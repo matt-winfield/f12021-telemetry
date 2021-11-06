@@ -4,11 +4,13 @@
   "description": "Telemetry server + client for F1 2021",
   "main": "./dist/index.js",
   "scripts": {
-    "start": "ts-node ./src/index.ts"
+    "start": "ts-node ./src/server/index.ts"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-react-app": "^10.0.0",
     "ts-node": "^10.4.0",
     "typescript": "^4.4.4"
   },

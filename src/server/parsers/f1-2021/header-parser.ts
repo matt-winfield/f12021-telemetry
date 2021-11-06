@@ -1,4 +1,5 @@
 import { Parser } from 'binary-parser';
+import { Header } from '../../../common/types/header';
 
 export default class HeaderParser extends Parser {
 	constructor() {
@@ -19,17 +20,4 @@ export default class HeaderParser extends Parser {
 	public parseHeader(message: Buffer): Header {
 		return this.parse(message) as Header;
 	}
-}
-
-export type Header = {
-	m_packetFormat: number;
-	m_gameMajorVersion: number;
-	m_gameMinorVerion: number;
-	m_packetVersion: number;
-	m_packetId: number;
-	m_sessionUID: number;
-	m_sessionTime: number;
-	m_frameIdentifier: number;
-	m_playerCarIndex: number;
-	m_secondaryPlayerCarIndex: number;
 }

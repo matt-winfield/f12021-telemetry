@@ -1,6 +1,7 @@
-import { PacketIds } from "../../constants/packet-ids";
+import { PacketIds } from "../../../common/constants/packet-ids";
+import { Message } from "../../../common/types/message";
 import HeaderParser from "./header-parser";
-import PacketMotionDataParser, { PacketMotionData } from "./packet-motion-data-parser";
+import PacketMotionDataParser from "./packet-motion-data-parser";
 
 export default class PacketMessageReader {
 	public static readMessage(message: Buffer): Message | undefined {
@@ -14,5 +15,3 @@ export default class PacketMessageReader {
 		return undefined;
 	}
 }
-
-export type Message = PacketMotionData;
