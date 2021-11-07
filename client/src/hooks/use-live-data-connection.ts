@@ -6,12 +6,10 @@ import { liveDataUpdated } from '../slices/live-data-slice';
 import { SocketEvents } from '../../../common/constants/socket-events';
 
 const SOCKET_ENDPOINT = 'http://localhost:12040';
-const MIN_TIME_BETWEEN_UPDATES_IN_MS = 10;
 
 const useLiveDataConnection = (packetId: PacketIds) => {
 	const dispatch = useDispatch();
 	const [socket, setSocket] = useState<Socket>();
-	const [lastUpdateTime, setLastUpdateTime] = useState(0);
 
 	useEffect(() => {
 		const newSocket = socketIOClient(SOCKET_ENDPOINT);
