@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux';
 import socketIOClient from 'socket.io-client';
-import { Message } from '../../../common/types/message';
 import { liveDataUpdated } from '../slices/live-data-slice';
 
 const SOCKET_ENDPOINT = "http://localhost:12040";
@@ -17,9 +16,9 @@ const useLiveDataConnection = () => {
 		socket.on('disconnect', () => {
 			console.log('Socket disconnected');
 		});
-		socket.on('data', (data: Message) => {
-			console.log(data);
-			dispatch(liveDataUpdated(data));
+		socket.on('data', (data: string) => {
+			let parsedData = JSON.parse(data);
+			dispatch(liveDataUpdated(parsedData));
 		});
 
 		return () => {

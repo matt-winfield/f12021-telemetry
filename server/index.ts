@@ -2,6 +2,7 @@ import dgram from 'dgram';
 import { Server as SocketServer } from 'socket.io';
 import PacketMessageReader from './parsers/f1-2021/packet-message-reader';
 import { SocketEvents } from '../common/constants/socket-events';
+import SocketDataFormatter from './socket-data-formatter';
 
 const SOCKET_PORT = 12040;
 const UDP_PORT = 20777;
@@ -21,8 +22,8 @@ server.on('error', (error) => {
 server.on('message', (message, remoteInfo) => {
 	const parsedMessage = PacketMessageReader.readMessage(message);
 	if (parsedMessage) {
-		console.log(parsedMessage);
-		socketServer.send(SocketEvents.Data, parsedMessage);
+		const formattedMessage = SocketDataFormatter.formatData(parsedMessage)
+		socketServer.emit(SocketEvents.Data, formattedMessage);
 	}
 });
 
