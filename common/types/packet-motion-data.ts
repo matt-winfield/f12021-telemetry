@@ -1,8 +1,8 @@
-import { Header } from "./header";
+import { PacketHeader } from "./packet-header";
 import { MotionData } from "./motion-data";
 
 export type PacketMotionData = {
-	m_header: Header;
+	m_header: PacketHeader;
 	m_carMotionData: MotionData[];
 	m_suspensionPosition: number[];
 	m_suspensionVelocity: number[];

@@ -1,4 +1,4 @@
-export type Header = {
+export type PacketHeader = {
 	m_packetFormat: number;
 	m_gameMajorVersion: number;
 	m_gameMinorVerion: number;

@@ -1,3 +1,4 @@
 import { PacketMotionData } from "./packet-motion-data";
+import { PacketSessionData } from "./packet-session-data";
 
-export type Message = PacketMotionData;
+export type Message = PacketMotionData | PacketSessionData;

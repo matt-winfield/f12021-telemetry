@@ -18,10 +18,6 @@ const DataCell = styled.td`
 
 const DataDisplay = (props: DataCellProps): JSX.Element => {
 	const createCells = (): JSX.Element[] => {
-		if (!props.data) {
-			return [];
-		}
-
 		let cells: JSX.Element[] = [];
 		for (const [key, value] of Object.entries(props.data)) {
 			cells.push(
@@ -33,6 +29,11 @@ const DataDisplay = (props: DataCellProps): JSX.Element => {
 		}
 		return cells;
 	}
+
+	if (!props.data) {
+		return <div>No data!</div>;
+	}
+
 	return <DataTable>
 		<tbody>
 			{createCells()}

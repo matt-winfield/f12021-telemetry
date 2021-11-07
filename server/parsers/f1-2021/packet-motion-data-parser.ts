@@ -1,6 +1,6 @@
 import { Parser } from "binary-parser";
 import { PacketMotionData } from "../../../common/types/packet-motion-data";
-import HeaderParser from "./header-parser";
+import PacketHeaderParser from "./packet-header-parser";
 import MotionDataParser from "./motion-data-parser";
 
 export default class PacketMotionDataParser extends Parser {
@@ -8,7 +8,7 @@ export default class PacketMotionDataParser extends Parser {
 		super();
 		this.endianess('little')
 			.nest('m_header', {
-				type: new HeaderParser()
+				type: new PacketHeaderParser()
 			})
 			.array('m_carMotionData', {
 				type: new MotionDataParser(),

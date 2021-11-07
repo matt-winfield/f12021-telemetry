@@ -1,7 +1,7 @@
 import { Parser } from 'binary-parser';
-import { Header } from '../../../common/types/header';
+import { PacketHeader } from '../../../common/types/packet-header';
 
-export default class HeaderParser extends Parser {
+export default class PacketHeaderParser extends Parser {
 	constructor() {
 		super();
 		this.endianess('little')
@@ -17,7 +17,7 @@ export default class HeaderParser extends Parser {
 			.uint8('m_secondaryPlayerCarIndex');
 	}
 
-	public parseHeader(message: Buffer): Header {
-		return this.parse(message) as Header;
+	public parseHeader(message: Buffer): PacketHeader {
+		return this.parse(message) as PacketHeader;
 	}
 }

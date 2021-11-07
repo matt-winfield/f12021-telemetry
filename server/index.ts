@@ -29,7 +29,7 @@ server.on('message', (message, remoteInfo) => {
 
 server.on('listening', () => {
 	const address = server.address();
-	console.log(`Server listening at ${address.address}:${address.port}`)
+	console.log(`UDP Server listening for F1 data at ${address.address}:${address.port}`)
 });
 
 socketServer.on('connection', (socket) => {
