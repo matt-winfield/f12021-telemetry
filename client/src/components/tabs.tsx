@@ -17,9 +17,13 @@ type TabProps = {
 
 const Tab = styled.div<TabProps>`
 	padding: 5px;
-	background-color: ${props => props.selected ? 'red' : 'white'};
+	background-color: ${props => props.selected ? props.theme.button.selected : props.theme.button.normal};
 	cursor: pointer;
 	border: 1px solid grey;
+
+	&:hover {
+		background-color: ${props => props.theme.button.hover};
+	}
 `
 
 const Tabs = (props: TabsProps) => {
