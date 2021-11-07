@@ -3,6 +3,7 @@ import { Server as SocketServer } from 'socket.io';
 import PacketMessageReader from './parsers/f1-2021/packet-message-reader';
 import { SocketEvents } from '../common/constants/socket-events';
 import SocketDataFormatter from './socket-data-formatter';
+import { PacketIds } from '../common/constants/packet-ids';
 
 const SOCKET_PORT = 12040;
 const UDP_PORT = 20777;
@@ -23,7 +24,7 @@ server.on('message', (message, remoteInfo) => {
 	const parsedMessage = PacketMessageReader.readMessage(message);
 	if (parsedMessage) {
 		const formattedMessage = SocketDataFormatter.formatData(parsedMessage)
-		socketServer.emit(SocketEvents.Data, formattedMessage);
+		socketServer.to(parsedMessage.m_header.m_packetId.toString()).emit(SocketEvents.Data, formattedMessage);
 	}
 });
 
@@ -34,6 +35,15 @@ server.on('listening', () => {
 
 socketServer.on('connection', (socket) => {
 	console.log(`Socket ${socket.id} connected`);
+
+	socket.join(PacketIds.Motion.toString());
+
+	socket.on(SocketEvents.ChangeChannel, (channel) => {
+		for (let room of socket.rooms) {
+			socket.leave(room);
+		}
+		socket.join(channel.toString());
+	})
 
 	socket.on('disconnect', () => {
 		console.log(`Socket ${socket.id} disconnected`);

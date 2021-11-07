@@ -1,3 +1,4 @@
 export enum SocketEvents {
-	Data = 'data'
+	Data = 'data',
+	ChangeChannel = 'change-channel'
 }

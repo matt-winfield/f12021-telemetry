@@ -27,7 +27,7 @@ const ArrayDataDisplay = (props: ArrayDataDisplayProps) => {
 
 		return <>
 			{props.data.map(((value, index) =>
-				getElementForValue(value)))}
+				<div key={index}>{getElementForValue(value)}</div>))}
 		</>
 	}
 

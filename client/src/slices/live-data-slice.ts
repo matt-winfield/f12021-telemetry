@@ -3,15 +3,18 @@ import { Message } from "../../../common/types/message";
 import { PacketMotionData } from "../../../common/types/packet-motion-data";
 import { PacketIds } from "../../../common/constants/packet-ids";
 import { PacketSessionData } from "../../../common/types/packet-session-data";
+import { PacketLapData } from "../../../common/types/packet-lap-data";
 
 type SliceState = {
 	motionData?: PacketMotionData;
 	sessionData?: PacketSessionData;
+	lapData?: PacketLapData;
 }
 
 const initialState: SliceState = {
 	motionData: undefined,
-	sessionData: undefined
+	sessionData: undefined,
+	lapData: undefined
 }
 
 export const liveDataSlice = createSlice({
@@ -30,6 +33,9 @@ export const liveDataSlice = createSlice({
 					break;
 				case PacketIds.Session:
 					state.sessionData = message as PacketSessionData;
+					break;
+				case PacketIds.LapData:
+					state.lapData = message as PacketLapData;
 					break;
 			}
 		}

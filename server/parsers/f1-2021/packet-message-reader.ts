@@ -1,6 +1,7 @@
 import { PacketIds } from "../../../common/constants/packet-ids";
 import { Message } from "../../../common/types/message";
 import PacketHeaderParser from "./packet-header-parser";
+import PacketLapDataParser from "./packet-lap-data-parser";
 import PacketMotionDataParser from "./packet-motion-data-parser";
 import PacketSessionDataParser from "./packet-session-data-parser";
 
@@ -13,6 +14,8 @@ export default class PacketMessageReader {
 				return new PacketMotionDataParser().parseMessage(message);
 			case PacketIds.Session:
 				return new PacketSessionDataParser().parseMessage(message);
+			case PacketIds.LapData:
+				return new PacketLapDataParser().parseMessage(message);
 		}
 
 		return undefined;
