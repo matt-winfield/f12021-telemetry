@@ -1,10 +1,10 @@
 import React from 'react';
-import DataDisplay from './components/DataDisplay';
+import LiveData from './components/live-data';
 
 function App() {
   return (
     <div>
-      <DataDisplay></DataDisplay>
+      <LiveData></LiveData>
     </div>
   );
 }

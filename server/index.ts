@@ -22,7 +22,7 @@ server.on('message', (message, remoteInfo) => {
 	const parsedMessage = PacketMessageReader.readMessage(message);
 	if (parsedMessage) {
 		console.log(parsedMessage);
-		socketServer.send('data', parsedMessage);
+		socketServer.send(SocketEvents.Data, parsedMessage);
 	}
 });
 
@@ -33,7 +33,6 @@ server.on('listening', () => {
 
 socketServer.on('connection', (socket) => {
 	console.log(`Socket ${socket.id} connected`);
-	socket.emit(SocketEvents.Data, 'Hello, world!');
 
 	socket.on('disconnect', () => {
 		console.log(`Socket ${socket.id} disconnected`);
