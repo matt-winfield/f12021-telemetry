@@ -1,6 +1,6 @@
 import dgram from 'dgram';
 import { Server as SocketServer } from 'socket.io';
-import PacketMessageReader from './parsers/f1-2021/packet-message-reader';
+import PacketMessageReader from '../common/parsers/f1-2021/packet-message-reader';
 import { SocketEvents } from '../common/constants/socket-events';
 import SocketDataFormatter from './socket-data-formatter';
 import { PacketIds } from '../common/constants/packet-ids';
@@ -21,11 +21,7 @@ server.on('error', (error) => {
 });
 
 server.on('message', (message, remoteInfo) => {
-	const parsedMessage = PacketMessageReader.readMessage(message);
-	if (parsedMessage) {
-		const formattedMessage = SocketDataFormatter.formatData(parsedMessage)
-		socketServer.to(parsedMessage.m_header.m_packetId.toString()).emit(SocketEvents.Data, formattedMessage);
-	}
+	socketServer.emit(SocketEvents.Data, message);
 });
 
 server.on('listening', () => {

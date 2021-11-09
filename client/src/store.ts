@@ -6,7 +6,11 @@ const reducer = combineReducers({
 })
 
 const store = configureStore({
-	reducer
+	reducer,
+	middleware: getDefaultMiddleware => getDefaultMiddleware({
+		serializableCheck: false,
+		immutableCheck: false
+	})
 })
 
 export type StoreState = ReturnType<typeof store.getState>;

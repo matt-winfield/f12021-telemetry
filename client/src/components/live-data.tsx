@@ -11,7 +11,7 @@ const LiveData = () => {
 	const sessionData = useSessionData();
 	const lapData = useLapData();
 	const [selectedTab, setSelectedTab] = useState(0);
-	useLiveDataConnection(selectedTab);
+	useLiveDataConnection();
 
 	const getLiveData = () => {
 		switch (selectedTab) {

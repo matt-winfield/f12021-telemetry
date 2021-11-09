@@ -1,0 +1,11 @@
+{
+  "name": "f12021-common",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/binary-parser": "^1.5.1",
+    "binary-parser": "^2.0.1"
+  }
+}

@@ -1836,6 +1836,13 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
+"@types/binary-parser@^1.5.1":
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/@types/binary-parser/-/binary-parser-1.5.1.tgz#248c0d787498f3622c177622e93dfe2478235635"
+  integrity sha512-wxSg5YQFVYsyGwuCSTdBu+cUIYCD9eX0pq3CsJbP4DLeLExbwEPqci9JgjCNHv1ZfLO/QzVtGlasec5xSUcCVA==
+  dependencies:
+    "@types/node" "*"
+
 "@types/eslint@^7.2.6":
   version "7.2.6"
   resolved "https://registry.yarnpkg.com/@types/eslint/-/eslint-7.2.6.tgz#5e9aff555a975596c03a98b59ecd103decc70c3c"
@@ -2990,6 +2997,11 @@ binary-extensions@^2.0.0:
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.2.0.tgz#75f502eeaf9ffde42fc98829645be4ea76bd9e2d"
   integrity sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==
 
+binary-parser@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/binary-parser/-/binary-parser-2.0.1.tgz#66b063c634a048d46ca48824e27288459f6b9064"
+  integrity sha512-7kZx8vZCq+V/0XkaOjLpCkBdOYCzjau+yt1PDMM04Q73WgtNYSoM6gOpl/Ky7qbANrEkcbX9ya+6Fdmj1WeU+w==
+
 bindings@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/bindings/-/bindings-1.5.0.tgz#10353c9e945334bc0511a6d90b38fbc7c9c504df"
@@ -3621,7 +3633,10 @@ common-tags@^1.8.0:
   integrity sha512-6P6g0uetGpW/sdyUy/iQQCbFF0kWVMSIVSyYz7Zgjcgh8mgw8PQzDNZeyZ5DQ2gM7LBoZPHmnjz8rUthkBG5tw==
 
 "common@file:./../common":
-  version "0.0.0"
+  version "1.0.0"
+  dependencies:
+    "@types/binary-parser" "^1.5.1"
+    binary-parser "^2.0.1"
 
 commondir@^1.0.1:
   version "1.0.1"
@@ -11297,6 +11312,11 @@ url@^0.11.0:
   dependencies:
     punycode "1.3.2"
     querystring "0.2.0"
+
+use-immer@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/use-immer/-/use-immer-0.6.0.tgz#ca6aa5ade93018e2c65cf128d19ada54fc23f70d"
+  integrity sha512-dFGRfvWCqPDTOt/S431ETYTg6+uxbpb7A1pptufwXVzGJY3RlXr38+3wyLNpc6SbbmAKjWl6+EP6uW74fkEsXQ==
 
 use@^3.1.0:
   version "3.1.1"

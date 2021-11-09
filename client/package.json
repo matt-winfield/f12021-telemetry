@@ -14,6 +14,7 @@
     "@types/react-redux": "^7.1.20",
     "@types/styled-components": "^5.1.15",
     "common": "file:./../common",
+    "immer": "^9.0.6",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.6",
@@ -21,10 +22,11 @@
     "socket.io-client": "^4.3.2",
     "styled-components": "^5.3.3",
     "typescript": "^4.1.2",
+    "use-immer": "^0.6.0",
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "tsc -b && (concurrently \"tsc -b -w\" \"react-app-rewired start\")",
+    "start": "tsc -b && (concurrently -n \"tsc,react\" \"tsc -b -w\" \"react-app-rewired start\")",
     "build": "tsc -b && react-app-rewired build",
     "test": "tsc -b && react-app-rewired test",
     "eject": "react-scripts eject"

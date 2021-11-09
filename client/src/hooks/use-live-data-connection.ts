@@ -1,15 +1,17 @@
-import { useCallback, useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux';
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { batch, useDispatch } from 'react-redux';
 import socketIOClient, { Socket } from 'socket.io-client';
-import { PacketIds } from '../../../common/constants/packet-ids';
 import { liveDataUpdated } from '../slices/live-data-slice';
 import { SocketEvents } from '../../../common/constants/socket-events';
+import PacketMessageReader from '../../../common/parsers/f1-2021/packet-message-reader';
+import { Action } from '@reduxjs/toolkit';
 
 const SOCKET_ENDPOINT = 'http://localhost:12040';
 
-const useLiveDataConnection = (packetId: PacketIds) => {
+const useLiveDataConnection = (updateIntervalMs: number = 100) => {
 	const dispatch = useDispatch();
 	const [socket, setSocket] = useState<Socket>();
+	const actionQueue = useRef<Action[]>([]);
 
 	useEffect(() => {
 		const newSocket = socketIOClient(SOCKET_ENDPOINT);
@@ -28,20 +30,34 @@ const useLiveDataConnection = (packetId: PacketIds) => {
 		}
 	}, []);
 
-	const listener = useCallback((data: string) => {
-		let parsedData = JSON.parse(data);
-		dispatch(liveDataUpdated(parsedData));
-	}, [dispatch]);
+	useEffect(() => {
+		const interval = setInterval(() => {
+			batch(() => {
+				for (let action of actionQueue.current) {
+					dispatch(action);
+				}
+			});
+			actionQueue.current = [];
+		}, updateIntervalMs);
+
+		return () => {
+			clearInterval(interval);
+		}
+	}, [dispatch, updateIntervalMs])
+
+	const listener = useCallback((data: ArrayBuffer) => {
+		const buffer = Buffer.from(data);
+		const parsedData = PacketMessageReader.readMessage(buffer);
+		if (parsedData) {
+			actionQueue.current.push(liveDataUpdated(parsedData));
+		}
+	}, []);
 
 	useEffect(() => {
 		socket?.on(SocketEvents.Data, listener);
 
 		return () => { socket?.off(SocketEvents.Data, listener); }
 	}, [listener, socket, dispatch])
-
-	useEffect(() => {
-		socket?.emit(SocketEvents.ChangeChannel, packetId.toString());
-	}, [socket, packetId])
 }
 
 export default useLiveDataConnection;
