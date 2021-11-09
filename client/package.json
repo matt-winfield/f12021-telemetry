@@ -24,9 +24,9 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
+    "start": "tsc -b && (concurrently \"tsc -b -w\" \"react-app-rewired start\")",
+    "build": "tsc -b && react-app-rewired build",
+    "test": "tsc -b && react-app-rewired test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -48,6 +48,7 @@
     ]
   },
   "devDependencies": {
+    "concurrently": "^6.3.0",
     "customize-cra": "^1.0.0",
     "react-app-rewired": "^2.1.8"
   }
