@@ -41,4 +41,4 @@ const DataDisplay = (props: DataCellProps): JSX.Element => {
 	</DataTable>
 }
 
-export default DataDisplay;
+export default React.memo(DataDisplay);

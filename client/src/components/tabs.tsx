@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import Tab from './tab'
 
 export type TabsProps = {
 	tabs: string[];
@@ -10,22 +11,6 @@ const TabsContainer = styled.div`
 	display: flex;
 	flex-direction: row;
 `
-
-type TabProps = {
-	selected: boolean;
-}
-
-const Tab = styled.div<TabProps>`
-	padding: 5px;
-	background-color: ${props => props.selected ? props.theme.button.selected : props.theme.button.normal};
-	cursor: pointer;
-	border: 1px solid grey;
-
-	&:hover {
-		background-color: ${props => props.theme.button.hover};
-	}
-`
-
 const Tabs = (props: TabsProps) => {
 	const [selectedTab, setSelectedTab] = useState(0);
 
@@ -37,10 +22,10 @@ const Tabs = (props: TabsProps) => {
 	return (
 		<TabsContainer>
 			{props.tabs.map((tab, index) =>
-				<Tab key={index} onClick={() => handleClick(index)} selected={index === selectedTab}>{tab}</Tab>
+				<Tab key={index} index={index} onClick={handleClick} selected={index === selectedTab}>{tab}</Tab>
 			)}
 		</TabsContainer>
 	)
 }
 
-export default Tabs
+export default React.memo(Tabs);

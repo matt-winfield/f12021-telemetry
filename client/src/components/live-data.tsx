@@ -27,7 +27,7 @@ const LiveData = () => {
 
 	return (
 		<div>
-			<Tabs tabs={dataTabs} onClick={(tabId) => setSelectedTab(tabId)}></Tabs>
+			<Tabs tabs={dataTabs} onClick={setSelectedTab}></Tabs>
 			<DataDisplay data={getLiveData()}></DataDisplay>
 		</div>
 	)

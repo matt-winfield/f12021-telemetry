@@ -8,7 +8,7 @@ import { Action } from '@reduxjs/toolkit';
 
 const SOCKET_ENDPOINT = 'http://localhost:12040';
 
-const useLiveDataConnection = (updateIntervalMs: number = 100) => {
+const useLiveDataConnection = (updateIntervalMs: number = 50) => {
 	const dispatch = useDispatch();
 	const [socket, setSocket] = useState<Socket>();
 	const actionQueue = useRef<Action[]>([]);

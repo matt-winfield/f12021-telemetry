@@ -34,13 +34,6 @@ socketServer.on('connection', (socket) => {
 
 	socket.join(PacketIds.Motion.toString());
 
-	socket.on(SocketEvents.ChangeChannel, (channel) => {
-		for (let room of socket.rooms) {
-			socket.leave(room);
-		}
-		socket.join(channel.toString());
-	})
-
 	socket.on('disconnect', () => {
 		console.log(`Socket ${socket.id} disconnected`);
 	})

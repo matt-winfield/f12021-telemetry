@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { formatDataValue } from '../logic/format-data-value';
 import DataDisplay from './data-display';
 import Tabs from './tabs';
@@ -7,8 +7,12 @@ export type ArrayDataDisplayProps = {
 	data: any[];
 }
 
-const ArrayDataDisplay = (props: ArrayDataDisplayProps) => {
+const ArrayDataDisplay = ({ data }: ArrayDataDisplayProps) => {
 	const [selectedTab, setSelectedTab] = useState(0);
+
+	const tabNames = useMemo(() => {
+		return [...Array(data.length).keys()].map(n => n.toString());
+	}, [data.length])
 
 	const getElementForValue = (value: any): JSX.Element | string | number => {
 		if (typeof value === 'string' || typeof value === 'number') {
@@ -18,15 +22,15 @@ const ArrayDataDisplay = (props: ArrayDataDisplayProps) => {
 	}
 
 	const getDataDisplayElements = (): JSX.Element | string | number => {
-		if (props.data.length > 4) {
+		if (data.length > 4) {
 			return <>
-				<Tabs tabs={props.data.map((_, index) => index.toString())} onClick={(id) => setSelectedTab(id)}></Tabs>
-				{getElementForValue(props.data[selectedTab])}
+				<Tabs tabs={tabNames} onClick={setSelectedTab}></Tabs>
+				{getElementForValue(data[selectedTab])}
 			</>
 		}
 
 		return <>
-			{props.data.map(((value, index) =>
+			{data.map(((value, index) =>
 				<div key={index}>{getElementForValue(value)}</div>))}
 		</>
 	}
@@ -38,4 +42,4 @@ const ArrayDataDisplay = (props: ArrayDataDisplayProps) => {
 	)
 }
 
-export default ArrayDataDisplay;
+export default React.memo(ArrayDataDisplay);
