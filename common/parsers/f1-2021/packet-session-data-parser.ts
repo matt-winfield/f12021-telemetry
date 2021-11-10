@@ -1,10 +1,11 @@
 import { Parser } from "binary-parser";
 import { PacketSessionData } from "../../../common/types/packet-session-data";
+import IPacketDataParser from "../ipacket-data-parser";
 import MarshalZoneParser from "./marshal-zone-parser";
 import PacketHeaderParser from "./packet-header-parser";
 import WeatherForecastSampleParser from "./weather-forecast-sample-parser";
 
-export default class PacketSessionDataParser extends Parser {
+export default class PacketSessionDataParser extends Parser implements IPacketDataParser {
 	constructor() {
 		super();
 		this.endianess('little')

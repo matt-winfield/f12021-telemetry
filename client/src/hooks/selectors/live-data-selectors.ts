@@ -12,3 +12,7 @@ export const useSessionData = () => {
 export const useLapData = () => {
 	return useSelector((state: StoreState) => state.liveData.lapData);
 }
+
+export const useEventData = () => {
+	return useSelector((state: StoreState) => state.liveData.eventData);
+}
