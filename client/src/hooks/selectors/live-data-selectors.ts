@@ -24,3 +24,7 @@ export const useParticipantsData = () => {
 export const useCarSetupsData = () => {
 	return useSelector((state: StoreState) => state.liveData.carSetupsData);
 }
+
+export const useCarTelemetryData = () => {
+	return useSelector((state: StoreState) => state.liveData.carTelemetryData);
+}

@@ -1,4 +1,5 @@
 import { PacketCarSetupData } from "./packet-car-setup-data";
+import { PacketCarTelemetryData } from "./packet-car-telemetry-data";
 import { PacketEventData } from "./packet-event-data";
 import { PacketLapData } from "./packet-lap-data";
 import { PacketMotionData } from "./packet-motion-data";
@@ -11,4 +12,5 @@ export type Message =
 	| PacketLapData
 	| PacketEventData
 	| PacketParticipantsData
-	| PacketCarSetupData;
+	| PacketCarSetupData
+	| PacketCarTelemetryData;

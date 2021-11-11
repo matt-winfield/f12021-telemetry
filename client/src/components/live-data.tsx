@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useCarSetupsData, useEventData, useLapData, useMotionData, useParticipantsData, useSessionData } from '../hooks/selectors/live-data-selectors';
+import { useCarSetupsData, useCarTelemetryData, useEventData, useLapData, useMotionData, useParticipantsData, useSessionData } from '../hooks/selectors/live-data-selectors';
 import useLiveDataConnection from '../hooks/use-live-data-connection';
 import DataDisplay from './data-display';
 import Tabs from './tabs';
@@ -13,6 +13,7 @@ const LiveData = () => {
 	const eventData = useEventData();
 	const participantsData = useParticipantsData();
 	const carSetupsData = useCarSetupsData();
+	const carTelemetryData = useCarTelemetryData();
 	const [selectedTab, setSelectedTab] = useState(0);
 	useLiveDataConnection();
 
@@ -30,6 +31,8 @@ const LiveData = () => {
 				return participantsData;
 			case 5:
 				return carSetupsData;
+			case 6:
+				return carTelemetryData;
 		}
 		return undefined;
 	}
