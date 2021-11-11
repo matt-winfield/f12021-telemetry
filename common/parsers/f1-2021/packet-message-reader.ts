@@ -2,6 +2,7 @@ import { PacketIds } from "../../../common/constants/packet-ids";
 import { Message } from "../../../common/types/message";
 import IPacketDataParser from "../ipacket-data-parser";
 import PacketCarSetupDataParser from "./packet-car-setup-data-parser";
+import PacketCarStatusDataParser from "./packet-car-status-data-parser";
 import PacketCarTelemetryDataParser from "./packet-car-telemetry-data-parser";
 import PacketEventDataParser from "./packet-event-data-parser";
 import PacketHeaderParser from "./packet-header-parser";
@@ -18,7 +19,8 @@ export default class PacketMessageReader {
 		[PacketIds.Event]: new PacketEventDataParser(),
 		[PacketIds.Participants]: new PacketParticipantsDataParser(),
 		[PacketIds.CarSetups]: new PacketCarSetupDataParser(),
-		[PacketIds.CarTelemetry]: new PacketCarTelemetryDataParser()
+		[PacketIds.CarTelemetry]: new PacketCarTelemetryDataParser(),
+		[PacketIds.CarStatus]: new PacketCarStatusDataParser()
 	}
 
 	public static readMessage(message: Buffer): Message | undefined {
