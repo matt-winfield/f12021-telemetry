@@ -6,6 +6,7 @@ import { PacketSessionData } from "../../../common/types/packet-session-data";
 import { PacketLapData } from "../../../common/types/packet-lap-data";
 import { PacketEventData } from "../../../common/types/packet-event-data";
 import { PacketParticipantsData } from "../../../common/types/packet-participants-data";
+import { PacketCarSetupData } from "../../../common/types/packet-car-setup-data";
 
 type SliceState = {
 	motionData?: PacketMotionData;
@@ -13,6 +14,7 @@ type SliceState = {
 	lapData?: PacketLapData;
 	eventData?: PacketEventData;
 	participantsData?: PacketParticipantsData;
+	carSetupsData?: PacketCarSetupData;
 }
 
 const initialState: SliceState = {
@@ -43,6 +45,9 @@ export const liveDataSlice = createSlice({
 					break;
 				case PacketIds.Participants:
 					state.participantsData = message as PacketParticipantsData;
+					break;
+				case PacketIds.CarSetups:
+					state.carSetupsData = message as PacketCarSetupData;
 					break;
 			}
 		}

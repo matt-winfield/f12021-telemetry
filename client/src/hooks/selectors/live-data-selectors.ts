@@ -20,3 +20,7 @@ export const useEventData = () => {
 export const useParticipantsData = () => {
 	return useSelector((state: StoreState) => state.liveData.participantsData);
 }
+
+export const useCarSetupsData = () => {
+	return useSelector((state: StoreState) => state.liveData.carSetupsData);
+}
