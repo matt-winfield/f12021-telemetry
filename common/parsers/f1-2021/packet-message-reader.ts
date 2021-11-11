@@ -5,6 +5,7 @@ import PacketEventDataParser from "./packet-event-data-parser";
 import PacketHeaderParser from "./packet-header-parser";
 import PacketLapDataParser from "./packet-lap-data-parser";
 import PacketMotionDataParser from "./packet-motion-data-parser";
+import PacketParticipantsDataParser from "./packet-participants-data-parser";
 import PacketSessionDataParser from "./packet-session-data-parser";
 
 export default class PacketMessageReader {
@@ -12,7 +13,8 @@ export default class PacketMessageReader {
 		[PacketIds.Motion]: new PacketMotionDataParser(),
 		[PacketIds.Session]: new PacketSessionDataParser(),
 		[PacketIds.LapData]: new PacketLapDataParser(),
-		[PacketIds.Event]: new PacketEventDataParser()
+		[PacketIds.Event]: new PacketEventDataParser(),
+		[PacketIds.Participants]: new PacketParticipantsDataParser()
 	}
 
 	public static readMessage(message: Buffer): Message | undefined {

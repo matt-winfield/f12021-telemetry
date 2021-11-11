@@ -5,19 +5,17 @@ import { PacketIds } from "../../../common/constants/packet-ids";
 import { PacketSessionData } from "../../../common/types/packet-session-data";
 import { PacketLapData } from "../../../common/types/packet-lap-data";
 import { PacketEventData } from "../../../common/types/packet-event-data";
+import { PacketParticipantsData } from "../../../common/types/packet-participants-data";
 
 type SliceState = {
 	motionData?: PacketMotionData;
 	sessionData?: PacketSessionData;
 	lapData?: PacketLapData;
 	eventData?: PacketEventData;
+	participantsData?: PacketParticipantsData;
 }
 
 const initialState: SliceState = {
-	motionData: undefined,
-	sessionData: undefined,
-	lapData: undefined,
-	eventData: undefined
 }
 
 export const liveDataSlice = createSlice({
@@ -42,6 +40,10 @@ export const liveDataSlice = createSlice({
 					break;
 				case PacketIds.Event:
 					state.eventData = message as PacketEventData;
+					break;
+				case PacketIds.Participants:
+					state.participantsData = message as PacketParticipantsData;
+					break;
 			}
 		}
 	}
