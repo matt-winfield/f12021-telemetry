@@ -5,6 +5,7 @@ import PacketCarSetupDataParser from "./packet-car-setup-data-parser";
 import PacketCarStatusDataParser from "./packet-car-status-data-parser";
 import PacketCarTelemetryDataParser from "./packet-car-telemetry-data-parser";
 import PacketEventDataParser from "./packet-event-data-parser";
+import PacketFinalClassificationDataParser from "./packet-final-classification-data-parser";
 import PacketHeaderParser from "./packet-header-parser";
 import PacketLapDataParser from "./packet-lap-data-parser";
 import PacketMotionDataParser from "./packet-motion-data-parser";
@@ -20,7 +21,8 @@ export default class PacketMessageReader {
 		[PacketIds.Participants]: new PacketParticipantsDataParser(),
 		[PacketIds.CarSetups]: new PacketCarSetupDataParser(),
 		[PacketIds.CarTelemetry]: new PacketCarTelemetryDataParser(),
-		[PacketIds.CarStatus]: new PacketCarStatusDataParser()
+		[PacketIds.CarStatus]: new PacketCarStatusDataParser(),
+		[PacketIds.FinalClassification]: new PacketFinalClassificationDataParser()
 	}
 
 	public static readMessage(message: Buffer): Message | undefined {

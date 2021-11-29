@@ -32,3 +32,7 @@ export const useCarTelemetryData = () => {
 export const useCarStatusData = () => {
 	return useSelector((state: StoreState) => state.liveData.carStatusData);
 }
+
+export const useFinalClassificationData = () => {
+	return useSelector((state: StoreState) => state.liveData.finalClassificationData);
+}
