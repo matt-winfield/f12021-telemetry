@@ -21,15 +21,15 @@ export const useParticipantsData = () => {
 	return useSelector((state: StoreState) => state.liveData.participants);
 }
 
-export const useCarSetupsData = () => {
+export const useCarSetups = () => {
 	return useSelector((state: StoreState) => state.liveData.carSetups);
 }
 
-export const useCarTelemetryData = () => {
+export const useCarTelemetry = () => {
 	return useSelector((state: StoreState) => state.liveData.carTelemetry);
 }
 
-export const useCarStatusData = () => {
+export const useCarStatus = () => {
 	return useSelector((state: StoreState) => state.liveData.carStatus);
 }
 
@@ -39,4 +39,8 @@ export const useFinalClassificationData = () => {
 
 export const useLobbyInfo = () => {
 	return useSelector((state: StoreState) => state.liveData.lobbyInfo);
+}
+
+export const useCarDamageData = () => {
+	return useSelector((state: StoreState) => state.liveData.carDamage);
 }

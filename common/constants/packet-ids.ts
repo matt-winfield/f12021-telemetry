@@ -9,6 +9,6 @@ export enum PacketIds {
 	CarStatus = 7,
 	FinalClassification = 8,
 	LobbyInfo = 9,
-	CarDamange = 10,
+	CarDamage = 10,
 	SessionHistory = 11
 }
