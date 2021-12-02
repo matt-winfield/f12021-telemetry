@@ -10,17 +10,19 @@ import { PacketCarSetupData } from "../../../common/types/packet-car-setup-data"
 import { PacketCarTelemetryData } from "../../../common/types/packet-car-telemetry-data";
 import { PacketCarStatusData } from "../../../common/types/packet-car-status-data";
 import { PacketFinalClassificationData } from "../../../common/types/packet-final-classification-data";
+import { PacketLobbyInfoData } from "../../../common/types/packet-lobby-info-data";
 
 type SliceState = {
-	motionData?: PacketMotionData;
-	sessionData?: PacketSessionData;
-	lapData?: PacketLapData;
-	eventData?: PacketEventData;
-	participantsData?: PacketParticipantsData;
-	carSetupsData?: PacketCarSetupData;
-	carTelemetryData?: PacketCarTelemetryData;
-	carStatusData?: PacketCarStatusData;
-	finalClassificationData?: PacketFinalClassificationData;
+	motion?: PacketMotionData;
+	session?: PacketSessionData;
+	lap?: PacketLapData;
+	event?: PacketEventData;
+	participants?: PacketParticipantsData;
+	carSetups?: PacketCarSetupData;
+	carTelemetry?: PacketCarTelemetryData;
+	carStatus?: PacketCarStatusData;
+	finalClassification?: PacketFinalClassificationData;
+	lobbyInfo?: PacketLobbyInfoData;
 }
 
 const initialState: SliceState = {
@@ -38,31 +40,35 @@ export const liveDataSlice = createSlice({
 
 			switch (message.m_header.m_packetId) {
 				case PacketIds.Motion:
-					state.motionData = message as PacketMotionData;
+					state.motion = message as PacketMotionData;
 					break;
 				case PacketIds.Session:
-					state.sessionData = message as PacketSessionData;
+					state.session = message as PacketSessionData;
 					break;
 				case PacketIds.LapData:
-					state.lapData = message as PacketLapData;
+					state.lap = message as PacketLapData;
 					break;
 				case PacketIds.Event:
-					state.eventData = message as PacketEventData;
+					state.event = message as PacketEventData;
 					break;
 				case PacketIds.Participants:
-					state.participantsData = message as PacketParticipantsData;
+					state.participants = message as PacketParticipantsData;
 					break;
 				case PacketIds.CarSetups:
-					state.carSetupsData = message as PacketCarSetupData;
+					state.carSetups = message as PacketCarSetupData;
 					break;
 				case PacketIds.CarTelemetry:
-					state.carTelemetryData = message as PacketCarTelemetryData;
+					state.carTelemetry = message as PacketCarTelemetryData;
 					break;
 				case PacketIds.CarStatus:
-					state.carStatusData = message as PacketCarStatusData;
+					state.carStatus = message as PacketCarStatusData;
 					break;
 				case PacketIds.FinalClassification:
-					state.finalClassificationData = message as PacketFinalClassificationData;
+					state.finalClassification = message as PacketFinalClassificationData;
+					break;
+				case PacketIds.LobbyInfo:
+					state.lobbyInfo = message as PacketLobbyInfoData;
+					break;
 			}
 		}
 	}

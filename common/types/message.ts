@@ -4,6 +4,7 @@ import { PacketCarTelemetryData } from "./packet-car-telemetry-data";
 import { PacketEventData } from "./packet-event-data";
 import { PacketFinalClassificationData } from "./packet-final-classification-data";
 import { PacketLapData } from "./packet-lap-data";
+import { PacketLobbyInfoData } from "./packet-lobby-info-data";
 import { PacketMotionData } from "./packet-motion-data";
 import { PacketParticipantsData } from "./packet-participants-data";
 import { PacketSessionData } from "./packet-session-data";
@@ -17,4 +18,5 @@ export type Message =
 	| PacketCarSetupData
 	| PacketCarTelemetryData
 	| PacketCarStatusData
-	| PacketFinalClassificationData;
+	| PacketFinalClassificationData
+	| PacketLobbyInfoData;
