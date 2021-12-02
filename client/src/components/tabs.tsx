@@ -5,14 +5,15 @@ import Tab from './tab'
 export type TabsProps = {
 	tabs: string[];
 	onClick?: (id: number) => void;
+	default?: number;
 }
 
-const TabsContainer = styled.div`
+export const TabsContainer = styled.div`
 	display: flex;
 	flex-direction: row;
 `
 const Tabs = (props: TabsProps) => {
-	const [selectedTab, setSelectedTab] = useState(0);
+	const [selectedTab, setSelectedTab] = useState(props.default ?? 0);
 
 	const handleClick = (id: number) => {
 		props.onClick?.(id);

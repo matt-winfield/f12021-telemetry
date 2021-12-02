@@ -1,7 +1,7 @@
 import { Parser } from "binary-parser";
-import { Message } from "../../types/message";
-import { PacketCarTelemetryData } from "../../types/packet-car-telemetry-data";
-import IPacketDataParser from "../ipacket-data-parser";
+import { Message } from "../../../types/message";
+import { PacketCarTelemetryData } from "../../../types/packet-car-telemetry-data";
+import IPacketDataParser from "./ipacket-data-parser";
 import PacketHeaderParser from "./packet-header-parser";
 
 export default class PacketCarTelemetryDataParser extends Parser implements IPacketDataParser {

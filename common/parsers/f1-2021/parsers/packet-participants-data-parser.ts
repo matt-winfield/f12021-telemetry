@@ -1,7 +1,7 @@
 import { Parser } from "binary-parser";
-import { Message } from "../../types/message";
-import { PacketParticipantsData } from "../../types/packet-participants-data";
-import IPacketDataParser from "../ipacket-data-parser";
+import { Message } from "../../../types/message";
+import { PacketParticipantsData } from "../../../types/packet-participants-data";
+import IPacketDataParser from "./ipacket-data-parser";
 import PacketHeaderParser from "./packet-header-parser";
 
 export default class PacketParticipantsDataParser extends Parser implements IPacketDataParser {

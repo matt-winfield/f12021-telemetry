@@ -1,6 +1,6 @@
 import { Parser } from "binary-parser";
-import { PacketSessionHistoryData } from "../../types/packet-session-history-data";
-import IPacketDataParser from "../ipacket-data-parser";
+import { PacketSessionHistoryData } from "../../../types/packet-session-history-data";
+import IPacketDataParser from "./ipacket-data-parser";
 import PacketHeaderParser from "./packet-header-parser";
 
 export default class PacketSessionHistoryDataParser extends Parser implements IPacketDataParser {

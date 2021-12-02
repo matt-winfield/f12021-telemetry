@@ -1,8 +1,10 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import liveDataReducer from "./slices/live-data-slice";
+import packetSubscriptionsReducer from './slices/packet-subscriptions-slice';
 
 const reducer = combineReducers({
-	liveData: liveDataReducer
+	liveData: liveDataReducer,
+	packetSubscriptions: packetSubscriptionsReducer
 })
 
 const store = configureStore({

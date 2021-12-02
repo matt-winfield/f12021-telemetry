@@ -5,11 +5,13 @@ import { liveDataUpdated } from '../slices/live-data-slice';
 import { SocketEvents } from '../../../common/constants/socket-events';
 import PacketMessageReader from '../../../common/parsers/f1-2021/packet-message-reader';
 import { Action } from '@reduxjs/toolkit';
+import useSubscribedPackets from './packet-subscriptions';
 
 const SOCKET_ENDPOINT = 'http://localhost:12040';
 
 const useLiveDataConnection = (updateIntervalMs: number = 50) => {
 	const dispatch = useDispatch();
+	const subscribedPackets = useSubscribedPackets();
 	const [socket, setSocket] = useState<Socket>();
 	const actionQueue = useRef<Action[]>([]);
 
@@ -47,11 +49,11 @@ const useLiveDataConnection = (updateIntervalMs: number = 50) => {
 
 	const listener = useCallback((data: ArrayBuffer) => {
 		const buffer = Buffer.from(data);
-		const parsedData = PacketMessageReader.readMessage(buffer);
+		const parsedData = PacketMessageReader.readMessage(buffer, subscribedPackets);
 		if (parsedData) {
 			actionQueue.current.push(liveDataUpdated(parsedData));
 		}
-	}, []);
+	}, [subscribedPackets]);
 
 	useEffect(() => {
 		socket?.on(SocketEvents.Data, listener);

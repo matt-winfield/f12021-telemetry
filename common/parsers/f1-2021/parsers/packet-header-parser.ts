@@ -1,5 +1,5 @@
 import { Parser } from 'binary-parser';
-import { PacketHeader } from '../../../common/types/packet-header';
+import { PacketHeader } from '../../../../common/types/packet-header';
 
 export default class PacketHeaderParser extends Parser {
 	constructor() {

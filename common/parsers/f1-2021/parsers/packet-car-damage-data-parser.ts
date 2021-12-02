@@ -1,6 +1,6 @@
 import { Parser } from "binary-parser";
-import { PacketCarDamageData } from "../../types/packet-car-damage-data";
-import IPacketDataParser from "../ipacket-data-parser";
+import { PacketCarDamageData } from "../../../types/packet-car-damage-data";
+import IPacketDataParser from "./ipacket-data-parser";
 import PacketHeaderParser from "./packet-header-parser";
 
 export default class PacketCarDamageDataParser extends Parser implements IPacketDataParser {

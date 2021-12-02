@@ -1,8 +1,8 @@
 import { Parser } from "binary-parser";
-import { PacketMotionData } from "../../../common/types/packet-motion-data";
+import { PacketMotionData } from "../../../../common/types/packet-motion-data";
 import PacketHeaderParser from "./packet-header-parser";
 import MotionDataParser from "./motion-data-parser";
-import IPacketDataParser from "../ipacket-data-parser";
+import IPacketDataParser from "./ipacket-data-parser";
 
 export default class PacketMotionDataParser extends Parser implements IPacketDataParser {
 	constructor() {

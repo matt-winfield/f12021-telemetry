@@ -1,7 +1,7 @@
 import { Parser } from "binary-parser";
-import { EventCodes } from "../../constants/event-codes";
-import { PacketEventData } from "../../types/packet-event-data";
-import IPacketDataParser from "../ipacket-data-parser";
+import { EventCodes } from "../../../constants/event-codes";
+import { PacketEventData } from "../../../types/packet-event-data";
+import IPacketDataParser from "./ipacket-data-parser";
 import PacketHeaderParser from "./packet-header-parser";
 
 export default class PacketEventDataParser implements IPacketDataParser {

@@ -1,6 +1,6 @@
 import { Parser } from "binary-parser";
-import { PacketFinalClassificationData } from "../../types/packet-final-classification-data";
-import IPacketDataParser from "../ipacket-data-parser";
+import { PacketFinalClassificationData } from "../../../types/packet-final-classification-data";
+import IPacketDataParser from "./ipacket-data-parser";
 import PacketHeaderParser from "./packet-header-parser";
 
 export default class PacketFinalClassificationDataParser extends Parser implements IPacketDataParser {

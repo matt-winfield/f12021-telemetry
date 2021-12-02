@@ -1,6 +1,6 @@
 import { Parser } from "binary-parser";
-import { PacketLobbyInfoData } from "../../types/packet-lobby-info-data";
-import IPacketDataParser from "../ipacket-data-parser";
+import { PacketLobbyInfoData } from "../../../types/packet-lobby-info-data";
+import IPacketDataParser from "./ipacket-data-parser";
 import PacketHeaderParser from "./packet-header-parser";
 
 export default class PacketLobbyInfoDataParser extends Parser implements IPacketDataParser {

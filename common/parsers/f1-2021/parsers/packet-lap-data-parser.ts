@@ -1,8 +1,8 @@
 import { Parser } from "binary-parser";
 import LapDataParser from "./lap-data-parser";
 import PacketHeaderParser from "./packet-header-parser";
-import { PacketLapData } from '../../../common/types/packet-lap-data';
-import IPacketDataParser from "../ipacket-data-parser";
+import { PacketLapData } from '../../../../common/types/packet-lap-data';
+import IPacketDataParser from "./ipacket-data-parser";
 
 export default class PacketLapDataParser extends Parser implements IPacketDataParser {
 	constructor() {
