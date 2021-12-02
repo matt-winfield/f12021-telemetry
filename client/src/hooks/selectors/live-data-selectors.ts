@@ -44,3 +44,7 @@ export const useLobbyInfo = () => {
 export const useCarDamageData = () => {
 	return useSelector((state: StoreState) => state.liveData.carDamage);
 }
+
+export const useSessionHistory = () => {
+	return useSelector((state: StoreState) => state.liveData.sessionHistory);
+}

@@ -12,6 +12,7 @@ import { PacketCarStatusData } from "../../../common/types/packet-car-status-dat
 import { PacketFinalClassificationData } from "../../../common/types/packet-final-classification-data";
 import { PacketLobbyInfoData } from "../../../common/types/packet-lobby-info-data";
 import { PacketCarDamageData } from "../../../common/types/packet-car-damage-data";
+import { PacketSessionHistoryData } from "../../../common/types/packet-session-history-data";
 
 type SliceState = {
 	motion?: PacketMotionData;
@@ -25,9 +26,11 @@ type SliceState = {
 	finalClassification?: PacketFinalClassificationData;
 	lobbyInfo?: PacketLobbyInfoData;
 	carDamage?: PacketCarDamageData;
+	sessionHistory: PacketSessionHistoryData[]
 }
 
 const initialState: SliceState = {
+	sessionHistory: []
 }
 
 export const liveDataSlice = createSlice({
@@ -73,6 +76,10 @@ export const liveDataSlice = createSlice({
 					break;
 				case PacketIds.CarDamage:
 					state.carDamage = message as PacketCarDamageData;
+					break;
+				case PacketIds.SessionHistory:
+					const sessionHistory = message as PacketSessionHistoryData;
+					state.sessionHistory[sessionHistory.m_carIdx] = sessionHistory;
 					break;
 			}
 		}

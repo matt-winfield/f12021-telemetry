@@ -9,6 +9,7 @@ import { PacketLobbyInfoData } from "./packet-lobby-info-data";
 import { PacketMotionData } from "./packet-motion-data";
 import { PacketParticipantsData } from "./packet-participants-data";
 import { PacketSessionData } from "./packet-session-data";
+import { PacketSessionHistoryData } from "./packet-session-history-data";
 
 export type Message =
 	PacketMotionData
@@ -21,4 +22,5 @@ export type Message =
 	| PacketCarStatusData
 	| PacketFinalClassificationData
 	| PacketLobbyInfoData
-	| PacketCarDamageData;
+	| PacketCarDamageData
+	| PacketSessionHistoryData;

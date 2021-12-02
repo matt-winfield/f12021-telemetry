@@ -13,6 +13,7 @@ import PacketLobbyInfoDataParser from "./packet-lobby-info-data-parser";
 import PacketMotionDataParser from "./packet-motion-data-parser";
 import PacketParticipantsDataParser from "./packet-participants-data-parser";
 import PacketSessionDataParser from "./packet-session-data-parser";
+import PacketSessionHistoryDataParser from "./packet-session-history-data-parser";
 
 export default class PacketMessageReader {
 	private static readonly parsers: { [key in PacketIds]?: IPacketDataParser } = {
@@ -26,7 +27,8 @@ export default class PacketMessageReader {
 		[PacketIds.CarStatus]: new PacketCarStatusDataParser(),
 		[PacketIds.FinalClassification]: new PacketFinalClassificationDataParser(),
 		[PacketIds.LobbyInfo]: new PacketLobbyInfoDataParser(),
-		[PacketIds.CarDamage]: new PacketCarDamageDataParser()
+		[PacketIds.CarDamage]: new PacketCarDamageDataParser(),
+		[PacketIds.SessionHistory]: new PacketSessionHistoryDataParser()
 	}
 
 	public static readMessage(message: Buffer): Message | undefined {
