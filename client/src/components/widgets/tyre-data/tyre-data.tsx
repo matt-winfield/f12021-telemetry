@@ -2,8 +2,8 @@ import React from 'react'
 import styled from 'styled-components';
 import { useCarTelemetry, useMotionData } from '../../../hooks/live-data/live-data-selectors';
 import WidgetContainer from '../widget-container';
-import WheelSlipIndicator from './wheel-slip-indicator';
 import { TyreIds } from '../../../../../common/constants/tyre-ids';
+import ValueBarContainer, { ValueBarType } from '../../data-display/value-bar';
 
 const WheelsContainer = styled.div`
 	display: flex;
@@ -13,6 +13,8 @@ const WheelsContainer = styled.div`
 const WheelsRow = styled.div`
 	display: flex;
 	flex-direction: row;
+	height: 100px;
+	margin: 1px 0;
 `
 
 const TyreData = () => {
@@ -23,12 +25,12 @@ const TyreData = () => {
 		<WidgetContainer>
 			<WheelsContainer>
 				<WheelsRow>
-					<WheelSlipIndicator width={15} height={100} wheelSlipValue={motionData?.m_wheelSlip[TyreIds.FrontLeft]} />
-					<WheelSlipIndicator width={15} height={100} wheelSlipValue={motionData?.m_wheelSlip[TyreIds.FrontRight]} />
+					<ValueBarContainer width={15} value={motionData?.m_wheelSlip[TyreIds.FrontLeft]} min={-1} max={1} type={ValueBarType.Centered} />
+					<ValueBarContainer width={15} value={motionData?.m_wheelSlip[TyreIds.FrontRight]} min={-1} max={1} type={ValueBarType.Centered} />
 				</WheelsRow>
 				<WheelsRow>
-					<WheelSlipIndicator width={15} height={100} wheelSlipValue={motionData?.m_wheelSlip[TyreIds.RearLeft]} />
-					<WheelSlipIndicator width={15} height={100} wheelSlipValue={motionData?.m_wheelSlip[TyreIds.RearRight]} />
+					<ValueBarContainer width={15} value={motionData?.m_wheelSlip[TyreIds.RearLeft]} min={-1} max={1} type={ValueBarType.Centered} />
+					<ValueBarContainer width={15} value={motionData?.m_wheelSlip[TyreIds.RearRight]} min={-1} max={1} type={ValueBarType.Centered} />
 				</WheelsRow>
 			</WheelsContainer>
 		</WidgetContainer>

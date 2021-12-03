@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSessionHistory } from '../../../hooks/live-data/live-data-selectors'
-import DataDisplay from '../../data-display'
+import DataDisplay from '../../data-display/data-display'
 
 const RawSessionHistory = () => {
 	const data = useSessionHistory();

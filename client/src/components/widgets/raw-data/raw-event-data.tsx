@@ -1,6 +1,6 @@
 import React from 'react'
 import { useEventData } from '../../../hooks/live-data/live-data-selectors'
-import DataDisplay from '../../data-display'
+import DataDisplay from '../../data-display/data-display'
 
 const RawEventData = () => {
 	const data = useEventData();

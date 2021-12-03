@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { formatDataValue } from '../logic/format-data-value'
+import { formatDataValue } from '../../logic/format-data-value'
 
 export type DataCellProps = {
 	data: any;

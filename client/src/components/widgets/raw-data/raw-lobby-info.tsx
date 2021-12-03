@@ -1,6 +1,6 @@
 import React from 'react'
 import { useLobbyInfo } from '../../../hooks/live-data/live-data-selectors'
-import DataDisplay from '../../data-display'
+import DataDisplay from '../../data-display/data-display'
 
 const RawLobbyInfo = () => {
 	const data = useLobbyInfo();

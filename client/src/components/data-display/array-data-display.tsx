@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
-import { formatDataValue } from '../logic/format-data-value';
+import { formatDataValue } from '../../logic/format-data-value';
 import DataDisplay from './data-display';
-import Tabs from './tabs';
+import Tabs from '../tabs';
 
 export type ArrayDataDisplayProps = {
 	data: any[];

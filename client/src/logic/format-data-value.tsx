@@ -1,6 +1,6 @@
 import { isNumeric } from "../../../common/helpers/string-helpers";
-import ArrayDataDisplay from "../components/array-data-display";
-import DataDisplay from "../components/data-display";
+import ArrayDataDisplay from "../components/data-display/array-data-display";
+import DataDisplay from "../components/data-display/data-display";
 
 export const formatDataValue = (value: any): JSX.Element | string | number => {
 	if (typeof value === 'string') {
