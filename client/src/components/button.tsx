@@ -11,9 +11,10 @@ type ButtonProps = {
 const Container = styled.div<{ selected: boolean }>`
 	padding: 5px 7px;
 	margin: 2px;
+	color: ${props => props.selected ? props.theme.button.selectedTextColor : props.theme.button.textColor};
 	background-color: ${props => props.selected ? props.theme.button.selected : props.theme.button.normal};
 	cursor: pointer;
-	border: 1px solid grey;
+	border: 1px solid ${props => props.theme.borders.color};
 	border-radius: 3px;
 
 	&:hover {

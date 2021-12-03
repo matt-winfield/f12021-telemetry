@@ -7,15 +7,32 @@ declare module 'styled-components' {
 			selected: string;
 			hover: string;
 			selectedHover: string;
+			textColor: string;
+			selectedTextColor: string;
+		},
+		borders: {
+			color: string
+		},
+		palette: {
+			primary: string
 		}
 	}
 }
 
+const lightPrimary = 'rgb(220, 0, 0)';
 export const lightTheme: DefaultTheme = {
 	button: {
 		normal: 'white',
-		selected: 'rgb(220, 0, 0)',
+		selected: lightPrimary,
 		hover: 'rgb(220, 220, 220)',
-		selectedHover: 'rgb(255, 70, 70)'
+		selectedHover: 'rgb(255, 70, 70)',
+		textColor: 'black',
+		selectedTextColor: 'white'
+	},
+	borders: {
+		color: 'grey'
+	},
+	palette: {
+		primary: lightPrimary
 	}
 }

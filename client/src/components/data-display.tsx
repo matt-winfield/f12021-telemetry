@@ -13,7 +13,7 @@ const DataTable = styled.table`
 
 const DataCell = styled.td`
 	padding: 5px;
-	border: 1px solid grey;
+	border: 1px solid ${props => props.theme.borders.color};
 `
 
 const DataDisplay = (props: DataCellProps): JSX.Element => {
@@ -30,7 +30,8 @@ const DataDisplay = (props: DataCellProps): JSX.Element => {
 		return cells;
 	}
 
-	if (!props.data) {
+	if (!props.data ||
+		(Array.isArray(props.data) && (props.data as Array<any>).length < 1)) {
 		return <div>No data!</div>;
 	}
 

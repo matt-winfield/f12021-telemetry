@@ -14,7 +14,7 @@ const Container = styled.div`
 		flex-direction: column;
 		padding: 10px;
 		margin-right: 10px;
-		border-right: 1px solid grey;
+		border-right: 1px solid ${props => props.theme.borders.color};
 		height: 100%;
 	}
 `;

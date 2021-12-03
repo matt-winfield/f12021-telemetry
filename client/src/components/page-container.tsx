@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react'
 import styled from 'styled-components';
 import { Page } from '../models/page';
 import Sidebar from './sidebar';
+import Dashboard from './widgets/dashboard/dashboard';
 import RawData from './widgets/raw-data/raw-data';
 
 const Container = styled.div`
@@ -17,14 +18,14 @@ const ContentContainer = styled.div`
 `;
 
 const PageContainer = () => {
-	const [page, setPage] = useState<Page>(Page.RawData);
+	const [page, setPage] = useState<Page>(Page.Dashboard);
 
 	const getContent = () => {
 		switch (page) {
 			case Page.Dashboard:
-				return <></>;
+				return <Dashboard />;
 			case Page.RawData:
-				return <RawData></RawData>;
+				return <RawData />;
 		}
 	}
 
@@ -34,7 +35,7 @@ const PageContainer = () => {
 
 	return (
 		<Container>
-			<Sidebar onChange={onPageChange} defaultPage={Page.RawData} />
+			<Sidebar onChange={onPageChange} defaultPage={Page.Dashboard} />
 			<ContentContainer>
 				{getContent()}
 			</ContentContainer>
