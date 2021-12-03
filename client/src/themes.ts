@@ -14,12 +14,14 @@ declare module 'styled-components' {
 			color: string
 		},
 		palette: {
-			primary: string
+			primary: string,
+			secondary: string
 		}
 	}
 }
 
 const lightPrimary = 'rgb(220, 0, 0)';
+const lightSecondary = 'rgb(46, 140, 255)';
 export const lightTheme: DefaultTheme = {
 	button: {
 		normal: 'white',
@@ -33,6 +35,7 @@ export const lightTheme: DefaultTheme = {
 		color: 'grey'
 	},
 	palette: {
-		primary: lightPrimary
+		primary: lightPrimary,
+		secondary: lightSecondary
 	}
 }

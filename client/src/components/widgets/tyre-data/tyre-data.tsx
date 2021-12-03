@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useCarTelemetry, useMotionData } from '../../../hooks/live-data/live-data-selectors';
 import WidgetContainer from '../widget-container';
 import { TyreIds } from '../../../../../common/constants/tyre-ids';
-import ValueBarContainer, { ValueBarType } from '../../data-display/value-bar';
+import WheelIndicator from './wheel-indicator';
 
 const WheelsContainer = styled.div`
 	display: flex;
@@ -20,17 +20,50 @@ const WheelsRow = styled.div`
 const TyreData = () => {
 	const motionData = useMotionData();
 	const telemetry = useCarTelemetry();
+	const playerCarIndex = telemetry?.m_header.m_playerCarIndex;
 
 	return (
 		<WidgetContainer>
 			<WheelsContainer>
 				<WheelsRow>
-					<ValueBarContainer width={15} value={motionData?.m_wheelSlip[TyreIds.FrontLeft]} min={-1} max={1} type={ValueBarType.Centered} />
-					<ValueBarContainer width={15} value={motionData?.m_wheelSlip[TyreIds.FrontRight]} min={-1} max={1} type={ValueBarType.Centered} />
+					<WheelIndicator
+						wheelWidth={50}
+						slipIndicatorWidth={8}
+						pressureIndicatorWidth={17}
+						tyreSlip={motionData?.m_wheelSlip[TyreIds.FrontLeft]}
+						tyrePressure={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresPressure[TyreIds.FrontLeft]}
+						tyreInnerTemperature={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresInnerTemperature[TyreIds.FrontLeft]}
+						tyreSurfaceTemperature={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresSurfaceTemperature[TyreIds.FrontLeft]}
+					/>
+					<WheelIndicator
+						wheelWidth={50}
+						slipIndicatorWidth={8}
+						pressureIndicatorWidth={17}
+						tyreSlip={motionData?.m_wheelSlip[TyreIds.FrontRight]}
+						tyrePressure={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresPressure[TyreIds.FrontRight]}
+						tyreInnerTemperature={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresInnerTemperature[TyreIds.FrontRight]}
+						tyreSurfaceTemperature={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresSurfaceTemperature[TyreIds.FrontRight]}
+					/>
 				</WheelsRow>
 				<WheelsRow>
-					<ValueBarContainer width={15} value={motionData?.m_wheelSlip[TyreIds.RearLeft]} min={-1} max={1} type={ValueBarType.Centered} />
-					<ValueBarContainer width={15} value={motionData?.m_wheelSlip[TyreIds.RearRight]} min={-1} max={1} type={ValueBarType.Centered} />
+					<WheelIndicator
+						wheelWidth={50}
+						slipIndicatorWidth={8}
+						pressureIndicatorWidth={17}
+						tyreSlip={motionData?.m_wheelSlip[TyreIds.RearLeft]}
+						tyrePressure={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresPressure[TyreIds.RearLeft]}
+						tyreInnerTemperature={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresInnerTemperature[TyreIds.RearLeft]}
+						tyreSurfaceTemperature={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresSurfaceTemperature[TyreIds.RearLeft]}
+					/>
+					<WheelIndicator
+						wheelWidth={50}
+						slipIndicatorWidth={8}
+						pressureIndicatorWidth={17}
+						tyreSlip={motionData?.m_wheelSlip[TyreIds.RearRight]}
+						tyrePressure={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresPressure[TyreIds.RearRight]}
+						tyreInnerTemperature={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresInnerTemperature[TyreIds.RearRight]}
+						tyreSurfaceTemperature={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresSurfaceTemperature[TyreIds.RearRight]}
+					/>
 				</WheelsRow>
 			</WheelsContainer>
 		</WidgetContainer>

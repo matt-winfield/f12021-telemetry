@@ -1,6 +1,8 @@
 import React from 'react'
-import styled from 'styled-components'
-import { clamp } from '../../utilities/number-helpers';
+import styled, { useTheme } from 'styled-components'
+import { clamp, getRatioBetweenValues } from '../../utilities/number-helpers';
+import { invert, readableColor } from 'polished';
+import { ChildrenProps } from '../../types/children-props';
 
 export enum ValueBarType {
 	Centered = 'centered',
@@ -14,6 +16,8 @@ export type ValueBarContainerProps = {
 	min: number;
 	max: number;
 	type: ValueBarType;
+	color?: string;
+	text?: string;
 }
 
 const Container = styled.div<{ width: number }>`
@@ -26,7 +30,7 @@ const Container = styled.div<{ width: number }>`
 `;
 
 const getPercentageComplete = (value: number, min: number, max: number): number => {
-	return 100 * (value - min) / (max - min);
+	return 100 * getRatioBetweenValues(value, min, max);
 }
 
 const getBarHeightPercentage = (type: ValueBarType, nullableValue: number | undefined, min: number, max: number): number => {
@@ -63,7 +67,7 @@ const ValueBar = styled.div.attrs<ValueBarContainerProps>(props => ({
 	position: absolute;
 	left: 0;
 	width: 100%;
-	background-color: ${props => props.theme.palette.primary};
+	background-color: ${props => props.color ?? props.theme.palette.primary};
 `;
 
 const CenterLine = styled.div`
@@ -75,11 +79,28 @@ const CenterLine = styled.div`
 	opacity: 0.5;
 `
 
+const Text = styled.div<{ width: number, color: string } & ChildrenProps>`
+	font-size: ${props => props.width - 2}px;
+	position: absolute;
+	color: ${props => props.color};
+	text-shadow: ${props => `-1px -1px 0 ${invert(props.color)}, 1px -1px 0 ${invert(props.color)}, -1px 1px 0 ${invert(props.color)}, 1px 1px 0 ${invert(props.color)}`};
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%) rotate(-90deg);
+	white-space: nowrap;
+`
+
 const ValueBarContainer = (props: ValueBarContainerProps) => {
+	const theme = useTheme();
+
 	return (
 		<Container width={props.width}>
-			<CenterLine />
+			{props.type === ValueBarType.Centered
+				&& <CenterLine />}
 			<ValueBar {...props} />
+			{props.text
+				&& <Text width={props.width} color={readableColor(props.color ?? theme.palette.primary)}>{props.text}</Text>
+			}
 		</Container>
 	)
 }
