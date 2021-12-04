@@ -40,12 +40,22 @@ const Wheel = styled.div.attrs<WheelProps>(props => ({
 		'backgroundColor': getWheelColor(props.temperature, props.theme.palette.primary, props.theme.palette.secondary)
 	})
 })) <WheelProps>`
-	border: 1px solid ${props => props.theme.borders.color};
+	border: 1px solid black;
 	border-radius: 10px;
 	width: ${props => props.width}px;
 	margin: 0 3px;
 	position: relative;
 `;
+
+const InternalWheel = styled(Wheel) <WheelProps>`
+	width: ${props => props.width}px;
+	height: 60%;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin: 0;
+	transform: translate(-50%, -50%);
+`
 
 type WheelTextProps = {
 	temperature: number;
@@ -73,6 +83,11 @@ const InternalWheelText = styled.div.attrs<WheelTextProps>(props => {
 	text-align: center;
 `
 
+const SurfaceWheelText = styled(InternalWheelText) <WheelTextProps>`
+	top: 2px;
+	transform: translateX(-50%);
+`;
+
 const WheelIndicator = (props: WheelIndicatorProps) => {
 	const theme = useTheme();
 
@@ -85,9 +100,14 @@ const WheelIndicator = (props: WheelIndicatorProps) => {
 				max={1}
 				type={ValueBarType.Centered} />
 			<Wheel temperature={props.tyreSurfaceTemperature ?? 0} width={props.wheelWidth}>
-				<InternalWheelText temperature={props.tyreSurfaceTemperature ?? 0}>
+				<SurfaceWheelText temperature={props.tyreSurfaceTemperature ?? 0}>
 					{props.tyreSurfaceTemperature && `${props.tyreSurfaceTemperature}°C`}
-				</InternalWheelText>
+				</SurfaceWheelText>
+				<InternalWheel temperature={props.tyreInnerTemperature ?? 0} width={props.wheelWidth - 10}>
+					<InternalWheelText temperature={props.tyreInnerTemperature ?? 0}>
+						{props.tyreSurfaceTemperature && `${props.tyreInnerTemperature}°C`}
+					</InternalWheelText>
+				</InternalWheel>
 			</Wheel>
 			<ValueBarContainer
 				width={props.pressureIndicatorWidth}
