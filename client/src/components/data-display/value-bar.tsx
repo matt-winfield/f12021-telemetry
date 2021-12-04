@@ -18,6 +18,7 @@ export type ValueBarContainerProps = {
 	type: ValueBarType;
 	color?: string;
 	text?: string;
+	invert?: boolean;
 }
 
 const Container = styled.div<{ width: number }>`
@@ -33,15 +34,17 @@ const getPercentageComplete = (value: number, min: number, max: number): number 
 	return 100 * getRatioBetweenValues(value, min, max);
 }
 
-const getBarHeightPercentage = (type: ValueBarType, nullableValue: number | undefined, min: number, max: number): number => {
+const getBarHeightPercentage = (type: ValueBarType, nullableValue: number | undefined, min: number, max: number, invert: boolean): number => {
 	const value = clamp(nullableValue ?? 0, min, max);
 	const percentage = type === ValueBarType.Centered
 		? getPercentageComplete(value, min, max) - 50
 		: getPercentageComplete(value, min, max);
-	return percentage;
+	return invert
+		? 100 - percentage
+		: percentage;
 }
 
-const getOffetStyle = (type: ValueBarType, nullableValue: number | undefined, min: number, max: number): Partial<{ top: string, bottom: string }> => {
+const getOffetStyle = (type: ValueBarType, nullableValue: number | undefined, min: number, max: number, invert: boolean): Partial<{ top: string, bottom: string }> => {
 	if (type === ValueBarType.Top) {
 		return { top: '0' };
 	}
@@ -55,13 +58,13 @@ const getOffetStyle = (type: ValueBarType, nullableValue: number | undefined, mi
 	if (percentage >= 50) {
 		return { top: '50%' };
 	}
-	return { top: `${50 + getBarHeightPercentage(type, value, min, max)}%` };
+	return { top: `${50 + getBarHeightPercentage(type, value, min, max, invert)}%` };
 }
 
 const ValueBar = styled.div.attrs<ValueBarContainerProps>(props => ({
 	style: ({
-		height: `${Math.abs(getBarHeightPercentage(props.type, props.value, props.min, props.max))}%`,
-		...getOffetStyle(props.type, props.value, props.min, props.max)
+		height: `${Math.abs(getBarHeightPercentage(props.type, props.value, props.min, props.max, props.invert ?? false))}%`,
+		...getOffetStyle(props.type, props.value, props.min, props.max, props.invert ?? false)
 	})
 })) <ValueBarContainerProps>`
 	position: absolute;

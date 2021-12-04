@@ -9,8 +9,9 @@ const WHEEL_TEMP_RANGE_MAX = 100;
 
 type WheelIndicatorProps = {
 	slipIndicatorWidth: number;
-	pressureIndicatorWidth: number;
+	sideBarIndicatorsWidth: number;
 	wheelWidth: number;
+	tyreWear?: number;
 	tyreSlip?: number;
 	tyreSurfaceTemperature?: number;
 	tyreInnerTemperature?: number;
@@ -94,6 +95,14 @@ const WheelIndicator = (props: WheelIndicatorProps) => {
 	return (
 		<Container>
 			<ValueBarContainer
+				width={props.sideBarIndicatorsWidth}
+				value={props.tyreWear}
+				min={0}
+				max={100}
+				type={ValueBarType.Bottom}
+				text={`${Math.round((props.tyreWear ?? 0) * 100) / 100}%`}
+				invert />
+			<ValueBarContainer
 				width={props.slipIndicatorWidth}
 				value={props.tyreSlip}
 				min={-1}
@@ -110,7 +119,7 @@ const WheelIndicator = (props: WheelIndicatorProps) => {
 				</InternalWheel>
 			</Wheel>
 			<ValueBarContainer
-				width={props.pressureIndicatorWidth}
+				width={props.sideBarIndicatorsWidth}
 				value={props.tyrePressure}
 				min={20}
 				max={25}
