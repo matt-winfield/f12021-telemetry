@@ -33,7 +33,7 @@ const TyreData = () => {
 						sideBarIndicatorsWidth={17}
 						tyreWear={damage?.m_carDamageData?.[playerCarIndex ?? 0].m_tyresWear[TyreIds.FrontLeft]}
 						tyreSlip={motionData?.m_wheelSlip[TyreIds.FrontLeft]}
-						tyrePressure={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresPressure[TyreIds.FrontLeft]}
+						brakeTemperature={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_brakesTemperature[TyreIds.FrontLeft]}
 						tyreInnerTemperature={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresInnerTemperature[TyreIds.FrontLeft]}
 						tyreSurfaceTemperature={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresSurfaceTemperature[TyreIds.FrontLeft]}
 					/>
@@ -43,7 +43,7 @@ const TyreData = () => {
 						sideBarIndicatorsWidth={17}
 						tyreWear={damage?.m_carDamageData?.[playerCarIndex ?? 0].m_tyresWear[TyreIds.FrontRight]}
 						tyreSlip={motionData?.m_wheelSlip[TyreIds.FrontRight]}
-						tyrePressure={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresPressure[TyreIds.FrontRight]}
+						brakeTemperature={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_brakesTemperature[TyreIds.FrontRight]}
 						tyreInnerTemperature={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresInnerTemperature[TyreIds.FrontRight]}
 						tyreSurfaceTemperature={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresSurfaceTemperature[TyreIds.FrontRight]}
 					/>
@@ -55,7 +55,7 @@ const TyreData = () => {
 						sideBarIndicatorsWidth={17}
 						tyreWear={damage?.m_carDamageData?.[playerCarIndex ?? 0].m_tyresWear[TyreIds.RearLeft]}
 						tyreSlip={motionData?.m_wheelSlip[TyreIds.RearLeft]}
-						tyrePressure={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresPressure[TyreIds.RearLeft]}
+						brakeTemperature={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_brakesTemperature[TyreIds.RearLeft]}
 						tyreInnerTemperature={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresInnerTemperature[TyreIds.RearLeft]}
 						tyreSurfaceTemperature={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresSurfaceTemperature[TyreIds.RearLeft]}
 					/>
@@ -65,7 +65,7 @@ const TyreData = () => {
 						sideBarIndicatorsWidth={17}
 						tyreWear={damage?.m_carDamageData?.[playerCarIndex ?? 0].m_tyresWear[TyreIds.RearRight]}
 						tyreSlip={motionData?.m_wheelSlip[TyreIds.RearRight]}
-						tyrePressure={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresPressure[TyreIds.RearRight]}
+						brakeTemperature={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_brakesTemperature[TyreIds.RearRight]}
 						tyreInnerTemperature={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresInnerTemperature[TyreIds.RearRight]}
 						tyreSurfaceTemperature={telemetry?.m_carTelemetryData?.[playerCarIndex ?? 0].m_tyresSurfaceTemperature[TyreIds.RearRight]}
 					/>
