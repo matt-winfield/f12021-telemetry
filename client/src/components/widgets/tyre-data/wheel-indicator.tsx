@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import { ChildrenProps } from '../../../types/children-props'
 import { clamp, getRatioBetweenValues } from '../../../utilities/number-helpers'
 import ValueBarContainer, { ValueBarType } from '../../data-display/value-bar'
+import ReactTooltip from 'react-tooltip';
+import { useRef, useCallback } from 'react'
 
 const DEFAULT_WHEEL_TEMP_RANGE_MIN = 70;
 const DEFAULT_WHEEL_TEMP_RANGE_MAX = 100;
@@ -90,6 +92,7 @@ const InternalWheelText = styled.div.attrs<WheelTextProps>(props => {
 	left: 50%;
 	transform: translate(-50%, -50%);
 	text-align: center;
+	pointer-events: none;
 `
 
 const SurfaceWheelText = styled(InternalWheelText) <WheelTextProps>`
@@ -108,7 +111,24 @@ const BrakeTemperatureText = styled(InternalWheelText) <WheelTextProps>`
 	transform: translate(-50%, -50%) rotate(-90deg);
 `
 
+const INNER_TEMPERATURE_TOOLTIP_ID = 'inner-temperature-tooltip';
+const WHEEL_INDICATOR_TOOLTIP_ID = 'wheel-indicator-tooltip';
+
 const WheelIndicator = (props: WheelIndicatorProps) => {
+	const tyreSurfaceTemperatureElementRef = useRef<HTMLDivElement | null>(null);
+
+	const onMouseEnterInnerWheel = useCallback(() => {
+		if (tyreSurfaceTemperatureElementRef.current) {
+			ReactTooltip.hide(tyreSurfaceTemperatureElementRef.current);
+		}
+	}, [tyreSurfaceTemperatureElementRef]);
+
+	const onMouseLeaveInnerWheel = useCallback(() => {
+		if (tyreSurfaceTemperatureElementRef.current) {
+			ReactTooltip.show(tyreSurfaceTemperatureElementRef.current);
+		}
+	}, [tyreSurfaceTemperatureElementRef]);
+
 	return (
 		<Container>
 			<ValueBarContainer
@@ -118,18 +138,33 @@ const WheelIndicator = (props: WheelIndicatorProps) => {
 				max={100}
 				type={ValueBarType.Bottom}
 				text={`${Math.round((props.tyreWear ?? 0) * 100) / 100}%`}
-				invert />
+				invert
+				data-tip='Wear'
+				data-for={WHEEL_INDICATOR_TOOLTIP_ID} />
 			<ValueBarContainer
 				width={props.slipIndicatorWidth}
 				value={props.tyreSlip}
 				min={-1}
 				max={1}
-				type={ValueBarType.Centered} />
-			<Wheel temperature={props.tyreSurfaceTemperature ?? 0} width={props.wheelWidth}>
+				type={ValueBarType.Centered}
+				data-tip='Slip'
+				data-for={WHEEL_INDICATOR_TOOLTIP_ID} />
+			<Wheel
+				temperature={props.tyreSurfaceTemperature ?? 0}
+				width={props.wheelWidth}
+				data-tip='Surface Temperature'
+				data-for={WHEEL_INDICATOR_TOOLTIP_ID}
+				ref={tyreSurfaceTemperatureElementRef}>
 				<SurfaceWheelText temperature={props.tyreSurfaceTemperature ?? 0}>
 					{props.tyreSurfaceTemperature && `${props.tyreSurfaceTemperature}°C`}
 				</SurfaceWheelText>
-				<InternalWheel temperature={props.tyreInnerTemperature ?? 0} width={props.wheelWidth - 10}>
+				<InternalWheel
+					temperature={props.tyreInnerTemperature ?? 0}
+					width={props.wheelWidth - 10}
+					data-tip='Inner Temperature'
+					data-for={INNER_TEMPERATURE_TOOLTIP_ID}
+					onMouseEnter={onMouseEnterInnerWheel}
+					onMouseLeave={onMouseLeaveInnerWheel}>
 					<InternalWheelText temperature={props.tyreInnerTemperature ?? 0}>
 						{props.tyreSurfaceTemperature && `${props.tyreInnerTemperature}°C`}
 					</InternalWheelText>
@@ -139,7 +174,9 @@ const WheelIndicator = (props: WheelIndicatorProps) => {
 				width={props.sideBarIndicatorsWidth}
 				temperature={props.brakeTemperature ?? 0}
 				minTemperature={100}
-				maxTemperature={1000}>
+				maxTemperature={1000}
+				data-tip='Brake Temperature'
+				data-for={WHEEL_INDICATOR_TOOLTIP_ID}>
 				<BrakeTemperatureText
 					temperature={props.brakeTemperature ?? 0}
 					minTemperature={100}
@@ -147,6 +184,8 @@ const WheelIndicator = (props: WheelIndicatorProps) => {
 					{props.brakeTemperature && `${props.brakeTemperature}°C`}
 				</BrakeTemperatureText>
 			</BrakeTemperature>
+			<ReactTooltip id={INNER_TEMPERATURE_TOOLTIP_ID} effect='solid' />
+			<ReactTooltip id={WHEEL_INDICATOR_TOOLTIP_ID} effect='solid' />
 		</Container>
 	)
 }

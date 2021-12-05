@@ -91,13 +91,14 @@ const Text = styled.div<{ width: number, color: string } & ChildrenProps>`
 	left: 50%;
 	transform: translate(-50%, -50%) rotate(-90deg);
 	white-space: nowrap;
+	pointer-events: none;
 `
 
 const ValueBarContainer = (props: ValueBarContainerProps) => {
 	const theme = useTheme();
 
 	return (
-		<Container width={props.width}>
+		<Container {...props}>
 			{props.type === ValueBarType.Centered
 				&& <CenterLine />}
 			<ValueBar {...props} />
