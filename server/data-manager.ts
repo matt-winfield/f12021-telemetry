@@ -1,16 +1,25 @@
 import { PacketIds } from '../common/constants/packet-ids';
 import { Message } from '../common/types/message';
+import { PacketLapData } from '../common/types/packet-lap-data';
 import { PacketMotionData } from '../common/types/packet-motion-data';
+import LapDataHandler from './data-handlers/lap-data-handler';
 import MotionDataHandler from './data-handlers/motion-data-handler';
 import CarData from './models/car-data';
+import LiveInfo from './models/live-info';
 import SessionData from './models/session-data';
+import util from 'util';
 
 export default class DataManager {
 	private data: SessionData = new SessionData();
+	private liveInfo: LiveInfo = new LiveInfo();
 
 	public addMessage(message: Message): void {
 		if (this.isMotionData(message)) {
 			MotionDataHandler.addMotionData(message, this.data);
+		}
+
+		if (this.isLapData(message)) {
+			LapDataHandler.addLapData(message, this.data, this.liveInfo, this.onLapComplete);
 		}
 	}
 
@@ -24,7 +33,16 @@ export default class DataManager {
 		}
 	}
 
+	private onLapComplete(carIndex: number, newCurrentLap: number): void {
+		console.log(`${carIndex} is now on lap ${newCurrentLap}`)
+		util.inspect(this?.data, { depth: null });
+	}
+
 	private isMotionData(message: Message): message is PacketMotionData {
 		return message.m_header.m_packetId === PacketIds.Motion;
+	}
+
+	private isLapData(message: Message): message is PacketLapData {
+		return message.m_header.m_packetId === PacketIds.LapData;
 	}
 }
