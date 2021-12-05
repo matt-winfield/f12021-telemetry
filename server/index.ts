@@ -1,9 +1,8 @@
 import dgram from 'dgram';
 import { Server as SocketServer } from 'socket.io';
-import PacketMessageReader from '../common/parsers/f1-2021/packet-message-reader';
-import { SocketEvents } from '../common/constants/socket-events';
-import SocketDataFormatter from './socket-data-formatter';
 import { PacketIds } from '../common/constants/packet-ids';
+import { SocketEvents } from '../common/constants/socket-events';
+import MessageHandler from './message-handler';
 
 const SOCKET_PORT = 12040;
 const UDP_PORT = 20777;
@@ -15,6 +14,8 @@ const socketServer = new SocketServer(SOCKET_PORT, {
 	}
 });
 
+const messageHandler = new MessageHandler();
+
 server.on('error', (error) => {
 	console.log(`Server error:\n${error.message}\n${error.stack}`);
 	server.close();
@@ -22,6 +23,7 @@ server.on('error', (error) => {
 
 server.on('message', (message, remoteInfo) => {
 	socketServer.emit(SocketEvents.Data, message);
+	messageHandler.handleMessage(message);
 });
 
 server.on('listening', () => {
