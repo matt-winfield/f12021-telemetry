@@ -23,13 +23,13 @@ export default class DataManager {
 		}
 	}
 
-	public static prepareData(data: SessionData, frameId: number, carIndex: number): void {
+	public static prepareData(data: SessionData, sessionTime: number, carIndex: number): void {
 		if (data.carData[carIndex] === undefined) {
 			data.carData[carIndex] = new CarData();
 		}
 
-		if (data.carData[carIndex].data[frameId] == undefined) {
-			data.carData[carIndex].data[frameId] = {};
+		if (data.carData[carIndex].data[sessionTime] == undefined) {
+			data.carData[carIndex].data[sessionTime] = {};
 		}
 	}
 

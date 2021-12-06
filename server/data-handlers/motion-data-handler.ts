@@ -4,24 +4,24 @@ import SessionData from "../models/session-data";
 
 export default abstract class MotionDataHandler {
 	public static addMotionData(message: PacketMotionData, data: SessionData): void {
-		const frameId = message.m_header.m_frameIdentifier;
-		this.addCarMotionData(message, data, frameId);
-		this.addPlayerMotionData(message, data, frameId);
+		const sessionTime = message.m_header.m_sessionTime;
+		this.addCarMotionData(message, data, sessionTime);
+		this.addPlayerMotionData(message, data, sessionTime);
 
 	}
 
-	private static addCarMotionData(message: PacketMotionData, data: SessionData, frameId: number): void {
+	private static addCarMotionData(message: PacketMotionData, data: SessionData, sessionTime: number): void {
 		message.m_carMotionData.forEach((carMotionData, carIndex) => {
-			DataManager.prepareData(data, frameId, carIndex);
-			data.carData[carIndex].data[frameId] = { ...data.carData[carIndex].data[frameId], ...carMotionData };
+			DataManager.prepareData(data, sessionTime, carIndex);
+			data.carData[carIndex].data[sessionTime] = { ...data.carData[carIndex].data[sessionTime], ...carMotionData };
 		});
 	}
 
-	private static addPlayerMotionData(message: PacketMotionData, data: SessionData, frameId: number): void {
+	private static addPlayerMotionData(message: PacketMotionData, data: SessionData, sessionTime: number): void {
 		const playerCarIndex = message.m_header.m_playerCarIndex;
-		DataManager.prepareData(data, frameId, playerCarIndex);
-		data.carData[playerCarIndex].data[frameId] = {
-			...data.carData[playerCarIndex].data[frameId],
+		DataManager.prepareData(data, sessionTime, playerCarIndex);
+		data.carData[playerCarIndex].data[sessionTime] = {
+			...data.carData[playerCarIndex].data[sessionTime],
 			m_suspensionPosition: message.m_suspensionPosition,
 			m_suspensionVelocity: message.m_suspensionVelocity,
 			m_suspensionAcceleration: message.m_suspensionAcceleration,
