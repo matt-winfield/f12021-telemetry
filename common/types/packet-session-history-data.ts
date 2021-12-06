@@ -16,6 +16,9 @@ export type TyreStintHistoryData = {
 
 export type PacketSessionHistoryData = {
 	m_header: PacketHeader;
+} & SessionHistoryData;
+
+export type SessionHistoryData = {
 	m_carIdx: number;
 	m_numLaps: number;
 	m_numTyreStints: number;

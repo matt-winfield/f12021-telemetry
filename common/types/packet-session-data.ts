@@ -4,6 +4,9 @@ import { WeatherForecastSample } from "./weather-forecast-sample";
 
 export type PacketSessionData = {
 	m_header: PacketHeader;
+} & SessionData;
+
+export type SessionData = {
 	m_weather: number;
 	m_trackTemperature: number;
 	m_airTemperature: number;

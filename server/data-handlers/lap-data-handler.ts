@@ -14,6 +14,7 @@ export default abstract class LapDataHandler {
 		message.m_lapData.forEach((carLapData, carIndex) => {
 			DataManager.prepareData(data, sessionTime, carIndex);
 			data.carData[carIndex].data[sessionTime] = { ...data.carData[carIndex].data[sessionTime], ...carLapData };
+			data.carData[carIndex].carIndex = carIndex;
 			this.updateLiveLapInfo(carLapData, carIndex, liveInfo, onLapComplete);
 		});
 	}

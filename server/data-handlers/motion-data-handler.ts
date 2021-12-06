@@ -14,6 +14,7 @@ export default abstract class MotionDataHandler {
 		message.m_carMotionData.forEach((carMotionData, carIndex) => {
 			DataManager.prepareData(data, sessionTime, carIndex);
 			data.carData[carIndex].data[sessionTime] = { ...data.carData[carIndex].data[sessionTime], ...carMotionData };
+			data.carData[carIndex].carIndex = carIndex;
 		});
 	}
 

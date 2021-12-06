@@ -1,15 +1,11 @@
-import { JSONFile, Low } from 'lowdb';
-import { join } from 'path';
-import { CombinedData } from '../common/types/combined-data';
+import { JsonDB } from 'node-json-db';
+import { Config } from 'node-json-db/dist/lib/JsonDBConfig';
+import { CombinedCarData } from '../common/types/combined-car-data';
 import CarData from './models/car-data';
 import SessionData from './models/session-data';
 
 type DatabaseData = {
-	tracks: { [trackId: string]: DatabaseTrackData };
-}
-
-type DatabaseTrackData = {
-	track: number;
+	trackId: number;
 	cars: { [carIndex: string]: DatabaseCarData };
 }
 
@@ -19,8 +15,8 @@ type DatabaseCarData = {
 }
 
 type DatabaseLapData = {
-	data: { [distance: string]: CombinedData };
-}
+	[distance: string]: CombinedCarData
+};
 
 type MapCarDataResult = {
 	data: DatabaseCarData;
@@ -28,43 +24,27 @@ type MapCarDataResult = {
 }
 
 export default class LocalDatabase {
-	private db: Low<DatabaseData>;
-	private _isInitialised: boolean = false;
-
-	public get isInitialised(): boolean {
-		return this._isInitialised;
-	}
-
-	constructor() {
-		const file = join(__dirname, 'db.json');
-		const adapter = new JSONFile<DatabaseData>(file);
-		this.db = new Low<DatabaseData>(adapter);
-	}
-
-	public async initialise(): Promise<void> {
-		await this.db.read();
-		this.db.data ||= { tracks: {} };
-		this._isInitialised = true;
-	}
-
-	public async saveData(data: SessionData): Promise<void> {
-		if (!this._isInitialised) {
-			throw new Error("LocalDatabase not initialised");
-		}
-
+	public saveData(data: SessionData): void {
 		const trackData = this.mapSessionDataToDatabaseFormat(data);
-		this.db.data!.tracks = { ...this.db.data?.tracks, ...trackData };
-		this.db.write();
+		const db = new JsonDB(new Config(`data/${trackData.trackId}`, false, true));
+		db.push('/', trackData.cars, false);
+		db.save();
 	}
 
-	private mapSessionDataToDatabaseFormat(data: SessionData): { [trackId: string]: DatabaseTrackData } {
-		const trackData: { [trackId: string]: DatabaseTrackData } = {};
+	private mapSessionDataToDatabaseFormat(data: SessionData): DatabaseData {
+		const carsData: { [carId: string]: DatabaseCarData } = {};
+		let trackId: number | undefined;
 
 		for (const carData of data.carData) {
-			this.mapCarData(carData);
+			const mappedData = this.mapCarData(carData);
+			trackId = mappedData.trackId ?? 0;
+			carsData[carData.carIndex] = mappedData.data;
 		}
 
-		return trackData;
+		return {
+			trackId: trackId ?? 0,
+			cars: carsData
+		};
 	}
 
 	private mapCarData(carData: CarData): MapCarDataResult {
@@ -80,8 +60,8 @@ export default class LocalDatabase {
 		let trackId: number | undefined;
 		for (const sessionTime in carData.data) {
 			const dataPoint = carData.data[sessionTime];
-			const lapDistance = dataPoint?.m_lapData?.[carData.carIndex].m_lapDistance;
-			const lapNumber = dataPoint?.m_lapData?.[carData.carIndex].m_currentLapNum;
+			const lapDistance = dataPoint.m_lapDistance
+			const lapNumber = dataPoint.m_currentLapNum;
 			trackId ||= dataPoint.m_trackId;
 
 			if (lapDistance !== undefined) {
@@ -101,11 +81,11 @@ export default class LocalDatabase {
 		};
 	}
 
-	private addDataToLap(lapNumber: number, lapDistance: number, dataPoint: CombinedData, outputCarData: DatabaseCarData): void {
+	private addDataToLap(lapNumber: number, lapDistance: number, dataPoint: CombinedCarData, outputCarData: DatabaseCarData): void {
 		if (outputCarData.laps[lapNumber] === undefined) {
 			outputCarData.laps[lapNumber] = { data: {} };
 		}
 
-		outputCarData.laps[lapNumber].data[lapDistance] = dataPoint;
+		outputCarData.laps[lapNumber][lapDistance] = dataPoint;
 	}
 }

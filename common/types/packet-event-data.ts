@@ -3,6 +3,9 @@ import { PacketHeader } from "./packet-header";
 
 export type PacketEventData = {
 	m_header: PacketHeader;
+} & EventData;
+
+export type EventData = {
 	m_eventStringCode: string;
 	m_eventDetails: FastestLap | Retirement | TeamMateInPits | RaceWinner | Penalty
 	| SpeedTrap | StartLights | DriveThroughPenaltyServed | StopGoPenaltyServed | Flashback | Buttons;

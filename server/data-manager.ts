@@ -34,14 +34,9 @@ export default class DataManager {
 		}
 	}
 
-	private async onLapComplete(carIndex: number, newCurrentLap: number): Promise<void> {
+	private onLapComplete = (carIndex: number, newCurrentLap: number): void => {
 		console.log(`${carIndex} is now on lap ${newCurrentLap}`)
-
-		if (!this.database.isInitialised) {
-			await this.database.initialise();
-		}
-
-		await this.database.saveData(this.data);
+		this.database.saveData(this.data);
 	}
 
 	private isMotionData(message: Message): message is PacketMotionData {
