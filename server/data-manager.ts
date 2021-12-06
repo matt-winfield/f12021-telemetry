@@ -4,14 +4,15 @@ import { PacketLapData } from '../common/types/packet-lap-data';
 import { PacketMotionData } from '../common/types/packet-motion-data';
 import LapDataHandler from './data-handlers/lap-data-handler';
 import MotionDataHandler from './data-handlers/motion-data-handler';
+import LocalDatabase from './local-database';
 import CarData from './models/car-data';
 import LiveInfo from './models/live-info';
 import SessionData from './models/session-data';
-import util from 'util';
 
 export default class DataManager {
 	private data: SessionData = new SessionData();
 	private liveInfo: LiveInfo = new LiveInfo();
+	private database: LocalDatabase = new LocalDatabase();
 
 	public addMessage(message: Message): void {
 		if (this.isMotionData(message)) {
@@ -33,9 +34,14 @@ export default class DataManager {
 		}
 	}
 
-	private onLapComplete(carIndex: number, newCurrentLap: number): void {
+	private async onLapComplete(carIndex: number, newCurrentLap: number): Promise<void> {
 		console.log(`${carIndex} is now on lap ${newCurrentLap}`)
-		util.inspect(this?.data, { depth: null });
+
+		if (!this.database.isInitialised) {
+			await this.database.initialise();
+		}
+
+		await this.database.saveData(this.data);
 	}
 
 	private isMotionData(message: Message): message is PacketMotionData {
