@@ -60,6 +60,7 @@ export default class LapDataHandler {
 		const existingData = sessionData.cars[carIndex]?.laps?.[currentLapNumber]?.[lapDistance];
 		sessionData.cars[carIndex].laps[currentLapNumber][lapDistance] = {
 			...existingData,
+			m_currentLapTimeInMS: carLapData.m_currentLapTimeInMS,
 			m_carPosition: carLapData.m_carPosition,
 			m_driverStatus: carLapData.m_driverStatus
 		};

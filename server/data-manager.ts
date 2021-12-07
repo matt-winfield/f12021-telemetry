@@ -4,7 +4,7 @@ import { PacketLapData } from '../common/types/packet-lap-data';
 import { PacketMotionData } from '../common/types/packet-motion-data';
 import LapDataHandler from './data-handlers/lap-data-handler';
 import MotionDataHandler from './data-handlers/motion-data-handler';
-import LocalDatabase from './local-database';
+import LocalDatabase from './database/local-database';
 import SessionData from './models/session-data';
 
 export default class DataManager {
