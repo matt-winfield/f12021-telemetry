@@ -1,10 +1,11 @@
 import { invert, mix, readableColor } from 'polished'
+import { useCallback, useRef } from 'react'
+import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
+import { roundToDecimalPlaces } from '../../../../../common/helpers/number-helpers'
 import { ChildrenProps } from '../../../types/children-props'
 import { clamp, getRatioBetweenValues } from '../../../utilities/number-helpers'
 import ValueBarContainer, { ValueBarType } from '../../data-display/value-bar'
-import ReactTooltip from 'react-tooltip';
-import { useRef, useCallback } from 'react'
 
 const DEFAULT_WHEEL_TEMP_RANGE_MIN = 70;
 const DEFAULT_WHEEL_TEMP_RANGE_MAX = 100;
@@ -137,7 +138,7 @@ const WheelIndicator = (props: WheelIndicatorProps) => {
 				min={0}
 				max={100}
 				type={ValueBarType.Bottom}
-				text={`${Math.round((props.tyreWear ?? 0) * 100) / 100}%`}
+				text={`${roundToDecimalPlaces(props.tyreWear ?? 0, 2)}%`}
 				invert
 				data-tip='Wear'
 				data-for={WHEEL_INDICATOR_TOOLTIP_ID} />

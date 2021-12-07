@@ -37,8 +37,14 @@ export default class DataManager {
 
 	private onLapComplete = (carIndex: number, newCurrentLap: number): void => {
 		console.log(`${carIndex} is now on lap ${newCurrentLap}`)
-		this.database.saveData(this.data);
-		this.data.cars = {};
+		const savePromise = new Promise((resolve, reject) => {
+			this.database.saveData(this.data);
+			resolve(null);
+		});
+
+		savePromise.then(() => {
+			this.data.cars = {};
+		});
 	}
 
 	private isMotionData(message: Message): message is PacketMotionData {

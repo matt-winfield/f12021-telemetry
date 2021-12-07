@@ -1,3 +1,4 @@
+import { roundToDecimalPlaces } from '../../common/helpers/number-helpers';
 import { PacketMotionData } from "../../common/types/packet-motion-data";
 import DataManager from "../data-manager";
 import SessionData from "../models/session-data";
@@ -16,12 +17,12 @@ export default abstract class MotionDataHandler {
 			DataManager.prepareSessionData(data, carIndex, currentLapNumber);
 			data.cars[carIndex].laps[currentLapNumber][currentLapDistance] = {
 				...data.cars[carIndex]?.laps?.[currentLapNumber]?.[currentLapDistance],
-				m_worldPositionX: carMotionData.m_worldPositionX,
-				m_worldPositionY: carMotionData.m_worldPositionY,
-				m_worldPositionZ: carMotionData.m_worldPositionZ,
-				m_gForceLateral: carMotionData.m_gForceLateral,
-				m_gForceLongitudinal: carMotionData.m_gForceLongitudinal,
-				m_gForceVertical: carMotionData.m_gForceVertical
+				m_worldPositionX: roundToDecimalPlaces(carMotionData.m_worldPositionX, 3),
+				m_worldPositionY: roundToDecimalPlaces(carMotionData.m_worldPositionY, 3),
+				m_worldPositionZ: roundToDecimalPlaces(carMotionData.m_worldPositionZ, 3),
+				m_gForceLateral: roundToDecimalPlaces(carMotionData.m_gForceLateral, 3),
+				m_gForceLongitudinal: roundToDecimalPlaces(carMotionData.m_gForceLongitudinal, 3),
+				m_gForceVertical: roundToDecimalPlaces(carMotionData.m_gForceVertical, 3)
 			}
 			data.cars[carIndex].driverName = carIndex.toString();
 		});
@@ -35,9 +36,9 @@ export default abstract class MotionDataHandler {
 
 		data.cars[playerCarIndex].laps[currentLapNumber][currentLapDistance] = {
 			...data.cars[playerCarIndex].laps[currentLapNumber][currentLapDistance],
-			m_suspensionPosition: message.m_suspensionPosition,
-			m_wheelSpeed: message.m_wheelSpeed,
-			m_wheelSlip: message.m_wheelSlip,
+			m_suspensionPosition: message.m_suspensionPosition.map(x => roundToDecimalPlaces(x, 4)),
+			m_wheelSpeed: message.m_wheelSpeed.map(x => roundToDecimalPlaces(x, 1)),
+			m_wheelSlip: message.m_wheelSlip.map(x => roundToDecimalPlaces(x, 4)),
 			m_frontWheelsAngle: message.m_frontWheelsAngle
 		};
 	}
