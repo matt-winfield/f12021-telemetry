@@ -15,6 +15,5 @@ export default class SessionData {
 
 	constructor() {
 		this.cars = {};
-		const data: CombinedCarData = {};
 	}
 }

@@ -32,7 +32,7 @@ export default class LocalDatabase {
 			for (const lapNumber in carData.laps) {
 				const lap = carData.laps[lapNumber];
 				const db = new JsonDB(new Config(`db/${data.trackId}/${carData.driverName}/${lapNumber}`, false, false));
-				db.push('/', lap, false);
+				db.push('/', lap, true);
 				db.save();
 			}
 		}

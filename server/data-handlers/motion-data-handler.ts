@@ -5,41 +5,39 @@ import { CarCurrentLapData } from "./lap-data-handler";
 
 export default abstract class MotionDataHandler {
 	public static addMotionData(message: PacketMotionData, data: SessionData, currentLapData: (carIndex: number) => CarCurrentLapData): void {
-		const sessionTime = message.m_header.m_sessionTime;
-		this.addCarMotionData(message, data, sessionTime, currentLapData);
-		this.addPlayerMotionData(message, data, sessionTime, currentLapData);
+		this.addCarMotionData(message, data, currentLapData);
+		this.addPlayerMotionData(message, data, currentLapData);
 	}
 
-	private static addCarMotionData(message: PacketMotionData, data: SessionData, sessionTime: number, currentLapData: (carIndex: number) => CarCurrentLapData): void {
+	private static addCarMotionData(message: PacketMotionData, data: SessionData, currentLapData: (carIndex: number) => CarCurrentLapData): void {
 		message.m_carMotionData.forEach((carMotionData, carIndex) => {
 			const currentLapNumber = currentLapData(carIndex).lapNumber;
+			const currentLapDistance = currentLapData(carIndex).lapDistance;
 			DataManager.prepareSessionData(data, carIndex, currentLapNumber);
-			data.cars[carIndex].laps[currentLapNumber][sessionTime] = { ...data.cars[carIndex]?.laps?.[currentLapNumber]?.[sessionTime], ...carMotionData }
-			data.cars[carIndex].driverName = carIndex.toString();;
+			data.cars[carIndex].laps[currentLapNumber][currentLapDistance] = {
+				...data.cars[carIndex]?.laps?.[currentLapNumber]?.[currentLapDistance],
+				m_worldPositionX: carMotionData.m_worldPositionX,
+				m_worldPositionY: carMotionData.m_worldPositionY,
+				m_worldPositionZ: carMotionData.m_worldPositionZ,
+				m_gForceLateral: carMotionData.m_gForceLateral,
+				m_gForceLongitudinal: carMotionData.m_gForceLongitudinal,
+				m_gForceVertical: carMotionData.m_gForceVertical
+			}
+			data.cars[carIndex].driverName = carIndex.toString();
 		});
 	}
 
-	private static addPlayerMotionData(message: PacketMotionData, data: SessionData, sessionTime: number, currentLapData: (carIndex: number) => CarCurrentLapData): void {
+	private static addPlayerMotionData(message: PacketMotionData, data: SessionData, currentLapData: (carIndex: number) => CarCurrentLapData): void {
 		const playerCarIndex = message.m_header.m_playerCarIndex;
 		const currentLapNumber = currentLapData(playerCarIndex).lapNumber;
+		const currentLapDistance = currentLapData(playerCarIndex).lapDistance;
 		DataManager.prepareSessionData(data, playerCarIndex, currentLapNumber);
 
-		data.cars[playerCarIndex].laps[currentLapNumber][sessionTime] = {
-			...data.cars[playerCarIndex].laps[currentLapNumber][sessionTime],
+		data.cars[playerCarIndex].laps[currentLapNumber][currentLapDistance] = {
+			...data.cars[playerCarIndex].laps[currentLapNumber][currentLapDistance],
 			m_suspensionPosition: message.m_suspensionPosition,
-			m_suspensionVelocity: message.m_suspensionVelocity,
-			m_suspensionAcceleration: message.m_suspensionAcceleration,
 			m_wheelSpeed: message.m_wheelSpeed,
 			m_wheelSlip: message.m_wheelSlip,
-			m_localVelocityX: message.m_localVelocityX,
-			m_localVelocityY: message.m_localVelocityY,
-			m_localVelocityZ: message.m_localVelocityZ,
-			m_angularVelocityX: message.m_localVelocityX,
-			m_angularVelocityY: message.m_localVelocityY,
-			m_angularVelocityZ: message.m_localVelocityZ,
-			m_angularAccelerationX: message.m_angularAccelerationX,
-			m_angularAccelerationY: message.m_angularAccelerationY,
-			m_angularAccelerationZ: message.m_angularAccelerationZ,
 			m_frontWheelsAngle: message.m_frontWheelsAngle
 		};
 	}

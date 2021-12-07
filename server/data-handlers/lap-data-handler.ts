@@ -23,16 +23,16 @@ export default class LapDataHandler {
 	}
 
 	public addLapData = (message: PacketLapData, data: SessionData, onLapComplete: (carIndex: number, newCurrentLap: number) => void): void => {
-		const sessionTime = message.m_header.m_sessionTime;
-		this.addCarLapData(message, data, sessionTime, onLapComplete);
+		this.addCarLapData(message, data, onLapComplete);
 	}
 
-	private addCarLapData = (message: PacketLapData, data: SessionData, sessionTime: number, onLapComplete: (carIndex: number, newCurrentLap: number) => void): void => {
+	private addCarLapData = (message: PacketLapData, data: SessionData, onLapComplete: (carIndex: number, newCurrentLap: number) => void): void => {
 		message.m_lapData.forEach((carLapData, carIndex) => {
+			const lapDistance = this.currentLapData(carIndex).lapDistance;
 			this.prepareCurrentLapData(carIndex);
 			const hasCompletedLap = this.hasCompletedLapSinceLastUpdate(carLapData, carIndex);
 			this.updateCurrentLapData(carLapData, carIndex);
-			this.updateSessionData(data, sessionTime, carLapData, carIndex);
+			this.updateSessionData(data, lapDistance, carLapData, carIndex);
 
 			if (hasCompletedLap) {
 				onLapComplete(carIndex, carLapData.m_currentLapNum);
@@ -54,15 +54,20 @@ export default class LapDataHandler {
 		return currentLapDistance < this._currentLapData[carIndex].lapDistance - MAX_POSSIBLE_DISTANCE_BETWEEN_UPDATES
 	}
 
-	private updateSessionData = (sessionData: SessionData, sessionTime: number, carLapData: LapData, carIndex: number): void => {
+	private updateSessionData = (sessionData: SessionData, lapDistance: number, carLapData: LapData, carIndex: number): void => {
 		const currentLapNumber = this.currentLapData(carIndex).lapNumber;
 		DataManager.prepareSessionData(sessionData, carIndex, currentLapNumber)
-		const existingData = sessionData.cars[carIndex]?.laps?.[currentLapNumber]?.[sessionTime];
-		sessionData.cars[carIndex].laps[currentLapNumber][sessionTime] = { ...existingData, ...carLapData };
+		const existingData = sessionData.cars[carIndex]?.laps?.[currentLapNumber]?.[lapDistance];
+		sessionData.cars[carIndex].laps[currentLapNumber][lapDistance] = {
+			...existingData,
+			m_lapDistance: carLapData.m_lapDistance,
+			m_carPosition: carLapData.m_carPosition,
+			m_driverStatus: carLapData.m_driverStatus
+		};
 	}
 
 	private updateCurrentLapData = (carLapData: LapData, carIndex: number): void => {
-		this._currentLapData[carIndex].lapDistance = carLapData.m_lapDistance;
+		this._currentLapData[carIndex].lapDistance = Math.round(carLapData.m_lapDistance);
 		this._currentLapData[carIndex].lapNumber = carLapData.m_currentLapNum;
 	}
 }
