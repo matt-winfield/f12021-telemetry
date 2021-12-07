@@ -21,4 +21,7 @@ export type CombinedCarData = Partial<
 	& FinalClassifcationData
 	& CarDamageData
 	& SessionHistoryData
+	& {
+		m_sessionTime: number
+	}
 >;

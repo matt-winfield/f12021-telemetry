@@ -1,5 +1,20 @@
-import CarData from "./car-data";
+import { CombinedCarData } from "../../common/types/combined-car-data";
 
 export default class SessionData {
-	public carData: CarData[] = [];
+	public cars: {
+		[carIndex: number]: {
+			driverName: string,
+			laps: {
+				[lapNumber: number]: {
+					[lapDistance: number]: CombinedCarData
+				}
+			}
+		}
+	};
+	public trackId: number = -1;
+
+	constructor() {
+		this.cars = {};
+		const data: CombinedCarData = {};
+	}
 }

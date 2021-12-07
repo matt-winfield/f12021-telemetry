@@ -4,7 +4,12 @@
   "description": "Telemetry server + client for F1 2021",
   "main": "./dist/index.js",
   "scripts": {
-    "start": "nodemon --ignore db.json ./index.ts"
+    "start": "nodemon ./index.ts"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "db/**/*.json"
+    ]
   },
   "author": "",
   "license": "ISC",

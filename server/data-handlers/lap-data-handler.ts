@@ -1,36 +1,68 @@
 import { LapData } from "../../common/types/lap-data";
 import { PacketLapData } from "../../common/types/packet-lap-data";
 import DataManager from "../data-manager";
-import LiveInfo from "../models/live-info";
 import SessionData from "../models/session-data";
 
-export default abstract class LapDataHandler {
-	public static addLapData(message: PacketLapData, data: SessionData, liveInfo: LiveInfo, onLapComplete: (carIndex: number, newCurrentLap: number) => void): void {
-		const sessionTime = message.m_header.m_sessionTime;
-		this.addCarLapData(message, data, sessionTime, liveInfo, onLapComplete);
+const MAX_POSSIBLE_DISTANCE_BETWEEN_UPDATES = 2;
+
+export type CurrentLapData = {
+	[carIndex: number]: CarCurrentLapData;
+};
+
+export type CarCurrentLapData = {
+	lapNumber: number;
+	lapDistance: number;
+};
+
+export default class LapDataHandler {
+	private _currentLapData: CurrentLapData = {};
+
+	public currentLapData = (carIndex: number): CarCurrentLapData => {
+		this.prepareCurrentLapData(carIndex);
+		return this._currentLapData[carIndex];
 	}
 
-	private static addCarLapData(message: PacketLapData, data: SessionData, sessionTime: number, liveInfo: LiveInfo, onLapComplete: (carIndex: number, newCurrentLap: number) => void): void {
+	public addLapData = (message: PacketLapData, data: SessionData, onLapComplete: (carIndex: number, newCurrentLap: number) => void): void => {
+		const sessionTime = message.m_header.m_sessionTime;
+		this.addCarLapData(message, data, sessionTime, onLapComplete);
+	}
+
+	private addCarLapData = (message: PacketLapData, data: SessionData, sessionTime: number, onLapComplete: (carIndex: number, newCurrentLap: number) => void): void => {
 		message.m_lapData.forEach((carLapData, carIndex) => {
-			DataManager.prepareData(data, sessionTime, carIndex);
-			data.carData[carIndex].data[sessionTime] = { ...data.carData[carIndex].data[sessionTime], ...carLapData };
-			data.carData[carIndex].carIndex = carIndex;
-			this.updateLiveLapInfo(carLapData, carIndex, liveInfo, onLapComplete);
+			this.prepareCurrentLapData(carIndex);
+			const hasCompletedLap = this.hasCompletedLapSinceLastUpdate(carLapData, carIndex);
+			this.updateCurrentLapData(carLapData, carIndex);
+			this.updateSessionData(data, sessionTime, carLapData, carIndex);
+
+			if (hasCompletedLap) {
+				onLapComplete(carIndex, carLapData.m_currentLapNum);
+			}
 		});
 	}
 
-	private static updateLiveLapInfo(carLapData: LapData, carIndex: number, liveInfo: LiveInfo, onLapComplete: (carIndex: number, newCurrentLap: number) => void): void {
-		if (liveInfo.currentLapDistance[carIndex] === undefined) {
-			liveInfo.currentLapDistance[carIndex] = 1;
+	private prepareCurrentLapData = (carIndex: number): void => {
+		if (this._currentLapData[carIndex] === undefined) {
+			this._currentLapData[carIndex] = {
+				lapNumber: 0,
+				lapDistance: 0
+			}
 		}
+	}
 
+	private hasCompletedLapSinceLastUpdate = (carLapData: LapData, carIndex: number): boolean => {
 		const currentLapDistance = carLapData.m_lapDistance;
-		const currentLapNumber = carLapData.m_currentLapNum;
+		return currentLapDistance < this._currentLapData[carIndex].lapDistance - MAX_POSSIBLE_DISTANCE_BETWEEN_UPDATES
+	}
 
-		if (currentLapDistance < liveInfo.currentLapDistance[carIndex]) {
-			onLapComplete(carIndex, currentLapNumber);
-		}
+	private updateSessionData = (sessionData: SessionData, sessionTime: number, carLapData: LapData, carIndex: number): void => {
+		const currentLapNumber = this.currentLapData(carIndex).lapNumber;
+		DataManager.prepareSessionData(sessionData, carIndex, currentLapNumber)
+		const existingData = sessionData.cars[carIndex]?.laps?.[currentLapNumber]?.[sessionTime];
+		sessionData.cars[carIndex].laps[currentLapNumber][sessionTime] = { ...existingData, ...carLapData };
+	}
 
-		liveInfo.currentLapDistance[carIndex] = currentLapDistance;
+	private updateCurrentLapData = (carLapData: LapData, carIndex: number): void => {
+		this._currentLapData[carIndex].lapDistance = carLapData.m_lapDistance;
+		this._currentLapData[carIndex].lapNumber = carLapData.m_currentLapNum;
 	}
 }

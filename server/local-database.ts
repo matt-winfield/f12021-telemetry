@@ -25,27 +25,34 @@ type MapCarDataResult = {
 
 export default class LocalDatabase {
 	public saveData(data: SessionData): void {
-		const trackData = this.mapSessionDataToDatabaseFormat(data);
-		const db = new JsonDB(new Config(`data/${trackData.trackId}`, false, true));
-		db.push('/', trackData.cars, false);
-		db.save();
-	}
+		// const trackData = this.mapSessionDataToDatabaseFormat(data);
+		for (const carIndex in data.cars) {
+			const carData = data.cars[carIndex];
 
-	private mapSessionDataToDatabaseFormat(data: SessionData): DatabaseData {
-		const carsData: { [carId: string]: DatabaseCarData } = {};
-		let trackId: number | undefined;
-
-		for (const carData of data.carData) {
-			const mappedData = this.mapCarData(carData);
-			trackId = mappedData.trackId ?? 0;
-			carsData[carData.carIndex] = mappedData.data;
+			for (const lapNumber in carData.laps) {
+				const lap = carData.laps[lapNumber];
+				const db = new JsonDB(new Config(`db/${data.trackId}/${carData.driverName}/${lapNumber}`, false, false));
+				db.push('/', lap, false);
+				db.save();
+			}
 		}
-
-		return {
-			trackId: trackId ?? 0,
-			cars: carsData
-		};
 	}
+
+	// private mapSessionDataToDatabaseFormat(data: SessionData): DatabaseData {
+	// 	const carsData: { [carId: string]: DatabaseCarData } = {};
+	// 	let trackId: number | undefined;
+
+	// 	for (const carData of data.carData) {
+	// 		const mappedData = this.mapCarData(carData);
+	// 		trackId = mappedData.trackId ?? 0;
+	// 		carsData[carData.carIndex] = mappedData.data;
+	// 	}
+
+	// 	return {
+	// 		trackId: trackId ?? 0,
+	// 		cars: carsData
+	// 	};
+	// }
 
 	private mapCarData(carData: CarData): MapCarDataResult {
 		const outputCarData: DatabaseCarData = {

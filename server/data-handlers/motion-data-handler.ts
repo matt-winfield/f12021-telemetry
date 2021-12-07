@@ -1,28 +1,31 @@
 import { PacketMotionData } from "../../common/types/packet-motion-data";
 import DataManager from "../data-manager";
 import SessionData from "../models/session-data";
+import { CarCurrentLapData } from "./lap-data-handler";
 
 export default abstract class MotionDataHandler {
-	public static addMotionData(message: PacketMotionData, data: SessionData): void {
+	public static addMotionData(message: PacketMotionData, data: SessionData, currentLapData: (carIndex: number) => CarCurrentLapData): void {
 		const sessionTime = message.m_header.m_sessionTime;
-		this.addCarMotionData(message, data, sessionTime);
-		this.addPlayerMotionData(message, data, sessionTime);
-
+		this.addCarMotionData(message, data, sessionTime, currentLapData);
+		this.addPlayerMotionData(message, data, sessionTime, currentLapData);
 	}
 
-	private static addCarMotionData(message: PacketMotionData, data: SessionData, sessionTime: number): void {
+	private static addCarMotionData(message: PacketMotionData, data: SessionData, sessionTime: number, currentLapData: (carIndex: number) => CarCurrentLapData): void {
 		message.m_carMotionData.forEach((carMotionData, carIndex) => {
-			DataManager.prepareData(data, sessionTime, carIndex);
-			data.carData[carIndex].data[sessionTime] = { ...data.carData[carIndex].data[sessionTime], ...carMotionData };
-			data.carData[carIndex].carIndex = carIndex;
+			const currentLapNumber = currentLapData(carIndex).lapNumber;
+			DataManager.prepareSessionData(data, carIndex, currentLapNumber);
+			data.cars[carIndex].laps[currentLapNumber][sessionTime] = { ...data.cars[carIndex]?.laps?.[currentLapNumber]?.[sessionTime], ...carMotionData }
+			data.cars[carIndex].driverName = carIndex.toString();;
 		});
 	}
 
-	private static addPlayerMotionData(message: PacketMotionData, data: SessionData, sessionTime: number): void {
+	private static addPlayerMotionData(message: PacketMotionData, data: SessionData, sessionTime: number, currentLapData: (carIndex: number) => CarCurrentLapData): void {
 		const playerCarIndex = message.m_header.m_playerCarIndex;
-		DataManager.prepareData(data, sessionTime, playerCarIndex);
-		data.carData[playerCarIndex].data[sessionTime] = {
-			...data.carData[playerCarIndex].data[sessionTime],
+		const currentLapNumber = currentLapData(playerCarIndex).lapNumber;
+		DataManager.prepareSessionData(data, playerCarIndex, currentLapNumber);
+
+		data.cars[playerCarIndex].laps[currentLapNumber][sessionTime] = {
+			...data.cars[playerCarIndex].laps[currentLapNumber][sessionTime],
 			m_suspensionPosition: message.m_suspensionPosition,
 			m_suspensionVelocity: message.m_suspensionVelocity,
 			m_suspensionAcceleration: message.m_suspensionAcceleration,
@@ -38,6 +41,6 @@ export default abstract class MotionDataHandler {
 			m_angularAccelerationY: message.m_angularAccelerationY,
 			m_angularAccelerationZ: message.m_angularAccelerationZ,
 			m_frontWheelsAngle: message.m_frontWheelsAngle
-		}
+		};
 	}
 }

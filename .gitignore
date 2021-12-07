@@ -1,4 +1,4 @@
 node_modules/
 dist/
 out/
-*/data/*.json
+**/db/**/*.json
