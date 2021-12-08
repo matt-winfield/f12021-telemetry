@@ -10,8 +10,9 @@ export default class PacketHeaderParser extends Parser {
 			.uint8('m_gameMinorVersion')
 			.uint8('m_packetVersion')
 			.uint8('m_packetId')
-			//.uint64('m_sessionUID')
-			.skip(8) // Skip 8 bytes for m_sessionUID as not serializable
+			.uint64('m_sessionUID', {
+				formatter: (value: number) => value.toString(16)
+			})
 			.floatle('m_sessionTime')
 			.uint32('m_frameIdentifier')
 			.uint8('m_playerCarIndex')
