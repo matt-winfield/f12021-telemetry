@@ -30,8 +30,10 @@
     "webpack-dev-server": "^4.4.0"
   },
   "dependencies": {
+    "@types/better-sqlite3": "^7.4.1",
     "@types/lowdb": "^1.0.11",
     "@types/node": "^16.11.6",
+    "better-sqlite3": "^7.4.5",
     "binary-parser": "^2.0.1",
     "binary-parser-encoder": "^1.5.3",
     "node-json-db": "^1.4.1",

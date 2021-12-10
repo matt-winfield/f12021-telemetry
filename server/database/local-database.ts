@@ -1,5 +1,4 @@
-import { JsonDB } from 'node-json-db';
-import { Config } from 'node-json-db/dist/lib/JsonDBConfig';
+import SqliteDatabase from 'better-sqlite3';
 import SessionData from '../models/session-data';
 import BinaryStorageParser, { BinaryDataProperties } from './binary-storage-parser';
 
@@ -11,17 +10,35 @@ type OutputLapFormat = {
 export default class LocalDatabase {
 	private binaryStorageParser: BinaryStorageParser = new BinaryStorageParser();
 
-	public saveData = (data: SessionData, carIndex: number): void => {
+	constructor() {
+		const db = new SqliteDatabase('db.sqlite');
+		db.pragma('journal_mode = WAL');
+
+		db.prepare(`CREATE TABLE IF NOT EXISTS Lap (sessionUID TEXT, trackId INTEGER, driverName TEXT, lapNumber INTEGER,
+		PRIMARY KEY (sessionUID, trackId, driverName, lapNumber))`).run();
+
+		db.prepare(`CREATE TABLE IF NOT EXISTS LapData (sessionUID TEXT, trackId INTEGER, driverName TEXT, lapNumber INTEGER, lapDistance INTEGER, data BLOB,
+		PRIMARY KEY (sessionUID, trackId, driverName, lapNumber, lapDistance),
+		FOREIGN KEY (sessionUID, trackId, driverName, lapNumber) REFERENCES Lap (sessionUID, trackId, driverName, lapNumber)
+		ON DELETE CASCADE)`).run();
+
+		db.close();
+	}
+
+	public saveData = (data: SessionData, carIndex: number, lapNumber: number): void => {
+		const db = new SqliteDatabase('db.sqlite');
+		db.pragma('journal_mode = WAL');
+		const createLapStatement = db.prepare('INSERT OR REPLACE INTO Lap VALUES (?, ?, ?, ?)');
+		const addLapDataStatement = db.prepare('INSERT OR REPLACE INTO LapData VALUES (?, ?, ?, ?, ?, ?)');
+
 		const carData = data.cars[carIndex];
 		if (carData === undefined) return;
 
-		for (const lapNumber in carData.laps) {
-			const lap = carData.laps[lapNumber];
+		const lap = carData.laps[lapNumber];
 
-			const outputLap: OutputLapFormat = {
-				sessionUID: data.sessionUID,
-				data: {}
-			};
+		createLapStatement.run(data.sessionUID, data.trackId, carData.driverName, lapNumber);
+
+		const insertLapData = db.transaction(() => {
 			for (const lapDistance in lap) {
 				const lapData = lap[lapDistance];
 				let nullCheckedData: BinaryDataProperties = {
@@ -39,12 +56,10 @@ export default class LocalDatabase {
 				}
 
 				const encodedData = this.binaryStorageParser.encodeBuffer(nullCheckedData);
-				outputLap.data[lapDistance] = encodedData.toString('base64');
+				addLapDataStatement.run(data.sessionUID, data.trackId, carData.driverName, lapNumber, lapDistance, encodedData);
 			}
-
-			const db = new JsonDB(new Config(`db/${data.trackId}/${carData.driverName}/${data.sessionUID}-${lapNumber}`, false, false));
-			db.push('/', outputLap, true);
-			db.save();
-		}
+		});
+		insertLapData();
+		db.close();
 	}
 }

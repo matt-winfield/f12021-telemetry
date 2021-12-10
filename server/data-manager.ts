@@ -43,15 +43,15 @@ export default class DataManager {
 		}
 	}
 
-	private onLapComplete = (carIndex: number, newCurrentLap: number): void => {
-		console.log(`${carIndex} is now on lap ${newCurrentLap}`)
+	private onLapComplete = (carIndex: number, completedLapNumber: number): void => {
+		console.log(`${carIndex} has completed lap ${completedLapNumber}`)
 		const savePromise = new Promise((resolve, reject) => {
-			this.database.saveData(this.data, carIndex);
+			this.database.saveData(this.data, carIndex, completedLapNumber);
 			resolve(null);
 		});
 
 		savePromise.then(() => {
-			delete this.data.cars[carIndex];
+			delete this.data.cars[carIndex].laps[completedLapNumber];
 		});
 	}
 

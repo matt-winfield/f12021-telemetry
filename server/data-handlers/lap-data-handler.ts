@@ -1,7 +1,7 @@
-import { LapData } from "../../common/types/lap-data";
-import { PacketLapData } from "../../common/types/packet-lap-data";
-import DataManager from "../data-manager";
-import SessionData from "../models/session-data";
+import { LapData } from '../../common/types/lap-data';
+import { PacketLapData } from '../../common/types/packet-lap-data';
+import DataManager from '../data-manager';
+import SessionData from '../models/session-data';
 
 export type CurrentLapData = {
 	[carIndex: number]: CarCurrentLapData;
@@ -22,20 +22,21 @@ export default class LapDataHandler {
 		return this._currentLapData[carIndex];
 	}
 
-	public addLapData = (message: PacketLapData, data: SessionData, onLapComplete: (carIndex: number, newCurrentLap: number) => void): void => {
+	public addLapData = (message: PacketLapData, data: SessionData, onLapComplete: (carIndex: number, completedLapNumber: number) => void): void => {
 		this.addCarLapData(message, data, onLapComplete);
 	}
 
-	private addCarLapData = (message: PacketLapData, data: SessionData, onLapComplete: (carIndex: number, newCurrentLap: number) => void): void => {
+	private addCarLapData = (message: PacketLapData, data: SessionData, onLapComplete: (carIndex: number, completedLapNumber: number) => void): void => {
 		message.m_lapData.forEach((carLapData, carIndex) => {
 			const lapDistance = this.currentLapData(carIndex).lapDistance;
 			this.prepareCurrentLapData(carIndex);
 			const hasCompletedLap = this.hasCompletedLapSinceLastUpdate(carLapData, carIndex, data);
+			const lastLapNumber = this._currentLapData[carIndex].lapNumber;
 			this.updateCurrentLapData(carLapData, carIndex);
 			this.updateSessionData(data, lapDistance, carLapData, carIndex);
 
 			if (hasCompletedLap) {
-				onLapComplete(carIndex, carLapData.m_currentLapNum);
+				onLapComplete(carIndex, lastLapNumber);
 			}
 		});
 	}
