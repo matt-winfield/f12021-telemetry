@@ -44,7 +44,6 @@ export default class DataManager {
 	}
 
 	private onLapComplete = (carIndex: number, completedLapNumber: number): void => {
-		console.log(`${carIndex} has completed lap ${completedLapNumber}`)
 		const savePromise = new Promise((resolve, reject) => {
 			this.database.saveData(this.data, carIndex, completedLapNumber);
 			resolve(null);
