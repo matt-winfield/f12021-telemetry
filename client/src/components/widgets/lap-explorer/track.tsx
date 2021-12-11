@@ -18,7 +18,7 @@ const Track = () => {
 
 	const getFormattedLaps = useCallback(() => {
 		return laps?.map(lap => {
-			return <Button onClick={() => onTrackClicked(lap.sessionUID, lap.driverName, lap.lapNumber)}>
+			return <Button onClick={() => onTrackClicked(lap.sessionUID, lap.driverName, lap.lapNumber)} key={`${lap.sessionUID}-${lap.driverName}-${lap.lapNumber}`}>
 				{TrackFormatter.getTrackName(lap.trackId)} - {lap.driverName} - {lap.lapNumber}
 			</Button>
 		})
