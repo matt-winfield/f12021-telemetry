@@ -41,10 +41,13 @@ const Lap = () => {
 		<div>
 			{!isLoading && !error &&
 				<>
-					<LapDataChart data={getData(x => x.currentLapTimeInMS) ?? []} xAxisLabel='Lap Distance' yAxisLabel='Lap Time (ms)' />
-					<LapDataChart data={getData(x => x.speed) ?? []} xAxisLabel='Lap Distance' yAxisLabel='Speed (km/h)' />
-					<LapDataChart data={getData(x => x.throttle) ?? []} xAxisLabel='Lap Distance' yAxisLabel='Throttle' />
-					<LapDataChart data={getData(x => x.brake) ?? []} xAxisLabel='Lap Distance' yAxisLabel='Brake' />
+					<LapDataChart data={getData(x => x.currentLapTimeInMS / 1000) ?? []} xAxisLabel='Lap Distance' yAxisLabel='Lap Time (s)' xAxisUnit='m' yAxisUnit='s' />
+					<LapDataChart data={getData(x => x.speed) ?? []} xAxisLabel='Lap Distance' yAxisLabel='Speed (km/h)' xAxisUnit='m' yAxisUnit='km/h' />
+					<LapDataChart data={getData(x => x.throttle * 100) ?? []} xAxisLabel='Lap Distance' yAxisLabel='Throttle %' xAxisUnit='m' yAxisUnit='%' />
+					<LapDataChart data={getData(x => x.brake * 100) ?? []} xAxisLabel='Lap Distance' yAxisLabel='Brake %' xAxisUnit='m' yAxisUnit='%' />
+					<LapDataChart data={getData(x => x.steering) ?? []} xAxisLabel='Lap Distance' yAxisLabel='Steering' xAxisUnit='m' />
+					<LapDataChart data={getData(x => x.engineRPM) ?? []} xAxisLabel='Lap Distance' yAxisLabel='Engine RPM' xAxisUnit='m' yAxisUnit='RPM' />
+					<LapDataChart data={getData(x => x.drs) ?? []} xAxisLabel='Lap Distance' yAxisLabel='DRS Activation' xAxisUnit='m' />
 				</>
 			}
 			{isLoading && !error && <ScaleLoader />}
