@@ -1,5 +1,11 @@
 import { CombinedCarData } from "../../common/types/combined-car-data";
 
+export type Lap = {
+	[lapNumber: number]: {
+		[lapDistance: number]: CombinedCarData
+	}
+}
+
 export default class SessionData {
 	public trackId: number = -1;
 	public sessionUID: string = '';
@@ -7,11 +13,7 @@ export default class SessionData {
 	public cars: {
 		[carIndex: number]: {
 			driverName: string,
-			laps: {
-				[lapNumber: number]: {
-					[lapDistance: number]: CombinedCarData
-				}
-			}
+			laps: Lap
 		}
 	};
 

@@ -31,11 +31,15 @@
   },
   "dependencies": {
     "@types/better-sqlite3": "^7.4.1",
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
     "@types/lowdb": "^1.0.11",
     "@types/node": "^16.11.6",
     "better-sqlite3": "^7.4.5",
     "binary-parser": "^2.0.1",
     "binary-parser-encoder": "^1.5.3",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
     "node-json-db": "^1.4.1",
     "socket.io": "^4.3.1"
   }

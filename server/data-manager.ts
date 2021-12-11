@@ -11,8 +11,12 @@ import SessionData from './models/session-data';
 
 export default class DataManager {
 	private data: SessionData = new SessionData();
-	private database: LocalDatabase = new LocalDatabase();
+	private database: LocalDatabase;
 	private lapDataHandler: LapDataHandler = new LapDataHandler();
+
+	constructor(database: LocalDatabase) {
+		this.database = database;
+	}
 
 	public addMessage(message: Message): void {
 		this.data.sessionUID = message.m_header.m_sessionUID;

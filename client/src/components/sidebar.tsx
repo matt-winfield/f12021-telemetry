@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import { Page } from '../models/page';
 import Tabs, { TabsContainer } from './tabs';
@@ -20,7 +20,7 @@ const Container = styled.div`
 `;
 
 const Sidebar = ({ onChange, defaultPage }: SidebarProps) => {
-	const tabs = ["Live Dashboard", "Raw Data"];
+	const tabs = ["Live Dashboard", "Saved Data", "Raw Data"];
 
 	const onTabClicked = useCallback((index: number) => {
 		onChange?.(index);

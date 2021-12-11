@@ -1,33 +1,42 @@
+import cors from 'cors';
 import dgram from 'dgram';
+import express from 'express';
+import { AddressInfo } from 'net';
 import { Server as SocketServer } from 'socket.io';
 import { PacketIds } from '../common/constants/packet-ids';
 import { SocketEvents } from '../common/constants/socket-events';
+import LocalDatabase from './database/local-database';
 import MessageHandler from './message-handler';
 
 const SOCKET_PORT = 12040;
 const UDP_PORT = 20777;
+const HTTP_PORT = 3001;
 
-const server = dgram.createSocket('udp4');
+const udpServer = dgram.createSocket('udp4');
 const socketServer = new SocketServer(SOCKET_PORT, {
 	cors: {
 		origin: "*"
 	}
 });
+const httpServer = express();
 
-const messageHandler = new MessageHandler();
+httpServer.use(cors());
 
-server.on('error', (error) => {
+const database = new LocalDatabase();
+const messageHandler = new MessageHandler(database);
+
+udpServer.on('error', (error) => {
 	console.log(`Server error:\n${error.message}\n${error.stack}`);
-	server.close();
+	udpServer.close();
 });
 
-server.on('message', (message, remoteInfo) => {
+udpServer.on('message', (message, remoteInfo) => {
 	socketServer.emit(SocketEvents.Data, message);
 	messageHandler.handleMessage(message);
 });
 
-server.on('listening', () => {
-	const address = server.address();
+udpServer.on('listening', () => {
+	const address = udpServer.address();
 	console.log(`UDP Server listening for F1 data at ${address.address}:${address.port}`)
 });
 
@@ -39,6 +48,35 @@ socketServer.on('connection', (socket) => {
 	socket.on('disconnect', () => {
 		console.log(`Socket ${socket.id} disconnected`);
 	})
+});
+
+httpServer.get('/tracks', (request, response) => {
+	response.send(database.getTracks());
 })
 
-server.bind(UDP_PORT);
+httpServer.get('/laps', (request, response) => {
+	const query = request.query as { trackId?: number, driverName?: string };
+
+	if (query.trackId !== undefined && query.driverName !== undefined) {
+		response.send(database.getLapsByTrackAndDriver(query.trackId, query.driverName));
+		return;
+	}
+
+	if (query.trackId !== undefined) {
+		response.send(database.getLapsByTrackId(query.trackId));
+		return;
+	}
+
+	if (query.driverName !== undefined) {
+		response.send(database.getLapsByDriverName(query.driverName));
+		return;
+	}
+
+	response.status(400).end();
+})
+
+udpServer.bind(UDP_PORT);
+const listener = httpServer.listen(HTTP_PORT, () => {
+	const address = listener.address() as AddressInfo;
+	console.log(`HTTP Server listening on ${address.address}:${address.port}`);
+});

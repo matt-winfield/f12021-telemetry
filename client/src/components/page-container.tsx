@@ -1,8 +1,9 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { Page } from '../models/page';
 import Sidebar from './sidebar';
 import Dashboard from './widgets/dashboard/dashboard';
+import Tracks from './widgets/lap-explorer/tracks';
 import RawData from './widgets/raw-data/raw-data';
 
 const Container = styled.div`
@@ -24,6 +25,8 @@ const PageContainer = () => {
 		switch (page) {
 			case Page.Dashboard:
 				return <Dashboard />;
+			case Page.SavedData:
+				return <Tracks />;
 			case Page.RawData:
 				return <RawData />;
 		}

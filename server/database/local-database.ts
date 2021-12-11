@@ -2,16 +2,19 @@ import SqliteDatabase from 'better-sqlite3';
 import SessionData from '../models/session-data';
 import BinaryStorageParser, { BinaryDataProperties } from './binary-storage-parser';
 
-type OutputLapFormat = {
+type LapInfo = {
 	sessionUID: string,
-	data: { [lapDistance: number]: string }
+	trackId: number,
+	driverName: string,
+	lapNumber: number
 }
 
 export default class LocalDatabase {
+	private readonly DB_NAME: string = 'db.sqlite';
 	private binaryStorageParser: BinaryStorageParser = new BinaryStorageParser();
 
 	constructor() {
-		const db = new SqliteDatabase('db.sqlite');
+		const db = new SqliteDatabase(this.DB_NAME);
 		db.pragma('journal_mode = WAL');
 
 		db.prepare(`CREATE TABLE IF NOT EXISTS Lap (sessionUID TEXT, trackId INTEGER, driverName TEXT, lapNumber INTEGER,
@@ -26,7 +29,7 @@ export default class LocalDatabase {
 	}
 
 	public saveData = (data: SessionData, carIndex: number, lapNumber: number): void => {
-		const db = new SqliteDatabase('db.sqlite');
+		const db = new SqliteDatabase(this.DB_NAME);
 		db.pragma('journal_mode = WAL');
 		const createLapStatement = db.prepare('INSERT OR REPLACE INTO Lap VALUES (?, ?, ?, ?)');
 		const addLapDataStatement = db.prepare('INSERT OR REPLACE INTO LapData VALUES (?, ?, ?, ?, ?, ?)');
@@ -61,5 +64,33 @@ export default class LocalDatabase {
 		});
 		insertLapData();
 		db.close();
+	}
+
+	public getTracks = (): number[] => {
+		const db = new SqliteDatabase(this.DB_NAME);
+		const data = db.prepare('SELECT DISTINCT trackId FROM Lap').pluck().all() as number[];
+		db.close();
+		return data;
+	};
+
+	public getLapsByTrackId = (trackId: number): LapInfo[] => {
+		const db = new SqliteDatabase(this.DB_NAME);
+		const data = db.prepare('SELECT * FROM Lap WHERE trackId = ?').all(trackId) as LapInfo[];
+		db.close();
+		return data;
+	}
+
+	public getLapsByDriverName = (driverName: string): LapInfo[] => {
+		const db = new SqliteDatabase(this.DB_NAME);
+		const data = db.prepare('SELECT * FROM Lap WHERE driverName = ?').all(driverName) as LapInfo[];
+		db.close();
+		return data;
+	}
+
+	public getLapsByTrackAndDriver = (trackId: number, driverName: string): LapInfo[] => {
+		const db = new SqliteDatabase(this.DB_NAME);
+		const data = db.prepare('SELECT * FROM Lap WHERE trackId = ? AND driverName = ?').all(trackId, driverName) as LapInfo[];
+		db.close();
+		return data;
 	}
 }
