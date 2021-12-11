@@ -10,7 +10,12 @@ import Button from '../../button';
 const Track = () => {
 	const navigate = useNavigate();
 	const params = useParams();
-	const { isLoading, error, data: laps } = useQuery(['track', params.trackId], () => Api.fetchTrackLaps(Number(params.trackId)));
+	const { isLoading, error, data: laps } = useQuery(['track', params.trackId], () => Api.fetchTrackLaps(Number(params.trackId)),
+		{
+			refetchInterval: false,
+			refetchOnWindowFocus: false,
+			refetchIntervalInBackground: false
+		});
 
 	const onTrackClicked = useCallback((sessionUID: string, driverName: string, lapNumber: number) => {
 		navigate(`/${ApplicationRoutes.Laps}/${sessionUID}/${driverName}/${lapNumber}`);

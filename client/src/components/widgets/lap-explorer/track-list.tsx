@@ -7,7 +7,12 @@ import TrackFormatter from '../../../logic/track-formatter';
 import Button from '../../button';
 
 const TrackList = () => {
-	const { isLoading, error, data: tracks } = useQuery('tracks', Api.fetchTracks);
+	const { isLoading, error, data: tracks } = useQuery('tracks', Api.fetchTracks,
+		{
+			refetchInterval: false,
+			refetchOnWindowFocus: false,
+			refetchIntervalInBackground: false
+		});
 	const navigate = useNavigate();
 
 	const onTrackClicked = useCallback((trackId: number): void => {

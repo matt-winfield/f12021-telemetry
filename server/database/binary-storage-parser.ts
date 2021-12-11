@@ -5,23 +5,31 @@ export default class BinaryStorageParser extends Parser {
 	constructor() {
 		super();
 		this.endianess('little')
-			.floatle('m_worldPositionX')
-			.floatle('m_worldPositionY')
-			.floatle('m_worldPositionZ')
-			.floatle('m_gForceLateral')
-			.floatle('m_gForceLongitudinal')
-			.floatle('m_gForceVertical')
-			.uint32('m_currentLapTimeInMS')
-			.array('m_suspensionPosition', {
+			.floatle('worldPositionX')
+			.floatle('worldPositionY')
+			.floatle('worldPositionZ')
+			.floatle('gForceLateral')
+			.floatle('gForceLongitudinal')
+			.floatle('gForceVertical')
+			.uint32('currentLapTimeInMS')
+			.array('suspensionPosition', {
 				type: 'floatle',
 				length: 4
 			})
-			.array('m_wheelSlip', {
+			.array('wheelSlip', {
 				type: 'floatle',
 				length: 4
 			})
-			.uint8('m_carPosition')
-			.uint8('m_driverStatus');
+			.uint8('carPosition')
+			.uint8('driverStatus')
+			.uint16('speed')
+			.floatle('throttle')
+			.floatle('steering')
+			.floatle('brake')
+			.uint8('clutch')
+			.int8('gear')
+			.uint16('engineRPM')
+			.uint8('drs');
 	}
 
 	public encodeBuffer = (object: SavedDataProperties): Buffer => {

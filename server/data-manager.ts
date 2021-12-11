@@ -1,11 +1,13 @@
 import { PacketIds } from '../common/constants/packet-ids';
 import { Message } from '../common/types/message';
+import { PacketCarTelemetryData } from '../common/types/packet-car-telemetry-data';
 import { PacketLapData } from '../common/types/packet-lap-data';
 import { PacketMotionData } from '../common/types/packet-motion-data';
 import { PacketSessionData } from '../common/types/packet-session-data';
 import LapDataHandler from './data-handlers/lap-data-handler';
 import MotionDataHandler from './data-handlers/motion-data-handler';
 import SessionDataHandler from './data-handlers/session-data-handler';
+import TelemetryDataHandler from './data-handlers/telemetry-data-handler';
 import LocalDatabase from './database/local-database';
 import SessionData from './models/session-data';
 
@@ -31,6 +33,10 @@ export default class DataManager {
 
 		if (this.isSessionData(message)) {
 			SessionDataHandler.addSessionData(message, this.data);
+		}
+
+		if (this.isCarTelemetryData(message)) {
+			TelemetryDataHandler.addCarTelemetryData(message, this.data, this.lapDataHandler.currentLapData);
 		}
 	}
 
@@ -68,5 +74,9 @@ export default class DataManager {
 
 	private isSessionData(message: Message): message is PacketSessionData {
 		return message.m_header.m_packetId === PacketIds.Session;
+	}
+
+	private isCarTelemetryData(message: Message): message is PacketCarTelemetryData {
+		return message.m_header.m_packetId === PacketIds.CarTelemetry
 	}
 }

@@ -1,13 +1,21 @@
 export type SavedDataProperties = {
-	m_worldPositionX: number;
-	m_worldPositionY: number;
-	m_worldPositionZ: number;
-	m_gForceLateral: number;
-	m_gForceLongitudinal: number;
-	m_gForceVertical: number;
-	m_currentLapTimeInMS: number;
-	m_suspensionPosition: number[];
-	m_wheelSlip: number[];
-	m_carPosition: number;
-	m_driverStatus: number;
+	worldPositionX: number;
+	worldPositionY: number;
+	worldPositionZ: number;
+	gForceLateral: number;
+	gForceLongitudinal: number;
+	gForceVertical: number;
+	currentLapTimeInMS: number;
+	suspensionPosition: number[];
+	wheelSlip: number[];
+	carPosition: number;
+	driverStatus: number;
+	speed: number;
+	throttle: number;
+	steering: number;
+	brake: number;
+	clutch: number;
+	gear: number;
+	engineRPM: number;
+	drs: number;
 }

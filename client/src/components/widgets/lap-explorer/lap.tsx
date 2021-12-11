@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { ScaleLoader } from 'react-spinners';
+import { SavedDataProperties } from '../../../../../common/model/saved-data-properties';
 import Api from '../../../logic/api';
 import LapDataChart from './lap-data-chart';
 
@@ -14,9 +15,14 @@ const Lap = () => {
 	const params = useParams();
 	const { isLoading, error, data: lapData } = useQuery(
 		['track', params.sessionUID, params.driverName, params.lapNumber],
-		() => Api.fetchLapData(params.sessionUID ?? '', params.driverName ?? '', Number(params.lapNumber)));
+		() => Api.fetchLapData(params.sessionUID ?? '', params.driverName ?? '', Number(params.lapNumber)),
+		{
+			refetchInterval: false,
+			refetchOnWindowFocus: false,
+			refetchIntervalInBackground: false
+		});
 
-	const getXPositionData = useCallback(() => {
+	const getData = useCallback((selector: (value: SavedDataProperties) => number) => {
 		if (!lapData) return;
 
 		let outputData: ChartValue[] = [];
@@ -25,41 +31,9 @@ const Lap = () => {
 			let dataPoint = lapData[Number(lapDistance)];
 			outputData.push({
 				lapDistance: Number(lapDistance),
-				value: dataPoint.m_worldPositionX
+				value: selector(dataPoint)
 			})
 		});
-		return outputData;
-	}, [lapData])
-
-	const getYPositionData = useCallback(() => {
-		if (!lapData) return;
-
-		let outputData: ChartValue[] = [];
-
-		Object.keys(lapData).forEach(lapDistance => {
-			let dataPoint = lapData[Number(lapDistance)];
-			outputData.push({
-				lapDistance: Number(lapDistance),
-				value: dataPoint.m_worldPositionY
-			})
-		});
-
-		return outputData;
-	}, [lapData])
-
-	const getZPositionData = useCallback(() => {
-		if (!lapData) return;
-
-		let outputData: ChartValue[] = [];
-
-		Object.keys(lapData).forEach(lapDistance => {
-			let dataPoint = lapData[Number(lapDistance)];
-			outputData.push({
-				lapDistance: Number(lapDistance),
-				value: dataPoint.m_worldPositionZ
-			})
-		});
-
 		return outputData;
 	}, [lapData])
 
@@ -67,9 +41,10 @@ const Lap = () => {
 		<div>
 			{!isLoading && !error &&
 				<>
-					<LapDataChart data={getXPositionData() ?? []} xAxisLabel='Lap Distance' yAxisLabel='X Position' />
-					<LapDataChart data={getYPositionData() ?? []} xAxisLabel='Lap Distance' yAxisLabel='Y Position' />
-					<LapDataChart data={getZPositionData() ?? []} xAxisLabel='Lap Distance' yAxisLabel='Z Position' />
+					<LapDataChart data={getData(x => x.currentLapTimeInMS) ?? []} xAxisLabel='Lap Distance' yAxisLabel='Lap Time (ms)' />
+					<LapDataChart data={getData(x => x.speed) ?? []} xAxisLabel='Lap Distance' yAxisLabel='Speed (km/h)' />
+					<LapDataChart data={getData(x => x.throttle) ?? []} xAxisLabel='Lap Distance' yAxisLabel='Throttle' />
+					<LapDataChart data={getData(x => x.brake) ?? []} xAxisLabel='Lap Distance' yAxisLabel='Brake' />
 				</>
 			}
 			{isLoading && !error && <ScaleLoader />}
@@ -77,4 +52,4 @@ const Lap = () => {
 	)
 }
 
-export default Lap
+export default Lap;

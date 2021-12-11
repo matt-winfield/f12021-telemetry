@@ -40,17 +40,25 @@ export default class LocalDatabase {
 			for (const lapDistance in lap) {
 				const lapData = lap[lapDistance];
 				let nullCheckedData: SavedDataProperties = {
-					m_worldPositionX: lapData.m_worldPositionX ?? 0,
-					m_worldPositionY: lapData.m_worldPositionY ?? 0,
-					m_worldPositionZ: lapData.m_worldPositionZ ?? 0,
-					m_gForceLateral: lapData.m_gForceLateral ?? 0,
-					m_gForceLongitudinal: lapData.m_gForceLongitudinal ?? 0,
-					m_gForceVertical: lapData.m_gForceVertical ?? 0,
-					m_currentLapTimeInMS: lapData.m_currentLapTimeInMS ?? 0,
-					m_carPosition: lapData.m_carPosition ?? 0,
-					m_driverStatus: lapData.m_driverStatus ?? 0,
-					m_suspensionPosition: lapData.m_suspensionPosition ?? [0, 0, 0, 0],
-					m_wheelSlip: lapData.m_wheelSlip ?? [0, 0, 0, 0]
+					worldPositionX: lapData.m_worldPositionX ?? 0,
+					worldPositionY: lapData.m_worldPositionY ?? 0,
+					worldPositionZ: lapData.m_worldPositionZ ?? 0,
+					gForceLateral: lapData.m_gForceLateral ?? 0,
+					gForceLongitudinal: lapData.m_gForceLongitudinal ?? 0,
+					gForceVertical: lapData.m_gForceVertical ?? 0,
+					currentLapTimeInMS: lapData.m_currentLapTimeInMS ?? 0,
+					carPosition: lapData.m_carPosition ?? 0,
+					driverStatus: lapData.m_driverStatus ?? 0,
+					suspensionPosition: lapData.m_suspensionPosition ?? [0, 0, 0, 0],
+					wheelSlip: lapData.m_wheelSlip ?? [0, 0, 0, 0],
+					speed: lapData.m_speed ?? 0,
+					throttle: lapData.m_throttle ?? 0,
+					steering: lapData.m_steer ?? 0,
+					brake: lapData.m_brake ?? 0,
+					clutch: lapData.m_clutch ?? 0,
+					gear: lapData.m_gear ?? 0,
+					engineRPM: lapData.m_engineRPM ?? 0,
+					drs: lapData.m_drs ?? 0
 				}
 
 				const encodedData = this.binaryStorageParser.encodeBuffer(nullCheckedData);
