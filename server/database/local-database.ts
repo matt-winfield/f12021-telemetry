@@ -1,13 +1,8 @@
 import SqliteDatabase from 'better-sqlite3';
+import { LapData, LapInfo } from '../../common/model/lap-info';
+import { SavedDataProperties } from '../../common/model/saved-data-properties';
 import SessionData from '../models/session-data';
-import BinaryStorageParser, { BinaryDataProperties } from './binary-storage-parser';
-
-type LapInfo = {
-	sessionUID: string,
-	trackId: number,
-	driverName: string,
-	lapNumber: number
-}
+import BinaryStorageParser from './binary-storage-parser';
 
 export default class LocalDatabase {
 	private readonly DB_NAME: string = 'db.sqlite';
@@ -44,7 +39,7 @@ export default class LocalDatabase {
 		const insertLapData = db.transaction(() => {
 			for (const lapDistance in lap) {
 				const lapData = lap[lapDistance];
-				let nullCheckedData: BinaryDataProperties = {
+				let nullCheckedData: SavedDataProperties = {
 					m_worldPositionX: lapData.m_worldPositionX ?? 0,
 					m_worldPositionY: lapData.m_worldPositionY ?? 0,
 					m_worldPositionZ: lapData.m_worldPositionZ ?? 0,
@@ -92,5 +87,20 @@ export default class LocalDatabase {
 		const data = db.prepare('SELECT * FROM Lap WHERE trackId = ? AND driverName = ?').all(trackId, driverName) as LapInfo[];
 		db.close();
 		return data;
+	}
+
+	public getLapData = (sessionUID: string, driverName: string, lapNumber: number): LapData => {
+		const db = new SqliteDatabase(this.DB_NAME);
+		const lapData = db.prepare('SELECT * FROM LapData WHERE sessionUID = ? AND driverName = ? AND lapNumber = ?')
+			.all(sessionUID, driverName, lapNumber) as { lapDistance: number, data: Buffer }[];
+
+		db.close();
+
+		let outputData: { [lapDistance: number]: SavedDataProperties } = {}
+		lapData.forEach(dataPoint => {
+			outputData[dataPoint.lapDistance] = this.binaryStorageParser.parse(dataPoint.data)
+		});
+
+		return outputData;
 	}
 }

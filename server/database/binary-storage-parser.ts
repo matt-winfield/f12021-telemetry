@@ -1,18 +1,5 @@
 import { Parser } from 'binary-parser-encoder';
-
-export type BinaryDataProperties = {
-	m_worldPositionX: number;
-	m_worldPositionY: number;
-	m_worldPositionZ: number;
-	m_gForceLateral: number;
-	m_gForceLongitudinal: number;
-	m_gForceVertical: number;
-	m_currentLapTimeInMS: number;
-	m_suspensionPosition: number[];
-	m_wheelSlip: number[];
-	m_carPosition: number;
-	m_driverStatus: number;
-}
+import { SavedDataProperties } from '../../common/model/saved-data-properties';
 
 export default class BinaryStorageParser extends Parser {
 	constructor() {
@@ -37,7 +24,7 @@ export default class BinaryStorageParser extends Parser {
 			.uint8('m_driverStatus');
 	}
 
-	public encodeBuffer = (object: BinaryDataProperties): Buffer => {
+	public encodeBuffer = (object: SavedDataProperties): Buffer => {
 		return this.encode(object) as Buffer;
 	}
 }

@@ -52,7 +52,7 @@ socketServer.on('connection', (socket) => {
 
 httpServer.get('/tracks', (request, response) => {
 	response.send(database.getTracks());
-})
+});
 
 httpServer.get('/laps', (request, response) => {
 	const query = request.query as { trackId?: number, driverName?: string };
@@ -73,7 +73,17 @@ httpServer.get('/laps', (request, response) => {
 	}
 
 	response.status(400).end();
-})
+});
+
+httpServer.get('/lapData', (request, response) => {
+	const query = request.query as { sessionUID?: string, driverName?: string, lapNumber?: number }
+	if (query.sessionUID === undefined || query.driverName === undefined || query.lapNumber === undefined) {
+		response.status(400).end();
+		return;
+	}
+
+	response.send(database.getLapData(query.sessionUID, query.driverName, query.lapNumber));
+});
 
 udpServer.bind(UDP_PORT);
 const listener = httpServer.listen(HTTP_PORT, () => {

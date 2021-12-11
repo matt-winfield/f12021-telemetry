@@ -1,9 +1,12 @@
-import React, { useCallback, useState } from 'react';
+import React from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import styled from 'styled-components';
-import { Page } from '../models/page';
+import { ApplicationRoutes } from '../models/application-routes';
 import Sidebar from './sidebar';
 import Dashboard from './widgets/dashboard/dashboard';
-import Tracks from './widgets/lap-explorer/tracks';
+import Lap from './widgets/lap-explorer/lap';
+import Track from './widgets/lap-explorer/track';
+import TrackList from './widgets/lap-explorer/track-list';
 import RawData from './widgets/raw-data/raw-data';
 
 const Container = styled.div`
@@ -19,29 +22,21 @@ const ContentContainer = styled.div`
 `;
 
 const PageContainer = () => {
-	const [page, setPage] = useState<Page>(Page.Dashboard);
-
-	const getContent = () => {
-		switch (page) {
-			case Page.Dashboard:
-				return <Dashboard />;
-			case Page.SavedData:
-				return <Tracks />;
-			case Page.RawData:
-				return <RawData />;
-		}
-	}
-
-	const onPageChange = useCallback((page: Page) => {
-		setPage(page);
-	}, [])
-
 	return (
 		<Container>
-			<Sidebar onChange={onPageChange} defaultPage={Page.Dashboard} />
-			<ContentContainer>
-				{getContent()}
-			</ContentContainer>
+			<BrowserRouter>
+				<Sidebar />
+				<ContentContainer>
+					<Routes>
+						<Route index element={<Dashboard />} />
+						<Route path={ApplicationRoutes.Dashboard} element={<Dashboard />} />
+						<Route path={ApplicationRoutes.Tracks} element={<TrackList />} />
+						<Route path={`${ApplicationRoutes.Tracks}/:trackId`} element={<Track />} />
+						<Route path={`${ApplicationRoutes.Laps}/:sessionUID/:driverName/:lapNumber`} element={<Lap />} />
+						<Route path={ApplicationRoutes.RawData} element={<RawData />} />
+					</Routes>
+				</ContentContainer>
+			</BrowserRouter>
 		</Container>
 	)
 }

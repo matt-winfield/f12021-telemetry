@@ -1,25 +1,35 @@
-import React from 'react'
-import styled from 'styled-components'
+import React, { useCallback } from 'react';
+import { useQuery } from 'react-query';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ScaleLoader } from 'react-spinners';
+import Api from '../../../logic/api';
+import TrackFormatter from '../../../logic/track-formatter';
+import { ApplicationRoutes } from '../../../models/application-routes';
+import Button from '../../button';
 
-const Container = styled.div`
-	border: 1px solid ${props => props.theme.borders.color};
-	border-radius: 5px;
-	padding: 10px;
-	width: fit-content;
-	cursor: pointer;
-`
+const Track = () => {
+	const navigate = useNavigate();
+	const params = useParams();
+	const { isLoading, error, data: laps } = useQuery(['track', params.trackId], () => Api.fetchTrackLaps(Number(params.trackId)));
 
-type TrackProps = {
-	key: number | string;
-	name: string;
-}
+	const onTrackClicked = useCallback((sessionUID: string, driverName: string, lapNumber: number) => {
+		navigate(`/${ApplicationRoutes.Laps}/${sessionUID}/${driverName}/${lapNumber}`);
+	}, [navigate])
 
-const Track = (props: TrackProps) => {
+	const getFormattedLaps = useCallback(() => {
+		return laps?.map(lap => {
+			return <Button onClick={() => onTrackClicked(lap.sessionUID, lap.driverName, lap.lapNumber)}>
+				{TrackFormatter.getTrackName(lap.trackId)} - {lap.driverName} - {lap.lapNumber}
+			</Button>
+		})
+	}, [laps, onTrackClicked])
+
 	return (
-		<Container key={props.key}>
-			{props.name}
-		</Container>
+		<div>
+			{!isLoading && !error && getFormattedLaps()}
+			{isLoading && !error && <ScaleLoader />}
+		</div>
 	)
 }
 
-export default Track
+export default Track;

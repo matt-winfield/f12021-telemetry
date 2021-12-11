@@ -1,34 +1,40 @@
 import React, { useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { Page } from '../models/page';
-import Tabs, { TabsContainer } from './tabs';
-
-export type SidebarProps = {
-	onChange?: (newPage: Page) => void;
-	defaultPage?: Page;
-}
+import { ApplicationRoutes } from '../models/application-routes';
+import Button from './button';
 
 const Container = styled.div`
-	${TabsContainer} {
-		display: flex;
-		flex-direction: column;
-		padding: 10px;
-		margin-right: 10px;
-		border-right: 1px solid ${props => props.theme.borders.color};
-		height: 100%;
-	}
+	display: flex;
+	flex-direction: column;
+	padding: 10px;
+	margin-right: 10px;
+	border-right: 1px solid ${props => props.theme.borders.color};
+	height: 100%;
 `;
 
-const Sidebar = ({ onChange, defaultPage }: SidebarProps) => {
-	const tabs = ["Live Dashboard", "Saved Data", "Raw Data"];
+const Sidebar = () => {
+	const navigate = useNavigate();
+	const location = useLocation();
+	const activePath = location.pathname.split('/')[1];
 
-	const onTabClicked = useCallback((index: number) => {
-		onChange?.(index);
-	}, [onChange]);
+	const onDashboardClicked = useCallback(() => {
+		navigate(ApplicationRoutes.Dashboard)
+	}, [navigate]);
+
+	const onSavedDataClicked = useCallback(() => {
+		navigate(ApplicationRoutes.Tracks);
+	}, [navigate]);
+
+	const onRawDataClicked = useCallback(() => {
+		navigate(ApplicationRoutes.RawData);
+	}, [navigate]);
 
 	return (
 		<Container>
-			<Tabs tabs={tabs} onClick={onTabClicked} default={defaultPage}></Tabs>
+			<Button selected={activePath === '' || activePath === ApplicationRoutes.Dashboard} onClick={onDashboardClicked}>Live Dashboard</Button>
+			<Button selected={activePath === ApplicationRoutes.Tracks || activePath === ApplicationRoutes.Laps} onClick={onSavedDataClicked}>Saved Data</Button>
+			<Button selected={activePath === ApplicationRoutes.RawData} onClick={onRawDataClicked}>Raw Data</Button>
 		</Container>
 	)
 }

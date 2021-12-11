@@ -1,11 +1,10 @@
-import React from "react"
-import { useCallback } from "react"
+import React, { useCallback } from "react"
 import styled from "styled-components"
 
 type ButtonProps = {
 	selected?: boolean;
 	onClick?: () => void;
-	children: React.ReactNode;
+	children?: React.ReactNode;
 }
 
 const Container = styled.div<{ selected: boolean }>`
