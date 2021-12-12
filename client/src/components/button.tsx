@@ -8,6 +8,7 @@ type ButtonProps = {
 }
 
 const Container = styled.div<{ selected: boolean }>`
+	display: inline-block;
 	padding: 5px 7px;
 	margin: 2px;
 	color: ${props => props.selected ? props.theme.button.selectedTextColor : props.theme.button.textColor};
