@@ -63,8 +63,6 @@ const LapDataChart = ({ data, dataKeys, xAxisLabel, yAxisLabel, xAxisUnit, yAxis
 		setIsDragging(false);
 	}, [referenceAreaLeft, referenceAreaRight, dispatch]);
 
-	const formatTickLabel = useCallback((value: any) => `${value}${xAxisUnit ?? ''}`, [xAxisUnit])
-
 	const formatTooltipLabel = useCallback((label: any) => `${xAxisLabel}: ${label}${xAxisUnit ?? ''}`, [xAxisLabel, xAxisUnit])
 
 	const formatTooltip = useCallback((value: any) => `${value}${yAxisUnit ?? ''}`, [yAxisUnit])
@@ -80,7 +78,7 @@ const LapDataChart = ({ data, dataKeys, xAxisLabel, yAxisLabel, xAxisUnit, yAxis
 				onMouseMove={onMouseMove}
 				onMouseUp={onMouseUp}
 			>
-				<XAxis allowDataOverflow dataKey='lapDistance' interval='preserveStartEnd' type='number' tickCount={10} tickFormatter={formatTickLabel} domain={[left, right]}>
+				<XAxis allowDataOverflow dataKey='lapDistance' interval='preserveStartEnd' type='number' unit={xAxisUnit} tickCount={10} domain={[left, right]}>
 					<Label dy={15}>{xAxisLabel}</Label>
 				</XAxis>
 				<YAxis yAxisId='1'>
