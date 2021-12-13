@@ -69,6 +69,20 @@ const LapDataChart = ({ data, lineNames, yAxisLabel, yAxisUnit }: LapDataChartPr
 
 	const formatTooltipLabel = useCallback((label: any) => `Lap Distance: ${label}m`, [])
 
+	const lines = data.map((series, index) =>
+		<Line
+			key={index}
+			data={series}
+			name={lineNames[index]}
+			dataKey='y'
+			yAxisId='1'
+			dot={false}
+			connectNulls
+			animationDuration={1000}
+			stroke={lineColors[index % 7]}
+			unit={yAxisUnit}
+		/>);
+
 	return (
 		<Container>
 			<LineChart
@@ -87,7 +101,7 @@ const LapDataChart = ({ data, lineNames, yAxisLabel, yAxisUnit }: LapDataChartPr
 					<Label angle={270} dx={-20}>{yAxisLabel}</Label>
 				</YAxis>
 				<CartesianGrid strokeDasharray='4' />
-				{data.map((series, index) => <Line key={index} data={series} name={lineNames[index]} dataKey='y' yAxisId='1' dot={false} connectNulls animationDuration={1000} stroke={lineColors[index % 7]} unit={yAxisUnit} />)}
+				{lines}
 				<Tooltip labelFormatter={formatTooltipLabel} animationDuration={0} />
 				{referenceAreaLeft && referenceAreaRight &&
 					<ReferenceArea yAxisId='1' x1={referenceAreaLeft} x2={referenceAreaRight} />}
