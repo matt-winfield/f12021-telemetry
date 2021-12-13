@@ -81,7 +81,7 @@ const LapDataChart = ({ data, dataKeys, xAxisLabel, yAxisLabel, xAxisUnit, yAxis
 				<XAxis allowDataOverflow dataKey='lapDistance' interval='preserveStartEnd' type='number' unit={xAxisUnit} tickCount={10} domain={[left, right]}>
 					<Label dy={15}>{xAxisLabel}</Label>
 				</XAxis>
-				<YAxis allowDataOverflow yAxisId='1' type='number'>
+				<YAxis yAxisId='1' type='number'>
 					<Label angle={270} dx={-20}>{yAxisLabel}</Label>
 				</YAxis>
 				<CartesianGrid strokeDasharray='4' />
