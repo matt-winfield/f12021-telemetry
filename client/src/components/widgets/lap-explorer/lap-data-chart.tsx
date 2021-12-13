@@ -80,14 +80,14 @@ const LapDataChart = ({ data, dataKeys, xAxisLabel, yAxisLabel, xAxisUnit, yAxis
 				onMouseMove={onMouseMove}
 				onMouseUp={onMouseUp}
 			>
-				<XAxis allowDataOverflow dataKey='lapDistance' type='number' tickCount={10} tickFormatter={formatTickLabel} domain={[left, right]}>
+				<XAxis allowDataOverflow dataKey='lapDistance' interval='preserveStartEnd' type='number' tickCount={10} tickFormatter={formatTickLabel} domain={[left, right]}>
 					<Label dy={15}>{xAxisLabel}</Label>
 				</XAxis>
 				<YAxis yAxisId='1'>
 					<Label angle={270} dx={-20}>{yAxisLabel}</Label>
 				</YAxis>
 				<CartesianGrid strokeDasharray='4' />
-				{dataKeys?.map((dataKey, index) => <Line type='linear' dataKey={dataKey} yAxisId='1' dot={false} connectNulls animationDuration={300} stroke={lineColors[index % 7]} />)}
+				{dataKeys?.map((dataKey, index) => <Line key={index} type='linear' dataKey={dataKey} yAxisId='1' dot={false} connectNulls animationDuration={300} stroke={lineColors[index % 7]} />)}
 				<Line type='linear' dataKey='value' yAxisId='1' dot={false} connectNulls animationDuration={300} stroke={lineColors[0]} />
 				<Tooltip labelFormatter={formatTooltipLabel} formatter={formatTooltip} animationDuration={0} />
 				{referenceAreaLeft && referenceAreaRight &&

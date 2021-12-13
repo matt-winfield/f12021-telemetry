@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 type SliceState = {
-	zoomStart: string;
-	zoomEnd: string;
+	zoomStart: string | number;
+	zoomEnd: string | number;
 }
 
 const initialState: SliceState = {
@@ -11,11 +11,11 @@ const initialState: SliceState = {
 }
 
 type UpdateZoomPayload = {
-	zoomStart: string,
-	zoomEnd: string
+	zoomStart: string | number,
+	zoomEnd: string | number
 }
 
-const prepareUpdateZoomPayload = (zoomStart: string, zoomEnd: string) =>
+const prepareUpdateZoomPayload = (zoomStart: string | number, zoomEnd: string | number) =>
 	({ payload: { zoomStart, zoomEnd } })
 
 export const chartSlice = createSlice({
