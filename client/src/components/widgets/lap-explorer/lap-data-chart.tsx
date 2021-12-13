@@ -1,9 +1,8 @@
 import React, { useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { CartesianGrid, Label, Line, LineChart, ReferenceArea, Tooltip, XAxis, YAxis } from 'recharts';
+import { useDispatch } from 'react-redux';
+import { CartesianGrid, Label, Legend, Line, LineChart, ReferenceArea, Tooltip, XAxis, YAxis } from 'recharts';
 import styled from 'styled-components';
 import { updateZoom } from '../../../slices/chart-slice';
-import { StoreState } from '../../../store';
 
 const Container = styled.div`
 	display: flex;
@@ -19,7 +18,7 @@ type LapDataChartProps = {
 	yAxisUnit?: string;
 }
 
-const margin = { top: 0, left: 30, right: 0, bottom: 30 };
+const margin = { top: 0, left: 30, right: 0, bottom: 50 };
 
 const lineColors = ['#0037ff', '#ff4b4b', '#09ff00', '#6600ff', '#24b6ff', '#ff47a6', '#b0ff4f', '#d400ff']
 
@@ -28,8 +27,6 @@ const LapDataChart = ({ data, dataKeys, xAxisLabel, yAxisLabel, xAxisUnit, yAxis
 	const [referenceAreaLeft, setReferenceAreaLeft] = useState('');
 	const [referenceAreaRight, setReferenceAreaRight] = useState('');
 	const [isDragging, setIsDragging] = useState(false);
-	const left = useSelector((state: StoreState) => state.charts.zoomStart);
-	const right = useSelector((state: StoreState) => state.charts.zoomEnd);
 
 	const onMouseDown = useCallback((e: any) => {
 		if (!e) return;
@@ -64,7 +61,6 @@ const LapDataChart = ({ data, dataKeys, xAxisLabel, yAxisLabel, xAxisUnit, yAxis
 	}, [referenceAreaLeft, referenceAreaRight, dispatch]);
 
 	const formatTooltipLabel = useCallback((label: any) => `${xAxisLabel}: ${label}${xAxisUnit ?? ''}`, [xAxisLabel, xAxisUnit])
-
 	const formatTooltip = useCallback((value: any) => `${value}${yAxisUnit ?? ''}`, [yAxisUnit])
 
 	return (
@@ -77,19 +73,22 @@ const LapDataChart = ({ data, dataKeys, xAxisLabel, yAxisLabel, xAxisUnit, yAxis
 				onMouseDown={onMouseDown}
 				onMouseMove={onMouseMove}
 				onMouseUp={onMouseUp}
+				syncId='1'
 			>
-				<XAxis allowDataOverflow dataKey='lapDistance' interval='preserveStartEnd' type='number' unit={xAxisUnit} tickCount={10} domain={[left, right]}>
+				<XAxis allowDataOverflow dataKey='lapDistance' interval='preserveStartEnd' type='number' unit={xAxisUnit} tickCount={10} domain={['dataMin', 'dataMax']}>
 					<Label dy={15}>{xAxisLabel}</Label>
 				</XAxis>
 				<YAxis yAxisId='1'>
 					<Label angle={270} dx={-20}>{yAxisLabel}</Label>
 				</YAxis>
 				<CartesianGrid strokeDasharray='4' />
-				{dataKeys?.map((dataKey, index) => <Line key={index} type='linear' dataKey={dataKey} yAxisId='1' dot={false} connectNulls animationDuration={300} stroke={lineColors[index % 7]} />)}
-				<Line type='linear' dataKey='value' yAxisId='1' dot={false} connectNulls animationDuration={300} stroke={lineColors[0]} />
+				{(dataKeys ?? ['value']).map((dataKey, index) => <Line key={index} type='linear' dataKey={dataKey} yAxisId='1' dot={false} connectNulls animationDuration={300} stroke={lineColors[index % 7]} />)}
 				<Tooltip labelFormatter={formatTooltipLabel} formatter={formatTooltip} animationDuration={0} />
 				{referenceAreaLeft && referenceAreaRight &&
 					<ReferenceArea yAxisId='1' x1={referenceAreaLeft} x2={referenceAreaRight} />}
+				{dataKeys !== undefined && dataKeys.length > 1 &&
+					<Legend iconType='plainline' verticalAlign='top' />
+				}
 			</LineChart>
 		</Container>
 	)

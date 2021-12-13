@@ -1,5 +1,5 @@
-import React, { useCallback } from "react"
-import styled from "styled-components"
+import React, { useCallback } from "react";
+import styled from "styled-components";
 
 type ButtonProps = {
 	selected?: boolean;
@@ -22,7 +22,7 @@ const Container = styled.div<{ selected: boolean }>`
 	}
 `
 
-const Button = ({ onClick, selected, children }: ButtonProps) => {
+export const Button = React.memo(({ onClick, selected, children }: ButtonProps) => {
 	const handleClick = useCallback(() => {
 		onClick?.();
 	}, [onClick]);
@@ -32,6 +32,4 @@ const Button = ({ onClick, selected, children }: ButtonProps) => {
 			{children}
 		</Container>
 	)
-}
-
-export default React.memo(Button);
+});

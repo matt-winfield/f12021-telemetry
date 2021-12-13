@@ -6,7 +6,7 @@ import { ScaleLoader } from 'react-spinners';
 import { SavedDataProperties } from '../../../../../common/model/saved-data-properties';
 import Api from '../../../logic/api';
 import { resetZoom } from '../../../slices/chart-slice';
-import Button from '../../button';
+import { Button } from '../../button';
 import LapDataChart from './lap-data-chart';
 
 const tyreKeys = ['Front Left', 'Front Right', 'Rear Left', 'Rear Right'];
