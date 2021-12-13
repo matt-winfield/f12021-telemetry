@@ -78,7 +78,7 @@ const Lap = () => {
 					<LapDataChart data={gearData} yAxisLabel='Gear' lineNames={['Gear']} />
 					<LapDataChart data={engineRPMData} yAxisLabel='Engine RPM' yAxisUnit='RPM' lineNames={['Engine RPM']} />
 					<LapDataChart data={drsData} yAxisLabel='DRS Activation' lineNames={['DRS']} />
-					<LapDataChart data={slipData} yAxisLabel='Wheel Slip' lineNames={['Front Left', 'Front Right', 'Rear Left', 'Rear Right']} />
+					<LapDataChart data={slipData} yAxisLabel='Wheel Slip' lineNames={tyreKeys} />
 				</>
 			}
 			{isLoading && !error && <ScaleLoader />}
