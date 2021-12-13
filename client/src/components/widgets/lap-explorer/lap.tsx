@@ -3,11 +3,12 @@ import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { ScaleLoader } from 'react-spinners';
+import { TyreIds } from '../../../../../common/constants/tyre-ids';
 import { SavedDataProperties } from '../../../../../common/model/saved-data-properties';
 import Api from '../../../logic/api';
 import { resetZoom } from '../../../slices/chart-slice';
 import { Button } from '../../button';
-import LapDataChart from './lap-data-chart';
+import LapDataChart, { ChartDataPoint } from './lap-data-chart';
 
 const tyreKeys = ['Front Left', 'Front Right', 'Rear Left', 'Rear Right'];
 
@@ -27,58 +28,57 @@ const Lap = () => {
 		dispatch(resetZoom());
 	}, [dispatch]);
 
-	const getData = useCallback((selector: (value: SavedDataProperties) => number | number[], dataKeys?: string[]): { data: any[] } => {
-		if (!lapData) return { data: [] };
+	const getData = useCallback((selectors: ((dataPoint: SavedDataProperties) => number)[]): ChartDataPoint[][] => {
+		if (!lapData) return [];
 
-		let outputData: any[] = [];
+		let outputData: ChartDataPoint[][] = [];
 
-		Object.keys(lapData).forEach(lapDistance => {
-			const dataPoint = lapData[Number(lapDistance)];
-			const value = selector(dataPoint);
-
-			const mappedDataKeys: { [key: string]: number } = {};
-			if (Array.isArray(value) && value.length === dataKeys?.length) {
-				dataKeys?.forEach((key, index) => {
-					mappedDataKeys[key] = value[index];
+		for (const selector of selectors) {
+			const values: ChartDataPoint[] = [];
+			Object.keys(lapData).forEach(key => {
+				const lapDistance = Number(key);
+				const dataPoint = lapData[lapDistance];
+				const value = selector(dataPoint);
+				values.push({
+					x: lapDistance,
+					y: value
 				});
-			} else {
-				mappedDataKeys['value'] = value as number;
-			}
-
-			outputData.push({
-				lapDistance: Number(lapDistance),
-				...mappedDataKeys
-			})
-		});
-		return {
-			data: outputData
+			});
+			outputData.push(values);
 		}
+
+		return outputData;
 	}, [lapData]);
 
-	const lapTimeData = useMemo(() => getData(x => x.currentLapTimeInMS / 1000), [getData]);
-	const speedData = useMemo(() => getData(x => x.speed), [getData]);
-	const throttleData = useMemo(() => getData(x => x.throttle), [getData]);
-	const brakeData = useMemo(() => getData(x => x.brake), [getData]);
-	const steeringData = useMemo(() => getData(x => x.steering), [getData]);
-	const gearData = useMemo(() => getData(x => x.gear), [getData]);
-	const engineRPMData = useMemo(() => getData(x => x.engineRPM), [getData]);
-	const drsData = useMemo(() => getData(x => x.drs), [getData]);
-	const slipData = useMemo(() => getData(x => x.wheelSlip, tyreKeys), [getData]);
+	const lapTimeData = useMemo(() => getData([x => x.currentLapTimeInMS / 1000]), [getData]);
+	const speedData = useMemo(() => getData([x => x.speed]), [getData]);
+	const throttleData = useMemo(() => getData([x => x.throttle]), [getData]);
+	const brakeData = useMemo(() => getData([x => x.brake]), [getData]);
+	const steeringData = useMemo(() => getData([x => x.steering]), [getData]);
+	const gearData = useMemo(() => getData([x => x.gear]), [getData]);
+	const engineRPMData = useMemo(() => getData([x => x.engineRPM]), [getData]);
+	const drsData = useMemo(() => getData([x => x.drs]), [getData]);
+	const slipData = useMemo(() => getData([
+		x => x.wheelSlip[TyreIds.FrontLeft],
+		x => x.wheelSlip[TyreIds.FrontRight],
+		x => x.wheelSlip[TyreIds.RearLeft],
+		x => x.wheelSlip[TyreIds.RearRight]
+	]), [getData]);
 
 	return (
 		<div>
 			{!isLoading && !error &&
 				<>
 					<Button onClick={onResetZoomClicked}>Reset Zoom</Button>
-					<LapDataChart data={lapTimeData.data} xAxisLabel='Lap Distance' yAxisLabel='Lap Time (s)' xAxisUnit='m' yAxisUnit='s' />
-					<LapDataChart data={speedData.data} xAxisLabel='Lap Distance' yAxisLabel='Speed (km/h)' xAxisUnit='m' yAxisUnit='km/h' />
-					<LapDataChart data={throttleData.data} xAxisLabel='Lap Distance' yAxisLabel='Throttle %' xAxisUnit='m' yAxisUnit='%' />
-					<LapDataChart data={brakeData.data} xAxisLabel='Lap Distance' yAxisLabel='Brake %' xAxisUnit='m' yAxisUnit='%' />
-					<LapDataChart data={steeringData.data} xAxisLabel='Lap Distance' yAxisLabel='Steering' xAxisUnit='m' />
-					<LapDataChart data={gearData.data} xAxisLabel='Lap Distance' yAxisLabel='Gear' xAxisUnit='m' />
-					<LapDataChart data={engineRPMData.data} xAxisLabel='Lap Distance' yAxisLabel='Engine RPM' xAxisUnit='m' yAxisUnit='RPM' />
-					<LapDataChart data={drsData.data} xAxisLabel='Lap Distance' yAxisLabel='DRS Activation' xAxisUnit='m' />
-					<LapDataChart data={slipData.data} dataKeys={tyreKeys} xAxisLabel='Lap Distance' yAxisLabel='Wheel Slip' xAxisUnit='m' />
+					<LapDataChart data={lapTimeData} yAxisLabel='Lap Time (s)' yAxisUnit='s' lineNames={['Lap Time']} />
+					<LapDataChart data={speedData} yAxisLabel='Speed (km/h)' yAxisUnit='km/h' lineNames={['Speed']} />
+					<LapDataChart data={throttleData} yAxisLabel='Throttle %' yAxisUnit='%' lineNames={['Throttle']} />
+					<LapDataChart data={brakeData} yAxisLabel='Brake %' yAxisUnit='%' lineNames={['Brake']} />
+					<LapDataChart data={steeringData} yAxisLabel='Steering' lineNames={['Steering']} />
+					<LapDataChart data={gearData} yAxisLabel='Gear' lineNames={['Gear']} />
+					<LapDataChart data={engineRPMData} yAxisLabel='Engine RPM' yAxisUnit='RPM' lineNames={['Engine RPM']} />
+					<LapDataChart data={drsData} yAxisLabel='DRS Activation' lineNames={['DRS']} />
+					<LapDataChart data={slipData} yAxisLabel='Wheel Slip' lineNames={['Front Left', 'Front Right', 'Rear Left', 'Rear Right']} />
 				</>
 			}
 			{isLoading && !error && <ScaleLoader />}
