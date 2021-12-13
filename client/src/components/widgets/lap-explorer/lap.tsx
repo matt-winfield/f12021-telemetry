@@ -60,6 +60,7 @@ const Lap = () => {
 	const throttleData = useMemo(() => getData(x => x.throttle), [getData]);
 	const brakeData = useMemo(() => getData(x => x.brake), [getData]);
 	const steeringData = useMemo(() => getData(x => x.steering), [getData]);
+	const gearData = useMemo(() => getData(x => x.gear), [getData]);
 	const engineRPMData = useMemo(() => getData(x => x.engineRPM), [getData]);
 	const drsData = useMemo(() => getData(x => x.drs), [getData]);
 	const slipData = useMemo(() => getData(x => x.wheelSlip, tyreKeys), [getData]);
@@ -74,6 +75,7 @@ const Lap = () => {
 					<LapDataChart data={throttleData.data} xAxisLabel='Lap Distance' yAxisLabel='Throttle %' xAxisUnit='m' yAxisUnit='%' />
 					<LapDataChart data={brakeData.data} xAxisLabel='Lap Distance' yAxisLabel='Brake %' xAxisUnit='m' yAxisUnit='%' />
 					<LapDataChart data={steeringData.data} xAxisLabel='Lap Distance' yAxisLabel='Steering' xAxisUnit='m' />
+					<LapDataChart data={gearData.data} xAxisLabel='Lap Distance' yAxisLabel='Gear' xAxisUnit='m' />
 					<LapDataChart data={engineRPMData.data} xAxisLabel='Lap Distance' yAxisLabel='Engine RPM' xAxisUnit='m' yAxisUnit='RPM' />
 					<LapDataChart data={drsData.data} xAxisLabel='Lap Distance' yAxisLabel='DRS Activation' xAxisUnit='m' />
 					<LapDataChart data={slipData.data} dataKeys={tyreKeys} xAxisLabel='Lap Distance' yAxisLabel='Wheel Slip' xAxisUnit='m' />
