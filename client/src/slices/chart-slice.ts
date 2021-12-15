@@ -1,21 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 type SliceState = {
-	zoomStart: string | number;
-	zoomEnd: string | number;
+	zoomStart?: number;
+	zoomEnd?: number;
+	dataMax: number;
 }
 
 const initialState: SliceState = {
-	zoomStart: 'dataMin',
-	zoomEnd: 'dataMax'
+	dataMax: 0
 }
 
 type UpdateZoomPayload = {
-	zoomStart: string | number,
-	zoomEnd: string | number
+	zoomStart?: number,
+	zoomEnd?: number,
 }
 
-const prepareUpdateZoomPayload = (zoomStart: string | number, zoomEnd: string | number) =>
+const prepareUpdateZoomPayload = (zoomStart: number, zoomEnd: number) =>
 	({ payload: { zoomStart, zoomEnd } })
 
 export const chartSlice = createSlice({
@@ -30,11 +30,19 @@ export const chartSlice = createSlice({
 			prepare: prepareUpdateZoomPayload
 		},
 		resetZoom: (state) => {
-			state.zoomStart = 'dataMin';
-			state.zoomEnd = 'dataMax';
+			state.zoomStart = undefined;
+			state.zoomEnd = undefined;
+		},
+		updateDataMax: (state, action: PayloadAction<number>) => {
+			if (state.dataMax === undefined || action.payload > state.dataMax) {
+				state.dataMax = action.payload;
+			}
+		},
+		resetDataMax: (state) => {
+			state.dataMax = 0;
 		}
 	}
 })
 
-export const { updateZoom, resetZoom } = chartSlice.actions;
+export const { updateZoom, resetZoom, updateDataMax, resetDataMax } = chartSlice.actions;
 export default chartSlice.reducer;

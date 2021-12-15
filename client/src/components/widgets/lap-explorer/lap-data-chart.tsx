@@ -1,8 +1,12 @@
-import { CategoryScale, Chart, ChartData, InteractionModeMap, Legend, LinearScale, LineElement, PointElement, ScatterController, Title, Tooltip } from 'chart.js';
+import { CategoryScale, Chart, ChartData, ChartTypeRegistry, InteractionModeMap, Legend, LinearScale, LineElement, PointElement, ScatterController, Tick, Title, Tooltip, TooltipItem } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { Mode } from 'chartjs-plugin-zoom/types/options';
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { roundToDecimalPlaces } from '../../../../../common/helpers/number-helpers';
+import { updateZoom } from '../../../slices/chart-slice';
+import { StoreState } from '../../../store';
 
 const Container = styled.div`
 	width: 100%;
@@ -71,61 +75,101 @@ Chart.register(
 	zoomPlugin
 );
 
-const options = {
-	responsive: true,
-	maintainAspectRatio: false,
-	layout: {
-		padding: 20
-	},
-	elements: {
-		point: {
-			radius: 0
-		},
-		line: {
-			tension: 0,
-			borderWidth: 1
-		}
-	},
-	tooltips: {
-		axis: 'x'
-	},
-	interaction: {
-		mode: 'index' as keyof InteractionModeMap,
-		intersect: false
-	},
-	plugins: {
-		legend: {
-			position: 'bottom' as const
-		},
-		zoom: {
-			pan: {
-				enabled: true,
-				mode: 'x' as Mode
-			},
-			zoom: {
-				wheel: {
-					enabled: true,
-					modifierKey: 'ctrl' as const
-				},
-				pinch: {
-					enabled: true
-				},
-				drag: {
-					enabled: true,
-					modifierKey: 'ctrl' as const
-				},
-				mode: 'x' as Mode
-			},
-			limits: {
-				x: { min: 'original' as const, max: 'original' as const }
-			}
-		}
-	}
-};
-
 const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataChartProps) => {
+	const dispatch = useDispatch();
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const chartRef = useRef<Chart>();
+	const zoomStart = useSelector((state: StoreState) => state.charts.zoomStart);
+	const zoomEnd = useSelector((state: StoreState) => state.charts.zoomEnd);
+	const dataMax = useSelector((state: StoreState) => state.charts.dataMax);
+
+	const onZoomOrPan = useCallback((context: { chart: Chart }) => {
+		const scale = context.chart.scales['x'];
+		dispatch(updateZoom(scale.min, scale.max));
+	}, [dispatch]);
+
+	const getXAxisTickLabel = useCallback((value: string | number, index: number, ticks: Tick[]) => `${roundToDecimalPlaces(Number(value), 1)}m`, [])
+	const getTooltipTitle = useCallback((items: TooltipItem<keyof ChartTypeRegistry>[]) => `${(items[0].raw as ChartDataPoint).x}m`, []);
+	const getTooltipLabel = useCallback((item: TooltipItem<keyof ChartTypeRegistry>) => `${item.dataset.label}: ${item.formattedValue}${yAxisUnit ?? ''}`, [yAxisUnit])
+
+	const options = useMemo(() => ({
+		responsive: true,
+		maintainAspectRatio: false,
+		layout: {
+			padding: 20
+		},
+		elements: {
+			point: {
+				radius: 0
+			},
+			line: {
+				tension: 0,
+				borderWidth: 1
+			}
+		},
+		tooltips: {
+			axis: 'x'
+		},
+		interaction: {
+			mode: 'index' as keyof InteractionModeMap,
+			intersect: false
+		},
+		scales: {
+			x: {
+				title: {
+					display: true,
+					text: 'Lap Distance'
+				},
+				ticks: {
+					callback: getXAxisTickLabel
+				},
+				min: 0,
+				max: dataMax
+			},
+			y: {
+				title: {
+					display: true,
+					text: yAxisLabel
+				}
+			}
+		},
+		plugins: {
+			legend: {
+				position: 'right' as const
+			},
+			tooltip: {
+				callbacks: {
+					title: getTooltipTitle,
+					label: getTooltipLabel
+				}
+			},
+			zoom: {
+				pan: {
+					enabled: true,
+					mode: 'x' as Mode,
+					onPanComplete: onZoomOrPan
+				},
+				zoom: {
+					wheel: {
+						enabled: true,
+						modifierKey: 'ctrl' as const
+					},
+					pinch: {
+						enabled: true
+					},
+					drag: {
+						enabled: true,
+						modifierKey: 'ctrl' as const
+					},
+					mode: 'x' as Mode,
+					onZoomComplete: onZoomOrPan
+				},
+				limits: {
+					x: { min: 'original' as const, max: 'original' as const }
+				}
+			}
+		}
+	}), [dataMax, onZoomOrPan, getXAxisTickLabel, getTooltipTitle, getTooltipLabel, yAxisLabel]);
 
 	useEffect(() => {
 		const data: ChartData = {
@@ -153,7 +197,15 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 		return () => {
 			chartRef.current?.destroy();
 		}
-	}, [dataSets, lineNames])
+	}, [dataSets, lineNames, options]);
+
+	useEffect(() => {
+		if (chartRef.current && zoomStart !== undefined && zoomEnd !== undefined) {
+			chartRef.current.zoomScale('x', { min: zoomStart, max: zoomEnd });
+		} else if (chartRef.current) {
+			chartRef.current.zoomScale('x', { min: 0, max: dataMax })
+		}
+	}, [zoomStart, zoomEnd, dataMax]);
 
 	return (
 		<Container>

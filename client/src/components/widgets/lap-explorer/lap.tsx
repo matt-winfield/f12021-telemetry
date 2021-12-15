@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -6,7 +6,7 @@ import { ScaleLoader } from 'react-spinners';
 import { TyreIds } from '../../../../../common/constants/tyre-ids';
 import { SavedDataProperties } from '../../../../../common/model/saved-data-properties';
 import Api from '../../../logic/api';
-import { resetZoom } from '../../../slices/chart-slice';
+import { resetDataMax, resetZoom, updateDataMax } from '../../../slices/chart-slice';
 import { Button } from '../../button';
 import LapDataChart, { ChartDataPoint } from './lap-data-chart';
 
@@ -28,17 +28,25 @@ const Lap = () => {
 		dispatch(resetZoom());
 	}, [dispatch]);
 
+	useEffect(() => {
+		dispatch(resetDataMax());
+	}, [dispatch])
+
 	const getData = useCallback((selectors: ((dataPoint: SavedDataProperties) => number)[]): ChartDataPoint[][] => {
 		if (!lapData) return [];
 
 		let outputData: ChartDataPoint[][] = [];
 
+		let maxLapDistance = 0;
 		for (const selector of selectors) {
 			const values: ChartDataPoint[] = [];
+			// eslint-disable-next-line no-loop-func
 			Object.keys(lapData).forEach(key => {
 				const lapDistance = Number(key);
 				const dataPoint = lapData[lapDistance];
 				const value = selector(dataPoint);
+				maxLapDistance = Math.max(maxLapDistance, lapDistance);
+
 				values.push({
 					x: lapDistance,
 					y: value
@@ -47,8 +55,9 @@ const Lap = () => {
 			outputData.push(values);
 		}
 
+		dispatch(updateDataMax(maxLapDistance));
 		return outputData;
-	}, [lapData]);
+	}, [lapData, dispatch]);
 
 	const lapTimeData = useMemo(() => getData([x => x.currentLapTimeInMS / 1000]), [getData]);
 	const speedData = useMemo(() => getData([x => x.speed]), [getData]);
