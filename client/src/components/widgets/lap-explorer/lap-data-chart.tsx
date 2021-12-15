@@ -1,13 +1,13 @@
-import React, { useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { CartesianGrid, Label, Line, LineChart, ReferenceArea, Tooltip, XAxis, YAxis } from 'recharts';
+import { CategoryScale, Chart, ChartData, InteractionModeMap, Legend, LinearScale, LineElement, PointElement, ScatterController, Title, Tooltip } from 'chart.js';
+import zoomPlugin from 'chartjs-plugin-zoom';
+import { Mode } from 'chartjs-plugin-zoom/types/options';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { updateZoom } from '../../../slices/chart-slice';
-import { StoreState } from '../../../store';
 
 const Container = styled.div`
-	display: flex;
-	align-items: flex-start;
+	width: 100%;
+	height: 500px;
+	position: relative;
 `
 
 export type ChartDataPoint = {
@@ -16,98 +16,150 @@ export type ChartDataPoint = {
 }
 
 type LapDataChartProps = {
-	data: ChartDataPoint[][];
+	dataSets: ChartDataPoint[][];
 	lineNames: string[];
 	yAxisLabel: string;
 	yAxisUnit?: string;
 }
 
-const margin = { top: 0, left: 30, right: 0, bottom: 50 };
-
 const lineColors = ['#0037ff', '#ff4b4b', '#09ff00', '#6600ff', '#24b6ff', '#ff47a6', '#b0ff4f', '#d400ff']
 
-const LapDataChart = ({ data, lineNames, yAxisLabel, yAxisUnit }: LapDataChartProps) => {
-	const dispatch = useDispatch();
-	const [referenceAreaLeft, setReferenceAreaLeft] = useState('');
-	const [referenceAreaRight, setReferenceAreaRight] = useState('');
-	const [isDragging, setIsDragging] = useState(false);
+const verticalCursorScatterChartId = 'verticalCursorScatterChart';
+class VerticalCursorScatterChart extends ScatterController {
+	public static id: string = verticalCursorScatterChartId;
+	public static defaults = ScatterController.defaults;
 
-	const left = useSelector((state: StoreState) => state.charts.zoomStart);
-	const right = useSelector((state: StoreState) => state.charts.zoomEnd);
+	public draw = (): void => {
+		super.draw();
 
-	const onMouseDown = useCallback((e: any) => {
-		if (!e) return;
-		setReferenceAreaLeft(e.activeLabel);
-		setIsDragging(true);
-	}, []);
+		const activeElements = this.chart.tooltip?.getActiveElements();
 
-	const onMouseMove = useCallback((e: any) => {
-		if (isDragging) {
-			setReferenceAreaRight(e.activeLabel);
+		if (activeElements !== undefined && activeElements.length > 0) {
+			let activePoint = activeElements[0],
+				ctx = this.chart.ctx,
+				x = activePoint.element.tooltipPosition().x,
+				topY = this.chart.scales['y']?.top,
+				bottomY = this.chart.scales['y']?.bottom;
+
+			ctx.save();
+			ctx.beginPath();
+			ctx.moveTo(x, topY);
+			ctx.lineTo(x, bottomY);
+			ctx.lineWidth = 2;
+			ctx.strokeStyle = '#38acff39';
+			ctx.stroke();
+			ctx.restore();
 		}
-	}, [isDragging]);
+	}
+}
 
-	const onMouseUp = useCallback((e: any) => {
-		let newLeft = referenceAreaLeft;
-		let newRight = referenceAreaRight;
+declare module 'chart.js' {
+	interface ChartTypeRegistry {
+		[verticalCursorScatterChartId]: ChartTypeRegistry['scatter']
+	}
+}
 
-		if (newLeft === newRight || newRight === '') {
-			setReferenceAreaLeft('');
-			setReferenceAreaRight('');
-			return;
+Chart.register(
+	CategoryScale,
+	LinearScale,
+	PointElement,
+	LineElement,
+	Title,
+	Tooltip,
+	Legend,
+	VerticalCursorScatterChart,
+	zoomPlugin
+);
+
+const options = {
+	responsive: true,
+	maintainAspectRatio: false,
+	layout: {
+		padding: 20
+	},
+	elements: {
+		point: {
+			radius: 0
+		},
+		line: {
+			tension: 0,
+			borderWidth: 1
+		}
+	},
+	tooltips: {
+		axis: 'x'
+	},
+	interaction: {
+		mode: 'index' as keyof InteractionModeMap,
+		intersect: false
+	},
+	plugins: {
+		legend: {
+			position: 'bottom' as const
+		},
+		zoom: {
+			pan: {
+				enabled: true,
+				mode: 'x' as Mode
+			},
+			zoom: {
+				wheel: {
+					enabled: true,
+					modifierKey: 'ctrl' as const
+				},
+				pinch: {
+					enabled: true
+				},
+				drag: {
+					enabled: true,
+					modifierKey: 'ctrl' as const
+				},
+				mode: 'x' as Mode
+			},
+			limits: {
+				x: { min: 'original' as const, max: 'original' as const }
+			}
+		}
+	}
+};
+
+const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataChartProps) => {
+	const canvasRef = useRef<HTMLCanvasElement | null>(null);
+	const chartRef = useRef<Chart>();
+
+	useEffect(() => {
+		const data: ChartData = {
+			datasets: []
 		}
 
-		if (newLeft > newRight) {
-			[newLeft, newRight] = [newRight, newLeft];
+		dataSets.forEach((dataSet, index) => {
+			data.datasets.push({
+				label: lineNames[index],
+				data: dataSet,
+				showLine: true,
+				borderColor: lineColors[index % 7],
+				backgroundColor: lineColors[index % 7]
+			})
+		})
+
+		if (canvasRef.current) {
+			chartRef.current = new Chart(canvasRef.current, {
+				type: verticalCursorScatterChartId,
+				data,
+				options
+			});
 		}
 
-		setReferenceAreaLeft('');
-		setReferenceAreaRight('');
-		dispatch(updateZoom(newLeft, newRight));
-		setIsDragging(false);
-	}, [referenceAreaLeft, referenceAreaRight, dispatch]);
-
-	const formatTooltipLabel = useCallback((label: any) => `Lap Distance: ${label}m`, [])
-
-	const lines = data.map((series, index) =>
-		<Line
-			key={index}
-			data={series}
-			name={lineNames[index]}
-			dataKey='y'
-			yAxisId='1'
-			dot={false}
-			connectNulls
-			animationDuration={1000}
-			stroke={lineColors[index % 7]}
-			unit={yAxisUnit}
-		/>);
+		return () => {
+			chartRef.current?.destroy();
+		}
+	}, [dataSets, lineNames])
 
 	return (
 		<Container>
-			<LineChart
-				width={1500}
-				height={400}
-				margin={margin}
-				onMouseDown={onMouseDown}
-				onMouseMove={onMouseMove}
-				onMouseUp={onMouseUp}
-				syncId='1'
-			>
-				<XAxis allowDataOverflow dataKey='x' interval='preserveStartEnd' type='number' unit='m' tickCount={10} domain={[left, right]}>
-					<Label dy={15}>Lap Distance</Label>
-				</XAxis>
-				<YAxis yAxisId='1' type='number'>
-					<Label angle={270} dx={-20}>{yAxisLabel}</Label>
-				</YAxis>
-				<CartesianGrid strokeDasharray='4' />
-				{lines}
-				<Tooltip labelFormatter={formatTooltipLabel} animationDuration={0} />
-				{referenceAreaLeft && referenceAreaRight &&
-					<ReferenceArea yAxisId='1' x1={referenceAreaLeft} x2={referenceAreaRight} />}
-			</LineChart>
+			<canvas ref={canvasRef}></canvas>
 		</Container>
 	)
 }
 
-export default LapDataChart
+export default LapDataChart;

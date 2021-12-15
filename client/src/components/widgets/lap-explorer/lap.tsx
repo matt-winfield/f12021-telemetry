@@ -70,15 +70,15 @@ const Lap = () => {
 			{!isLoading && !error &&
 				<>
 					<Button onClick={onResetZoomClicked}>Reset Zoom</Button>
-					<LapDataChart data={lapTimeData} yAxisLabel='Lap Time (s)' yAxisUnit='s' lineNames={['Lap Time']} />
-					<LapDataChart data={speedData} yAxisLabel='Speed (km/h)' yAxisUnit='km/h' lineNames={['Speed']} />
-					<LapDataChart data={throttleData} yAxisLabel='Throttle %' yAxisUnit='%' lineNames={['Throttle']} />
-					<LapDataChart data={brakeData} yAxisLabel='Brake %' yAxisUnit='%' lineNames={['Brake']} />
-					<LapDataChart data={steeringData} yAxisLabel='Steering' lineNames={['Steering']} />
-					<LapDataChart data={gearData} yAxisLabel='Gear' lineNames={['Gear']} />
-					<LapDataChart data={engineRPMData} yAxisLabel='Engine RPM' yAxisUnit='RPM' lineNames={['Engine RPM']} />
-					<LapDataChart data={drsData} yAxisLabel='DRS Activation' lineNames={['DRS']} />
-					<LapDataChart data={slipData} yAxisLabel='Wheel Slip' lineNames={tyreKeys} />
+					<LapDataChart dataSets={lapTimeData} yAxisLabel='Lap Time (s)' yAxisUnit='s' lineNames={['Lap Time']} />
+					<LapDataChart dataSets={speedData} yAxisLabel='Speed (km/h)' yAxisUnit='km/h' lineNames={['Speed']} />
+					<LapDataChart dataSets={throttleData} yAxisLabel='Throttle %' yAxisUnit='%' lineNames={['Throttle']} />
+					<LapDataChart dataSets={brakeData} yAxisLabel='Brake %' yAxisUnit='%' lineNames={['Brake']} />
+					<LapDataChart dataSets={steeringData} yAxisLabel='Steering' lineNames={['Steering']} />
+					<LapDataChart dataSets={gearData} yAxisLabel='Gear' lineNames={['Gear']} />
+					<LapDataChart dataSets={engineRPMData} yAxisLabel='Engine RPM' yAxisUnit='RPM' lineNames={['Engine RPM']} />
+					<LapDataChart dataSets={drsData} yAxisLabel='DRS Activation' lineNames={['DRS']} />
+					<LapDataChart dataSets={slipData} yAxisLabel='Wheel Slip' lineNames={tyreKeys} />
 				</>
 			}
 			{isLoading && !error && <ScaleLoader />}
