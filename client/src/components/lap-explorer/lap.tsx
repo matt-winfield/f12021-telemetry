@@ -3,11 +3,11 @@ import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { ScaleLoader } from 'react-spinners';
-import { TyreIds } from '../../../../../common/constants/tyre-ids';
-import { SavedDataProperties } from '../../../../../common/model/saved-data-properties';
-import Api from '../../../logic/api';
-import { resetDataMax, resetZoom, updateDataMax } from '../../../slices/chart-slice';
-import { Button } from '../../button';
+import { TyreIds } from '../../../../common/constants/tyre-ids';
+import { SavedDataProperties } from '../../../../common/model/saved-data-properties';
+import Api from '../../logic/api';
+import { resetDataMax, resetZoom, updateDataMax } from '../../slices/chart-slice';
+import { Button } from '../button';
 import LapDataChart, { ChartDataPoint } from './lap-data-chart';
 
 const tyreKeys = ['Front Left', 'Front Right', 'Rear Left', 'Rear Right'];

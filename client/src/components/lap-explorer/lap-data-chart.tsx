@@ -4,9 +4,9 @@ import { Mode } from 'chartjs-plugin-zoom/types/options';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { roundToDecimalPlaces } from '../../../../../common/helpers/number-helpers';
-import { updateZoom } from '../../../slices/chart-slice';
-import { StoreState } from '../../../store';
+import { roundToDecimalPlaces } from '../../../../common/helpers/number-helpers';
+import { updateZoom } from '../../slices/chart-slice';
+import { StoreState } from '../../store';
 
 const Container = styled.div`
 	width: 100%;

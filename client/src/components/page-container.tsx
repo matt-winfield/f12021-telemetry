@@ -2,12 +2,12 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import styled from 'styled-components';
 import { ApplicationRoutes } from '../models/application-routes';
+import Dashboard from './dashboard/dashboard';
+import Lap from './lap-explorer/lap';
+import Track from './lap-explorer/track';
+import TrackList from './lap-explorer/track-list';
+import RawData from './raw-data/raw-data';
 import Sidebar from './sidebar';
-import Dashboard from './widgets/dashboard/dashboard';
-import Lap from './widgets/lap-explorer/lap';
-import Track from './widgets/lap-explorer/track';
-import TrackList from './widgets/lap-explorer/track-list';
-import RawData from './widgets/raw-data/raw-data';
 
 const Container = styled.div`
 	display: flex;

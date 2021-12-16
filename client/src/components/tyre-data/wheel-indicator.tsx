@@ -2,10 +2,10 @@ import { invert, mix, readableColor } from 'polished'
 import { useCallback, useRef } from 'react'
 import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
-import { roundToDecimalPlaces } from '../../../../../common/helpers/number-helpers'
-import { ChildrenProps } from '../../../types/children-props'
-import { clamp, getRatioBetweenValues } from '../../../utilities/number-helpers'
-import ValueBarContainer, { ValueBarType } from '../../data-display/value-bar'
+import { roundToDecimalPlaces } from '../../../../common/helpers/number-helpers'
+import { ChildrenProps } from '../../types/children-props'
+import { clamp, getRatioBetweenValues } from '../../utilities/number-helpers'
+import ValueBarContainer, { ValueBarType } from '../data-display/value-bar'
 
 const DEFAULT_WHEEL_TEMP_RANGE_MIN = 70;
 const DEFAULT_WHEEL_TEMP_RANGE_MAX = 100;

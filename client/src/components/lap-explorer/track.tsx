@@ -3,10 +3,10 @@ import { useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ScaleLoader } from 'react-spinners';
 import styled from 'styled-components';
-import Api from '../../../logic/api';
-import TrackFormatter from '../../../logic/track-formatter';
-import { ApplicationRoutes } from '../../../models/application-routes';
-import { Button } from '../../button';
+import Api from '../../logic/api';
+import TrackFormatter from '../../logic/track-formatter';
+import { ApplicationRoutes } from '../../models/application-routes';
+import { Button } from '../button';
 
 const List = styled.div`
 	display: flex;

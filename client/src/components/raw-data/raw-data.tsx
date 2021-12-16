@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Tabs from '../../tabs';
+import Tabs from '../tabs';
 import RawCarDamageData from './raw-car-damage-data';
 import RawCarSetupsData from './raw-car-setups-data';
 import RawCarStatus from './raw-car-status';

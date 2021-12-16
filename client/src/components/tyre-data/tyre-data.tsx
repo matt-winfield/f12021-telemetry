@@ -1,8 +1,8 @@
-import React from 'react'
+import React from 'react';
 import styled from 'styled-components';
-import { useCarDamageData, useCarTelemetry, useMotionData } from '../../../hooks/live-data/live-data-selectors';
+import { TyreIds } from '../../../../common/constants/tyre-ids';
+import { useCarDamageData, useCarTelemetry, useMotionData } from '../../hooks/live-data/live-data-selectors';
 import WidgetContainer from '../widget-container';
-import { TyreIds } from '../../../../../common/constants/tyre-ids';
 import WheelIndicator from './wheel-indicator';
 
 const WheelsContainer = styled.div`
