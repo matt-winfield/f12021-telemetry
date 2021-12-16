@@ -3,14 +3,33 @@ import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { ScaleLoader } from 'react-spinners';
+import styled from 'styled-components';
 import { TyreIds } from '../../../../common/constants/tyre-ids';
 import { SavedDataProperties } from '../../../../common/model/saved-data-properties';
 import Api from '../../logic/api';
 import { resetDataMax, resetZoom, updateDataMax } from '../../slices/chart-slice';
-import { Button } from '../button';
+import { Button } from '../button/button';
+import TrackMap, { Coordinate } from '../track-map/track-map';
 import LapDataChart, { ChartDataPoint } from './lap-data-chart';
 
 const tyreKeys = ['Front Left', 'Front Right', 'Rear Left', 'Rear Right'];
+
+const Container = styled.div`
+	display: flex;
+	width: 100%;
+	height: 100%;
+`
+
+const GraphContainer = styled.div`
+	flex-grow: 1;
+	height: 100%;
+	overflow-y: auto;
+`
+
+const Sidebar = styled.div`
+	width: 300px;
+	padding: 10px;
+`
 
 const Lap = () => {
 	const dispatch = useDispatch();
@@ -59,6 +78,24 @@ const Lap = () => {
 		return outputData;
 	}, [lapData, dispatch]);
 
+	const getPositionData = useMemo(() => {
+		let outputData: { [lapDistance: number]: Coordinate } = {};
+
+		if (!lapData) return [];
+
+		Object.keys(lapData).forEach(key => {
+			const lapDistance = Number(key);
+			const dataPoint = lapData[lapDistance];
+
+			outputData[lapDistance] = {
+				x: dataPoint.worldPositionX,
+				y: dataPoint.worldPositionZ
+			};
+		});
+
+		return outputData;
+	}, [lapData])
+
 	const lapTimeData = useMemo(() => getData([x => x.currentLapTimeInMS / 1000]), [getData]);
 	const speedData = useMemo(() => getData([x => x.speed]), [getData]);
 	const throttleData = useMemo(() => getData([x => x.throttle]), [getData]);
@@ -75,23 +112,28 @@ const Lap = () => {
 	]), [getData]);
 
 	return (
-		<div>
+		<Container>
 			{!isLoading && !error &&
 				<>
-					<Button onClick={onResetZoomClicked}>Reset Zoom</Button>
-					<LapDataChart dataSets={lapTimeData} yAxisLabel='Lap Time (s)' yAxisUnit='s' lineNames={['Lap Time']} />
-					<LapDataChart dataSets={speedData} yAxisLabel='Speed (km/h)' yAxisUnit='km/h' lineNames={['Speed']} />
-					<LapDataChart dataSets={throttleData} yAxisLabel='Throttle %' yAxisUnit='%' lineNames={['Throttle']} />
-					<LapDataChart dataSets={brakeData} yAxisLabel='Brake %' yAxisUnit='%' lineNames={['Brake']} />
-					<LapDataChart dataSets={steeringData} yAxisLabel='Steering' lineNames={['Steering']} />
-					<LapDataChart dataSets={gearData} yAxisLabel='Gear' lineNames={['Gear']} />
-					<LapDataChart dataSets={engineRPMData} yAxisLabel='Engine RPM' yAxisUnit='RPM' lineNames={['Engine RPM']} />
-					<LapDataChart dataSets={drsData} yAxisLabel='DRS Activation' lineNames={['DRS']} />
-					<LapDataChart dataSets={slipData} yAxisLabel='Wheel Slip' lineNames={tyreKeys} />
+					<GraphContainer>
+						<Button onClick={onResetZoomClicked}>Reset Zoom</Button>
+						<LapDataChart dataSets={lapTimeData} yAxisLabel='Lap Time (s)' yAxisUnit='s' lineNames={['Lap Time']} />
+						<LapDataChart dataSets={speedData} yAxisLabel='Speed (km/h)' yAxisUnit='km/h' lineNames={['Speed']} />
+						<LapDataChart dataSets={throttleData} yAxisLabel='Throttle %' yAxisUnit='%' lineNames={['Throttle']} />
+						<LapDataChart dataSets={brakeData} yAxisLabel='Brake %' yAxisUnit='%' lineNames={['Brake']} />
+						<LapDataChart dataSets={steeringData} yAxisLabel='Steering' lineNames={['Steering']} />
+						<LapDataChart dataSets={gearData} yAxisLabel='Gear' lineNames={['Gear']} />
+						<LapDataChart dataSets={engineRPMData} yAxisLabel='Engine RPM' yAxisUnit='RPM' lineNames={['Engine RPM']} />
+						<LapDataChart dataSets={drsData} yAxisLabel='DRS Activation' lineNames={['DRS']} />
+						<LapDataChart dataSets={slipData} yAxisLabel='Wheel Slip' lineNames={tyreKeys} />
+					</GraphContainer>
+					<Sidebar>
+						<TrackMap data={getPositionData} />
+					</Sidebar>
 				</>
 			}
 			{isLoading && !error && <ScaleLoader />}
-		</div>
+		</Container>
 	)
 }
 

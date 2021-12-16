@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Button } from './button';
+import { Button } from './button/button';
 
 type TabProps = {
 	selected: boolean;

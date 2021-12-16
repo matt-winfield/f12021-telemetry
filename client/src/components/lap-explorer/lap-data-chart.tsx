@@ -1,11 +1,11 @@
-import { CategoryScale, Chart, ChartData, ChartTypeRegistry, InteractionModeMap, Legend, LinearScale, LineElement, PointElement, ScatterController, Tick, Title, Tooltip, TooltipItem } from 'chart.js';
+import { ActiveElement, CategoryScale, Chart, ChartData, ChartEvent, ChartTypeRegistry, InteractionModeMap, Legend, LinearScale, LineElement, PointElement, ScatterController, ScatterDataPoint, Tick, Title, Tooltip, TooltipItem } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { Mode } from 'chartjs-plugin-zoom/types/options';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { roundToDecimalPlaces } from '../../../../common/helpers/number-helpers';
-import { updateZoom } from '../../slices/chart-slice';
+import { updateActiveLapDistance, updateZoom } from '../../slices/chart-slice';
 import { StoreState } from '../../store';
 
 const Container = styled.div`
@@ -88,6 +88,17 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 		dispatch(updateZoom(scale.min, scale.max));
 	}, [dispatch]);
 
+	const onHover = useCallback((event: ChartEvent, activeElements: ActiveElement[], chart: Chart) => {
+		if (activeElements.length < 1) {
+			dispatch(updateActiveLapDistance(undefined));
+			return;
+		}
+
+		const activeElement = activeElements[0];
+		const dataPoint = chart.data.datasets[activeElement.datasetIndex].data[activeElement.index] as ScatterDataPoint;
+		dispatch(updateActiveLapDistance(dataPoint.x));
+	}, [dispatch])
+
 	const getXAxisTickLabel = useCallback((value: string | number, index: number, ticks: Tick[]) => `${roundToDecimalPlaces(Number(value), 1)}m`, [])
 	const getTooltipTitle = useCallback((items: TooltipItem<keyof ChartTypeRegistry>[]) => `${(items[0].raw as ChartDataPoint).x}m`, []);
 	const getTooltipLabel = useCallback((item: TooltipItem<keyof ChartTypeRegistry>) => `${item.dataset.label}: ${item.formattedValue}${yAxisUnit ?? ''}`, [yAxisUnit])
@@ -114,6 +125,7 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 			mode: 'index' as keyof InteractionModeMap,
 			intersect: false
 		},
+		onHover: onHover,
 		scales: {
 			x: {
 				title: {
@@ -169,7 +181,7 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 				}
 			}
 		}
-	}), [dataMax, onZoomOrPan, getXAxisTickLabel, getTooltipTitle, getTooltipLabel, yAxisLabel]);
+	}), [dataMax, onZoomOrPan, onHover, getXAxisTickLabel, getTooltipTitle, getTooltipLabel, yAxisLabel]);
 
 	useEffect(() => {
 		const data: ChartData = {

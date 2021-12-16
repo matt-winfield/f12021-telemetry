@@ -4,11 +4,11 @@ module.exports = function (plop) {
 	});
 
 	plop.setHelper('className', (name) => {
-		return name.replace(/(?:^|\s)+\S/g, match => match.toUpperCase()).replace(/\s/g, '');
+		return name.replace(/(?:^|[\s-])+\S/g, match => match.toUpperCase()).replace(/[\s-]/g, '');
 	});
 
 	plop.setHelper('camelCase', (name) => {
-		return name.replace(/(?:^|\s)+\S/g, match => match.toUpperCase()).replace(/(?:\s)?^\S/g, match => match.toLowerCase()).replace(/\s/g, '');
+		return name.replace(/(?:^|[\s-])+\S/g, match => match.toUpperCase()).replace(/(?:\s)?^\S/g, match => match.toLowerCase()).replace(/[\s-]/g, '');
 	});
 
 	plop.setGenerator('component', {
@@ -17,11 +17,18 @@ module.exports = function (plop) {
 			name: 'name',
 			message: 'Component name'
 		}],
-		actions: [{
-			type: 'add',
-			path: 'src/components/{{fileName name}}.tsx',
-			templateFile: '_templates/component.hbs'
-		}]
+		actions: [
+			{
+				type: 'add',
+				path: 'src/components/{{fileName name}}/{{fileName name}}.tsx',
+				templateFile: '_templates/component.hbs'
+			},
+			{
+				type: 'add',
+				path: 'src/components/{{fileName name}}/{{fileName name}}.test.tsx',
+				templateFile: '_templates/component-tests.hbs'
+			}
+		]
 	});
 
 	plop.setGenerator('slice', {

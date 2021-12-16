@@ -7,7 +7,7 @@ type ButtonProps = {
 	children?: React.ReactNode;
 }
 
-const Container = styled.div<{ selected: boolean }>`
+const Container = styled.button<{ selected: boolean }>`
 	display: inline-block;
 	padding: 5px 7px;
 	margin: 2px;
@@ -16,6 +16,7 @@ const Container = styled.div<{ selected: boolean }>`
 	cursor: pointer;
 	border: 1px solid ${props => props.theme.borders.color};
 	border-radius: 3px;
+	font-size: 1rem;
 
 	&:hover {
 		background-color: ${props => props.selected ? props.theme.button.selectedHover : props.theme.button.hover};

@@ -4,6 +4,7 @@ type SliceState = {
 	zoomStart?: number;
 	zoomEnd?: number;
 	dataMax: number;
+	activeLapDistance?: number;
 }
 
 const initialState: SliceState = {
@@ -40,9 +41,12 @@ export const chartSlice = createSlice({
 		},
 		resetDataMax: (state) => {
 			state.dataMax = 0;
+		},
+		updateActiveLapDistance: (state, action: PayloadAction<number | undefined>) => {
+			state.activeLapDistance = action.payload;
 		}
 	}
 })
 
-export const { updateZoom, resetZoom, updateDataMax, resetDataMax } = chartSlice.actions;
+export const { updateZoom, resetZoom, updateDataMax, resetDataMax, updateActiveLapDistance } = chartSlice.actions;
 export default chartSlice.reducer;

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ScaleLoader } from 'react-spinners';
 import Api from '../../logic/api';
 import TrackFormatter from '../../logic/track-formatter';
-import { Button } from '../button';
+import { Button } from '../button/button';
 
 const TrackList = () => {
 	const { isLoading, error, data: tracks } = useQuery('tracks', Api.fetchTracks,

@@ -6,11 +6,12 @@ import styled from 'styled-components';
 import Api from '../../logic/api';
 import TrackFormatter from '../../logic/track-formatter';
 import { ApplicationRoutes } from '../../models/application-routes';
-import { Button } from '../button';
+import { Button } from '../button/button';
 
 const List = styled.div`
 	display: flex;
 	flex-direction: column;
+	width: fit-content;
 `
 
 const Track = () => {

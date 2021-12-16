@@ -5,7 +5,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^1.6.2",
     "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
+    "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^12.1.10",
     "@types/jest": "^26.0.15",
     "@types/node": "^12.0.0",
@@ -35,7 +35,7 @@
   "scripts": {
     "start": "tsc -b && (concurrently -n \"tsc,react\" \"tsc -b -w\" \"react-app-rewired start\")",
     "build": "tsc -b && react-app-rewired build",
-    "test": "tsc -b && react-app-rewired test",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

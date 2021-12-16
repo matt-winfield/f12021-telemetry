@@ -1,0 +1,12 @@
+import { render } from '@testing-library/react';
+import { ThemeProvider } from 'styled-components';
+import { lightTheme } from '../../themes';
+import {{className name}} from './{{fileName name}}';
+
+test('', async () => {
+	render(
+		<ThemeProvider theme={lightTheme}>
+			<{{className name}}></{{className name}}>
+		</ThemeProvider>
+	);
+});

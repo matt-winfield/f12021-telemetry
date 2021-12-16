@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { ApplicationRoutes } from '../models/application-routes';
-import { Button } from './button';
+import { Button } from './button/button';
 
 const Container = styled.div`
 	display: flex;
