@@ -1,5 +1,7 @@
 import { render, screen } from '@testing-library/react';
+import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
+import store from '../../store';
 import { lightTheme } from '../../themes';
 import TrackMap, { Coordinate } from './track-map';
 
@@ -11,9 +13,11 @@ test('should render svg with provided points', async () => {
 	]
 
 	render(
-		<ThemeProvider theme={lightTheme}>
-			<TrackMap data={dataPoints}></TrackMap>
-		</ThemeProvider>
+		<Provider store={store}>
+			<ThemeProvider theme={lightTheme}>
+				<TrackMap data={dataPoints}></TrackMap>
+			</ThemeProvider>
+		</Provider>
 	);
 
 	const svg = screen.getByTitle('Track Map').parentElement;
@@ -24,7 +28,7 @@ test('should render svg with provided points', async () => {
 	expect(path).toHaveAttribute('d', `M 1 2 L 3 4 L 5 6 Z`)
 });
 
-test('should set viewbox to min and max values in data', async () => {
+test('should set correct viewbox x, y, width and height', async () => {
 	const dataPoints: { [lapDistance: number]: Coordinate } = [
 		{ x: -10, y: 2 },
 		{ x: 3, y: -3 },
@@ -32,12 +36,14 @@ test('should set viewbox to min and max values in data', async () => {
 	]
 
 	render(
-		<ThemeProvider theme={lightTheme}>
-			<TrackMap data={dataPoints}></TrackMap>
-		</ThemeProvider>
+		<Provider store={store}>
+			<ThemeProvider theme={lightTheme}>
+				<TrackMap data={dataPoints}></TrackMap>
+			</ThemeProvider>
+		</Provider>
 	);
 
 	const svg = screen.getByTitle('Track Map').parentElement;
 	expect(svg).toBeInTheDocument();
-	expect(svg).toHaveAttribute('viewBox', '-10 -3 5 6');
+	expect(svg).toHaveAttribute('viewBox', '-10 -3 15 9');
 });
