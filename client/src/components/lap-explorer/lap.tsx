@@ -29,6 +29,9 @@ const GraphContainer = styled.div`
 const Sidebar = styled.div`
 	width: 300px;
 	padding: 10px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 `
 
 const Lap = () => {
@@ -128,7 +131,7 @@ const Lap = () => {
 						<LapDataChart dataSets={slipData} yAxisLabel='Wheel Slip' lineNames={tyreKeys} />
 					</GraphContainer>
 					<Sidebar>
-						<TrackMap data={getPositionData} />
+						<TrackMap data={getPositionData} padding={5} />
 					</Sidebar>
 				</>
 			}

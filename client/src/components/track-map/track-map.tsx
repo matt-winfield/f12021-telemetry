@@ -9,14 +9,15 @@ export type Coordinate = {
 }
 
 type TrackMapProps = {
-	data: { [lapDistance: number]: Coordinate }
+	data: { [lapDistance: number]: Coordinate },
+	padding?: number
 }
 
 const StyledSvg = styled.svg`
 	max-height: 500px;
 `
 
-const TrackMap = ({ data }: TrackMapProps) => {
+const TrackMap = ({ data, padding }: TrackMapProps) => {
 	const zoomStart = useSelector((state: StoreState) => state.charts.zoomStart);
 	const zoomEnd = useSelector((state: StoreState) => state.charts.zoomEnd);
 
@@ -46,8 +47,8 @@ const TrackMap = ({ data }: TrackMapProps) => {
 			}
 		});
 
-		return [output + 'Z', `${minX} ${minY} ${maxX - minX} ${maxY - minY}`];
-	}, [data, zoomStart, zoomEnd])
+		return [output + 'Z', `${minX - (padding ?? 0)} ${minY - (padding ?? 0)} ${maxX - minX + (padding ?? 0) * 2} ${maxY - minY + (padding ?? 0) * 2}`];
+	}, [data, zoomStart, zoomEnd, padding])
 
 	const activeLapDistance = useSelector((state: StoreState) => state.charts.activeLapDistance);
 	const activeCoordinate = useMemo(() => activeLapDistance ? data[activeLapDistance] : undefined, [data, activeLapDistance])

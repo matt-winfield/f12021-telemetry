@@ -47,3 +47,23 @@ test('should set correct viewbox x, y, width and height', async () => {
 	expect(svg).toBeInTheDocument();
 	expect(svg).toHaveAttribute('viewBox', '-10 -3 15 9');
 });
+
+test('should add correct padding to viewBox', async () => {
+	const dataPoints: { [lapDistance: number]: Coordinate } = [
+		{ x: -10, y: 2 },
+		{ x: 3, y: -3 },
+		{ x: 5, y: 6 }
+	]
+
+	render(
+		<Provider store={store}>
+			<ThemeProvider theme={lightTheme}>
+				<TrackMap data={dataPoints} padding={10}></TrackMap>
+			</ThemeProvider>
+		</Provider>
+	);
+
+	const svg = screen.getByTitle('Track Map').parentElement;
+	expect(svg).toBeInTheDocument();
+	expect(svg).toHaveAttribute('viewBox', '-20 -13 35 29');
+});
