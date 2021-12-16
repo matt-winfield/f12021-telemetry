@@ -3,9 +3,11 @@ import { Message } from '../common/types/message';
 import { PacketCarTelemetryData } from '../common/types/packet-car-telemetry-data';
 import { PacketLapData } from '../common/types/packet-lap-data';
 import { PacketMotionData } from '../common/types/packet-motion-data';
+import { PacketParticipantsData } from '../common/types/packet-participants-data';
 import { PacketSessionData } from '../common/types/packet-session-data';
 import LapDataHandler from './data-handlers/lap-data-handler';
 import MotionDataHandler from './data-handlers/motion-data-handler';
+import ParticipantsDataHandler from './data-handlers/participants-data-handler';
 import SessionDataHandler from './data-handlers/session-data-handler';
 import TelemetryDataHandler from './data-handlers/telemetry-data-handler';
 import LocalDatabase from './database/local-database';
@@ -38,12 +40,17 @@ export default class DataManager {
 		if (this.isCarTelemetryData(message)) {
 			TelemetryDataHandler.addCarTelemetryData(message, this.data, this.lapDataHandler.currentLapData);
 		}
+
+		if (this.isParticipants(message)) {
+			ParticipantsDataHandler.addParticipantsData(message, this.data);
+		}
 	}
 
 	public static prepareSessionData(data: SessionData, carIndex: number, lapNumber?: number): void {
 		if (data.cars[carIndex] === undefined) {
 			data.cars[carIndex] = {
 				driverName: '',
+				aiControlled: false,
 				laps: {}
 			}
 		}
@@ -78,5 +85,9 @@ export default class DataManager {
 
 	private isCarTelemetryData(message: Message): message is PacketCarTelemetryData {
 		return message.m_header.m_packetId === PacketIds.CarTelemetry
+	}
+
+	private isParticipants(message: Message): message is PacketParticipantsData {
+		return message.m_header.m_packetId === PacketIds.Participants
 	}
 }

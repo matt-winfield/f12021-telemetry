@@ -37,28 +37,53 @@ export default class LocalDatabase {
 		createLapStatement.run(data.sessionUID, data.trackId, carData.driverName, lapNumber);
 
 		const insertLapData = db.transaction(() => {
+			let currentLapData: Partial<SavedDataProperties> = {}
+
 			for (const lapDistance in lap) {
 				const lapData = lap[lapDistance];
+
+				currentLapData = {
+					worldPositionX: lapData.m_worldPositionX ?? currentLapData.worldPositionX,
+					worldPositionY: lapData.m_worldPositionY ?? currentLapData.worldPositionY,
+					worldPositionZ: lapData.m_worldPositionZ ?? currentLapData.worldPositionZ,
+					gForceLateral: lapData.m_gForceLateral ?? currentLapData.gForceLateral,
+					gForceLongitudinal: lapData.m_gForceLongitudinal ?? currentLapData.gForceLongitudinal,
+					gForceVertical: lapData.m_gForceVertical ?? currentLapData.gForceVertical,
+					currentLapTimeInMS: lapData.m_currentLapTimeInMS ?? currentLapData.currentLapTimeInMS,
+					carPosition: lapData.m_carPosition ?? currentLapData.carPosition,
+					driverStatus: lapData.m_driverStatus ?? currentLapData.driverStatus,
+					suspensionPosition: lapData.m_suspensionPosition ?? currentLapData.suspensionPosition,
+					wheelSlip: lapData.m_wheelSlip ?? currentLapData.wheelSlip,
+					speed: lapData.m_speed ?? currentLapData.speed,
+					throttle: lapData.m_throttle ?? currentLapData.throttle,
+					steering: lapData.m_steer ?? currentLapData.throttle,
+					brake: lapData.m_brake ?? currentLapData.brake,
+					clutch: lapData.m_clutch ?? currentLapData.clutch,
+					gear: lapData.m_gear ?? currentLapData.gear,
+					engineRPM: lapData.m_engineRPM ?? currentLapData.engineRPM,
+					drs: lapData.m_drs ?? currentLapData.drs
+				}
+
 				let nullCheckedData: SavedDataProperties = {
-					worldPositionX: lapData.m_worldPositionX ?? 0,
-					worldPositionY: lapData.m_worldPositionY ?? 0,
-					worldPositionZ: lapData.m_worldPositionZ ?? 0,
-					gForceLateral: lapData.m_gForceLateral ?? 0,
-					gForceLongitudinal: lapData.m_gForceLongitudinal ?? 0,
-					gForceVertical: lapData.m_gForceVertical ?? 0,
-					currentLapTimeInMS: lapData.m_currentLapTimeInMS ?? 0,
-					carPosition: lapData.m_carPosition ?? 0,
-					driverStatus: lapData.m_driverStatus ?? 0,
-					suspensionPosition: lapData.m_suspensionPosition ?? [0, 0, 0, 0],
-					wheelSlip: lapData.m_wheelSlip ?? [0, 0, 0, 0],
-					speed: lapData.m_speed ?? 0,
-					throttle: lapData.m_throttle ?? 0,
-					steering: lapData.m_steer ?? 0,
-					brake: lapData.m_brake ?? 0,
-					clutch: lapData.m_clutch ?? 0,
-					gear: lapData.m_gear ?? 0,
-					engineRPM: lapData.m_engineRPM ?? 0,
-					drs: lapData.m_drs ?? 0
+					worldPositionX: currentLapData.worldPositionX ?? 0,
+					worldPositionY: currentLapData.worldPositionY ?? 0,
+					worldPositionZ: currentLapData.worldPositionZ ?? 0,
+					gForceLateral: currentLapData.gForceLateral ?? 0,
+					gForceLongitudinal: currentLapData.gForceLongitudinal ?? 0,
+					gForceVertical: currentLapData.gForceVertical ?? 0,
+					currentLapTimeInMS: currentLapData.currentLapTimeInMS ?? 0,
+					carPosition: currentLapData.carPosition ?? 0,
+					driverStatus: currentLapData.driverStatus ?? 0,
+					suspensionPosition: currentLapData.suspensionPosition ?? [0, 0, 0, 0],
+					wheelSlip: currentLapData.wheelSlip ?? [0, 0, 0, 0],
+					speed: currentLapData.speed ?? 0,
+					throttle: currentLapData.throttle ?? 0,
+					steering: currentLapData.steering ?? 0,
+					brake: currentLapData.brake ?? 0,
+					clutch: currentLapData.clutch ?? 0,
+					gear: currentLapData.gear ?? 0,
+					engineRPM: currentLapData.engineRPM ?? 0,
+					drs: currentLapData.drs ?? 0
 				}
 
 				const encodedData = this.binaryStorageParser.encodeBuffer(nullCheckedData);

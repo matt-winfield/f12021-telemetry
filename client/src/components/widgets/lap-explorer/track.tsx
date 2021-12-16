@@ -23,17 +23,17 @@ const Track = () => {
 			refetchIntervalInBackground: false
 		});
 
-	const onTrackClicked = useCallback((sessionUID: string, driverName: string, lapNumber: number) => {
+	const onLapClicked = useCallback((sessionUID: string, driverName: string, lapNumber: number) => {
 		navigate(`/${ApplicationRoutes.Laps}/${sessionUID}/${driverName}/${lapNumber}`);
 	}, [navigate])
 
 	const getFormattedLaps = useCallback(() => {
 		return laps?.map(lap => {
-			return <Button onClick={() => onTrackClicked(lap.sessionUID, lap.driverName, lap.lapNumber)} key={`${lap.sessionUID}-${lap.driverName}-${lap.lapNumber}`}>
+			return <Button onClick={() => onLapClicked(lap.sessionUID, lap.driverName, lap.lapNumber)} key={`${lap.sessionUID}-${lap.driverName}-${lap.lapNumber}`}>
 				{TrackFormatter.getTrackName(lap.trackId)} - {lap.driverName} - {lap.lapNumber}
 			</Button>
 		})
-	}, [laps, onTrackClicked])
+	}, [laps, onLapClicked])
 
 	return (
 		<List>

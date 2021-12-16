@@ -13,6 +13,7 @@ export default class SessionData {
 	public cars: {
 		[carIndex: number]: {
 			driverName: string,
+			aiControlled: boolean,
 			laps: Lap
 		}
 	};

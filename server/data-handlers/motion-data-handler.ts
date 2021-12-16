@@ -24,7 +24,6 @@ export default abstract class MotionDataHandler {
 				m_gForceLongitudinal: roundToDecimalPlaces(carMotionData.m_gForceLongitudinal, 3),
 				m_gForceVertical: roundToDecimalPlaces(carMotionData.m_gForceVertical, 3)
 			}
-			data.cars[carIndex].driverName = carIndex.toString();
 		});
 	}
 
