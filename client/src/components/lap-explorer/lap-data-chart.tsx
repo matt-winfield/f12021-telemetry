@@ -1,6 +1,7 @@
 import { ActiveElement, CategoryScale, Chart, ChartData, ChartEvent, ChartTypeRegistry, InteractionModeMap, Legend, LinearScale, LineElement, PointElement, ScatterController, ScatterDataPoint, Tick, Title, Tooltip, TooltipItem } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { Mode } from 'chartjs-plugin-zoom/types/options';
+import deepEqual from 'deep-equal';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useRecoilState, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
@@ -106,7 +107,12 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 
 	const options = useRef({
 		responsive: true,
+		spanGaps: true,
 		maintainAspectRatio: false,
+		animation: {
+			duration: 0
+		},
+		responsiveAnimationDuration: 0,
 		layout: {
 			padding: 20
 		},
@@ -202,6 +208,18 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 	}, [maxLapDistance, onZoomOrPan, onHover, getXAxisTickLabel, getTooltipTitle, getTooltipLabel, yAxisLabel])
 
 	useEffect(() => {
+		if (dataSets.length < 1) return;
+
+		if (dataSets.length === data.current.datasets.length) {
+			for (let i = 0; i < dataSets.length; i++) {
+				let newDataSet = dataSets[i];
+				let oldDataSet = data.current.datasets[i].data;
+				if (deepEqual(newDataSet, oldDataSet)) {
+					return;
+				}
+			}
+		}
+
 		data.current.datasets = [];
 
 		dataSets.forEach((dataSet, index) => {
@@ -209,8 +227,8 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 				label: lineNames[index],
 				data: dataSet,
 				showLine: true,
-				borderColor: lineColors[index % 7],
-				backgroundColor: lineColors[index % 7]
+				borderColor: lineColors[index % 8],
+				backgroundColor: lineColors[index % 8]
 			})
 		})
 
@@ -232,11 +250,18 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 	}, [options]);
 
 	useEffect(() => {
-		if (chartRef.current && zoomStart !== null && zoomEnd !== null) {
-			chartRef.current.zoomScale('x', { min: zoomStart, max: zoomEnd });
-		} else if (chartRef.current) {
-			chartRef.current.zoomScale('x', { min: 0, max: maxLapDistance })
+		if (!chartRef.current) return;
+		if (zoomStart === null && zoomEnd === null
+			&& chartRef.current.scales['x'].min === 0 && chartRef.current.scales['x'].max === maxLapDistance) {
+			return;
 		}
+
+		if (zoomStart !== null && zoomEnd !== null) {
+			chartRef.current.zoomScale('x', { min: zoomStart, max: zoomEnd });
+			return;
+		}
+
+		chartRef.current.zoomScale('x', { min: 0, max: maxLapDistance })
 	}, [zoomStart, zoomEnd, maxLapDistance]);
 
 	return (

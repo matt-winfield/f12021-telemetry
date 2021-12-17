@@ -62,11 +62,11 @@ const TrackMap = ({ lines, padding }: TrackMapProps) => {
 		<StyledSvg viewBox={viewBox}>
 			<title>Track Map</title>
 			<g fill='none'>
-				{paths.map((path, index) => <path key={index} d={path} stroke={lineColors[index % 7]}></path>)}
+				{paths.map((path, index) => <path key={index} d={path} stroke={lineColors[index % 8]}></path>)}
 				{activeCoordinates &&
 					activeCoordinates.map((coordinate, index) =>
 						coordinate
-							? <circle key={index} cx={coordinate.x} cy={coordinate.y} stroke={lineColors[index % 7]} r={5}></circle>
+							? <circle key={index} cx={coordinate.x} cy={coordinate.y} stroke={lineColors[index % 8]} r={5}></circle>
 							: null)
 				}
 			</g>

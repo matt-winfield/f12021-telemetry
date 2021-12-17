@@ -168,15 +168,13 @@ const Lap = () => {
 			setLapLinesData(lapLinesData);
 			setMaxLapDistance(Math.max(...Object.keys(lapData.data).map(Number)));
 		}
-	}, [lapData, queryData, setLapLinesData, setMaxLapDistance])
 
-	useEffect(() => {
 		if (referenceLapData) {
-			const lapLinesData = queryData(referenceLapData);
-			setReferenceLapLinesData(lapLinesData);
+			const referenceLapLinesData = queryData(referenceLapData);
+			setReferenceLapLinesData(referenceLapLinesData);
 			setMaxLapDistance(Math.max(...Object.keys(referenceLapData.data).map(Number)));
 		}
-	}, [referenceLapData, queryData, setLapLinesData, setMaxLapDistance])
+	}, [lapData, referenceLapData, queryData, setMaxLapDistance])
 
 	const positionData = useMemo(() => getPositionData(lapData), [getPositionData, lapData]);
 	const referencePositionData = useMemo(() => getPositionData(referenceLapData), [getPositionData, referenceLapData]);
