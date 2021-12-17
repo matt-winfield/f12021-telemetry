@@ -101,8 +101,8 @@ const Lap = () => {
 
 	const lapTimeData = useMemo(() => getData([x => x.currentLapTimeInMS / 1000]), [getData]);
 	const speedData = useMemo(() => getData([x => x.speed]), [getData]);
-	const throttleData = useMemo(() => getData([x => x.throttle]), [getData]);
-	const brakeData = useMemo(() => getData([x => x.brake]), [getData]);
+	const throttleData = useMemo(() => getData([x => x.throttle * 100]), [getData]);
+	const brakeData = useMemo(() => getData([x => x.brake * 100]), [getData]);
 	const steeringData = useMemo(() => getData([x => x.steering]), [getData]);
 	const gearData = useMemo(() => getData([x => x.gear]), [getData]);
 	const engineRPMData = useMemo(() => getData([x => x.engineRPM]), [getData]);
