@@ -125,7 +125,7 @@ export default class LocalDatabase {
 	public getLapData = (sessionUID: string, driverName: string, lapNumber: number): LapData => {
 		const db = new SqliteDatabase(this.DB_NAME);
 		const lapData = db.prepare('SELECT * FROM LapData WHERE sessionUID = ? AND driverName = ? AND lapNumber = ?')
-			.all(sessionUID, driverName, lapNumber) as { lapDistance: number, data: Buffer }[];
+			.all(sessionUID, driverName, lapNumber) as { trackId: number, lapDistance: number, data: Buffer }[];
 
 		db.close();
 
@@ -134,6 +134,14 @@ export default class LocalDatabase {
 			outputData[dataPoint.lapDistance] = this.binaryStorageParser.parse(dataPoint.data)
 		});
 
-		return outputData;
+		return {
+			lapInfo: {
+				trackId: lapData[0].trackId,
+				sessionUID,
+				driverName,
+				lapNumber
+			},
+			data: outputData
+		};
 	}
 }

@@ -8,5 +8,6 @@ export type LapInfo = {
 }
 
 export type LapData = {
-	[lapDistance: number]: SavedDataProperties;
+	lapInfo: LapInfo,
+	data: { [lapDistance: number]: SavedDataProperties };
 }

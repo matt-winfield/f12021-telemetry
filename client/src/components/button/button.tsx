@@ -5,6 +5,7 @@ type ButtonProps = {
 	selected?: boolean;
 	onClick?: () => void;
 	children?: React.ReactNode;
+	className?: string;
 }
 
 const Container = styled.button<{ selected: boolean }>`
@@ -23,13 +24,13 @@ const Container = styled.button<{ selected: boolean }>`
 	}
 `
 
-export const Button = React.memo(({ onClick, selected, children }: ButtonProps) => {
+export const Button = React.memo(({ onClick, selected, children, className }: ButtonProps) => {
 	const handleClick = useCallback(() => {
 		onClick?.();
 	}, [onClick]);
 
 	return (
-		<Container selected={selected ?? false} onClick={handleClick}>
+		<Container selected={selected ?? false} onClick={handleClick} className={className}>
 			{children}
 		</Container>
 	)
