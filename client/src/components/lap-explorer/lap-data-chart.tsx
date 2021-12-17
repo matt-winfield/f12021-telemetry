@@ -3,9 +3,10 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 import { Mode } from 'chartjs-plugin-zoom/types/options';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { roundToDecimalPlaces } from '../../../../common/helpers/number-helpers';
-import { updateActiveLapDistance, updateZoom } from '../../slices/chart-slice';
+import { updateActiveLapDistance, zoomEndAtom, zoomStartAtom } from '../../slices/chart-slice';
 import { StoreState } from '../../store';
 
 const Container = styled.div`
@@ -79,14 +80,15 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 	const dispatch = useDispatch();
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const chartRef = useRef<Chart>();
-	const zoomStart = useSelector((state: StoreState) => state.charts.zoomStart);
-	const zoomEnd = useSelector((state: StoreState) => state.charts.zoomEnd);
+	const [zoomStart, setZoomStart] = useRecoilState(zoomStartAtom);
+	const [zoomEnd, setZoomEnd] = useRecoilState(zoomEndAtom);
 	const dataMax = useSelector((state: StoreState) => state.charts.dataMax);
 
 	const onZoomOrPan = useCallback((context: { chart: Chart }) => {
 		const scale = context.chart.scales['x'];
-		dispatch(updateZoom(scale.min, scale.max));
-	}, [dispatch]);
+		setZoomStart(scale.min);
+		setZoomEnd(scale.max);
+	}, [setZoomStart, setZoomEnd]);
 
 	const onHover = useCallback((event: ChartEvent, activeElements: ActiveElement[], chart: Chart) => {
 		if (activeElements.length < 1) {
@@ -213,7 +215,7 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 	}, [dataSets, lineNames, options]);
 
 	useEffect(() => {
-		if (chartRef.current && zoomStart !== undefined && zoomEnd !== undefined) {
+		if (chartRef.current && zoomStart !== null && zoomEnd !== null) {
 			chartRef.current.zoomScale('x', { min: zoomStart, max: zoomEnd });
 		} else if (chartRef.current) {
 			chartRef.current.zoomScale('x', { min: 0, max: dataMax })

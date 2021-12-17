@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
+import { zoomEndAtom, zoomStartAtom } from '../../slices/chart-slice';
 import { StoreState } from '../../store';
 
 export type Coordinate = {
@@ -20,8 +22,8 @@ const StyledSvg = styled.svg`
 const lineColors = ['#0037ff', '#ff4b4b', '#09ff00', '#6600ff', '#24b6ff', '#ff47a6', '#b0ff4f', '#d400ff']
 
 const TrackMap = ({ lines, padding }: TrackMapProps) => {
-	const zoomStart = useSelector((state: StoreState) => state.charts.zoomStart);
-	const zoomEnd = useSelector((state: StoreState) => state.charts.zoomEnd);
+	const [zoomStart] = useRecoilState(zoomStartAtom);
+	const [zoomEnd] = useRecoilState(zoomEndAtom);
 
 	const [paths, viewBox] = useMemo(() => {
 		let minX = Infinity;
@@ -42,7 +44,7 @@ const TrackMap = ({ lines, padding }: TrackMapProps) => {
 				path += `${firstCoordinate ? 'M' : 'L'} ${dataPoint.x} ${dataPoint.y} `;
 				firstCoordinate = false;
 
-				if ((zoomStart === undefined || zoomEnd === undefined) || (lapDistance >= zoomStart && lapDistance <= zoomEnd)) {
+				if ((zoomStart === null || zoomEnd === null) || (lapDistance >= zoomStart && lapDistance <= zoomEnd)) {
 					minX = Math.min(dataPoint.x, minX);
 					minY = Math.min(dataPoint.y, minY);
 					maxX = Math.max(dataPoint.x, maxX);

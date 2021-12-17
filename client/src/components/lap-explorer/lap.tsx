@@ -3,12 +3,13 @@ import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { ScaleLoader } from 'react-spinners';
+import { useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { TyreIds } from '../../../../common/constants/tyre-ids';
 import { LapData, LapInfo } from '../../../../common/model/lap-info';
 import { SavedDataProperties } from '../../../../common/model/saved-data-properties';
 import Api from '../../logic/api';
-import { resetDataMax, resetZoom, updateDataMax } from '../../slices/chart-slice';
+import { resetDataMax, updateDataMax, zoomEndAtom, zoomStartAtom } from '../../slices/chart-slice';
 import { Button } from '../button/button';
 import ReferenceDataSelector from '../reference-data-selector/reference-data-selector';
 import TrackMap, { Coordinate } from '../track-map/track-map';
@@ -40,6 +41,8 @@ const Lap = () => {
 	const dispatch = useDispatch();
 	const params = useParams();
 	const [referenceLapInfo, setReferenceLapInfo] = useState<LapInfo>()
+	const resetZoomStart = useResetRecoilState(zoomStartAtom);
+	const resetZoomEnd = useResetRecoilState(zoomEndAtom);
 
 	const { isLoading, error, data: lapData } = useQuery(
 		['track', params.sessionUID, params.driverName, params.lapNumber],
@@ -61,8 +64,9 @@ const Lap = () => {
 		});
 
 	const onResetZoomClicked = useCallback(() => {
-		dispatch(resetZoom());
-	}, [dispatch]);
+		resetZoomStart();
+		resetZoomEnd();
+	}, [resetZoomStart, resetZoomEnd]);
 
 	useEffect(() => {
 		dispatch(resetDataMax());

@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Provider } from 'react-redux';
+import { RecoilRoot } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -14,12 +15,14 @@ const queryClient = new QueryClient();
 ReactDOM.render(
     <React.StrictMode>
         <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-                <ReactQueryDevtools initialIsOpen={false} />
-                <ThemeProvider theme={lightTheme}>
-                    <App />
-                </ThemeProvider>
-            </QueryClientProvider>
+            <RecoilRoot>
+                <QueryClientProvider client={queryClient}>
+                    <ReactQueryDevtools initialIsOpen={false} />
+                    <ThemeProvider theme={lightTheme}>
+                        <App />
+                    </ThemeProvider>
+                </QueryClientProvider>
+            </RecoilRoot>
         </Provider>
     </React.StrictMode>,
     document.getElementById('root')

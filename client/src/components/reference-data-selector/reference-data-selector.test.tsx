@@ -14,7 +14,7 @@ const mockLaps: LapInfo[] = [
 ];
 
 const server = setupServer(
-	rest.get(`http://localhost:3001/laps?trackId=${testTrackId}`, (request, response, context) => {
+	rest.get(`http://localhost:3001/laps`, (request, response, context) => {
 		return response(
 			context.status(200),
 			context.json<LapInfo[]>(mockLaps)
