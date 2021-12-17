@@ -173,7 +173,7 @@ const Lap = () => {
 	useEffect(() => {
 		if (referenceLapData) {
 			const lapLinesData = queryData(referenceLapData);
-			setLapLinesData(lapLinesData);
+			setReferenceLapLinesData(lapLinesData);
 			setMaxLapDistance(Math.max(...Object.keys(referenceLapData.data).map(Number)));
 		}
 	}, [referenceLapData, queryData, setLapLinesData, setMaxLapDistance])

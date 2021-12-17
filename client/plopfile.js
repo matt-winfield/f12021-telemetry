@@ -46,17 +46,4 @@ module.exports = function (plop) {
 			}
 		]
 	});
-
-	plop.setGenerator('slice', {
-		prompts: [{
-			type: 'input',
-			name: 'name',
-			message: 'Slice name'
-		}],
-		actions: [{
-			type: 'add',
-			path: 'src/slices/{{fileName name}}-slice.ts',
-			templateFile: '_templates/slice.hbs'
-		}]
-	})
 };

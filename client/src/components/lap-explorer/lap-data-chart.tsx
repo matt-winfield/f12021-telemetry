@@ -1,7 +1,7 @@
 import { ActiveElement, CategoryScale, Chart, ChartData, ChartEvent, ChartTypeRegistry, InteractionModeMap, Legend, LinearScale, LineElement, PointElement, ScatterController, ScatterDataPoint, Tick, Title, Tooltip, TooltipItem } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { Mode } from 'chartjs-plugin-zoom/types/options';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useRecoilState, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { roundToDecimalPlaces } from '../../../../common/helpers/number-helpers';
@@ -104,7 +104,7 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 	const getTooltipTitle = useCallback((items: TooltipItem<keyof ChartTypeRegistry>[]) => `${(items[0].raw as ChartDataPoint).x}m`, []);
 	const getTooltipLabel = useCallback((item: TooltipItem<keyof ChartTypeRegistry>) => `${item.dataset.label}: ${item.formattedValue}${yAxisUnit ?? ''}`, [yAxisUnit])
 
-	const options = useMemo(() => ({
+	const options = useRef({
 		responsive: true,
 		maintainAspectRatio: false,
 		layout: {
@@ -183,15 +183,29 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 				}
 			}
 		}
-	}), [maxLapDistance, onZoomOrPan, onHover, getXAxisTickLabel, getTooltipTitle, getTooltipLabel, yAxisLabel]);
+	});
+
+	const data = useRef<ChartData>({
+		datasets: []
+	});
 
 	useEffect(() => {
-		const data: ChartData = {
-			datasets: []
-		}
+		options.current.onHover = onHover;
+		options.current.scales.x.ticks.callback = getXAxisTickLabel;
+		options.current.scales.x.max = maxLapDistance;
+		options.current.scales.y.title.text = yAxisLabel;
+		options.current.plugins.tooltip.callbacks.title = getTooltipTitle;
+		options.current.plugins.tooltip.callbacks.label = getTooltipLabel;
+		options.current.plugins.zoom.pan.onPanComplete = onZoomOrPan;
+		options.current.plugins.zoom.zoom.onZoomComplete = onZoomOrPan;
+		chartRef.current?.update();
+	}, [maxLapDistance, onZoomOrPan, onHover, getXAxisTickLabel, getTooltipTitle, getTooltipLabel, yAxisLabel])
+
+	useEffect(() => {
+		data.current.datasets = [];
 
 		dataSets.forEach((dataSet, index) => {
-			data.datasets.push({
+			data.current.datasets.push({
 				label: lineNames[index],
 				data: dataSet,
 				showLine: true,
@@ -200,18 +214,22 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 			})
 		})
 
+		chartRef.current?.update();
+	}, [dataSets, lineNames])
+
+	useEffect(() => {
 		if (canvasRef.current) {
 			chartRef.current = new Chart(canvasRef.current, {
 				type: verticalCursorScatterChartId,
-				data,
-				options
+				data: data.current,
+				options: options.current
 			});
 		}
 
 		return () => {
 			chartRef.current?.destroy();
 		}
-	}, [dataSets, lineNames, options]);
+	}, [options]);
 
 	useEffect(() => {
 		if (chartRef.current && zoomStart !== null && zoomEnd !== null) {
