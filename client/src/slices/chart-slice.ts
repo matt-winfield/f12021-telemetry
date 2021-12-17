@@ -11,9 +11,13 @@ export const zoomEndAtom = atom<number | null>({
 	default: null
 })
 
+export const activeLapDistanceAtom = atom<number | null>({
+	key: 'activeLapDistance',
+	default: null
+})
+
 type SliceState = {
 	dataMax: number;
-	activeLapDistance?: number;
 }
 
 const initialState: SliceState = {
@@ -31,12 +35,9 @@ export const chartSlice = createSlice({
 		},
 		resetDataMax: (state) => {
 			state.dataMax = 0;
-		},
-		updateActiveLapDistance: (state, action: PayloadAction<number | undefined>) => {
-			state.activeLapDistance = action.payload;
 		}
 	}
 })
 
-export const { updateDataMax, resetDataMax, updateActiveLapDistance } = chartSlice.actions;
+export const { updateDataMax, resetDataMax } = chartSlice.actions;
 export default chartSlice.reducer;

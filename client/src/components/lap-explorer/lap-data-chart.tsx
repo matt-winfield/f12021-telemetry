@@ -2,11 +2,11 @@ import { ActiveElement, CategoryScale, Chart, ChartData, ChartEvent, ChartTypeRe
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { Mode } from 'chartjs-plugin-zoom/types/options';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useRecoilState } from 'recoil';
+import { useSelector } from 'react-redux';
+import { useRecoilState, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { roundToDecimalPlaces } from '../../../../common/helpers/number-helpers';
-import { updateActiveLapDistance, zoomEndAtom, zoomStartAtom } from '../../slices/chart-slice';
+import { activeLapDistanceAtom, zoomEndAtom, zoomStartAtom } from '../../slices/chart-slice';
 import { StoreState } from '../../store';
 
 const Container = styled.div`
@@ -77,11 +77,12 @@ Chart.register(
 );
 
 const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataChartProps) => {
-	const dispatch = useDispatch();
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const chartRef = useRef<Chart>();
 	const [zoomStart, setZoomStart] = useRecoilState(zoomStartAtom);
 	const [zoomEnd, setZoomEnd] = useRecoilState(zoomEndAtom);
+	const [, updateActiveLapDistance] = useRecoilState(activeLapDistanceAtom);
+	const resetActiveLapDistance = useResetRecoilState(activeLapDistanceAtom);
 	const dataMax = useSelector((state: StoreState) => state.charts.dataMax);
 
 	const onZoomOrPan = useCallback((context: { chart: Chart }) => {
@@ -92,14 +93,14 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 
 	const onHover = useCallback((event: ChartEvent, activeElements: ActiveElement[], chart: Chart) => {
 		if (activeElements.length < 1) {
-			dispatch(updateActiveLapDistance(undefined));
+			resetActiveLapDistance();
 			return;
 		}
 
 		const activeElement = activeElements[0];
 		const dataPoint = chart.data.datasets[activeElement.datasetIndex].data[activeElement.index] as ScatterDataPoint;
-		dispatch(updateActiveLapDistance(dataPoint.x));
-	}, [dispatch])
+		updateActiveLapDistance(dataPoint.x);
+	}, [updateActiveLapDistance, resetActiveLapDistance])
 
 	const getXAxisTickLabel = useCallback((value: string | number, index: number, ticks: Tick[]) => `${roundToDecimalPlaces(Number(value), 1)}m`, [])
 	const getTooltipTitle = useCallback((items: TooltipItem<keyof ChartTypeRegistry>[]) => `${(items[0].raw as ChartDataPoint).x}m`, []);

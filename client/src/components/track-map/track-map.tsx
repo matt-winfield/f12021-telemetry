@@ -1,9 +1,7 @@
 import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
-import { zoomEndAtom, zoomStartAtom } from '../../slices/chart-slice';
-import { StoreState } from '../../store';
+import { activeLapDistanceAtom, zoomEndAtom, zoomStartAtom } from '../../slices/chart-slice';
 
 export type Coordinate = {
 	x: number;
@@ -24,6 +22,8 @@ const lineColors = ['#0037ff', '#ff4b4b', '#09ff00', '#6600ff', '#24b6ff', '#ff4
 const TrackMap = ({ lines, padding }: TrackMapProps) => {
 	const [zoomStart] = useRecoilState(zoomStartAtom);
 	const [zoomEnd] = useRecoilState(zoomEndAtom);
+	const [activeLapDistance] = useRecoilState(activeLapDistanceAtom);
+	const activeCoordinates = useMemo(() => activeLapDistance ? lines.map(line => line[activeLapDistance]) : undefined, [lines, activeLapDistance])
 
 	const [paths, viewBox] = useMemo(() => {
 		let minX = Infinity;
@@ -57,9 +57,6 @@ const TrackMap = ({ lines, padding }: TrackMapProps) => {
 
 		return [paths, `${minX - (padding ?? 0)} ${minY - (padding ?? 0)} ${maxX - minX + (padding ?? 0) * 2} ${maxY - minY + (padding ?? 0) * 2}`];
 	}, [lines, zoomStart, zoomEnd, padding])
-
-	const activeLapDistance = useSelector((state: StoreState) => state.charts.activeLapDistance);
-	const activeCoordinates = useMemo(() => activeLapDistance ? lines.map(line => line[activeLapDistance]) : undefined, [lines, activeLapDistance])
 
 	return (
 		<StyledSvg viewBox={viewBox}>

@@ -176,7 +176,6 @@ const Lap = () => {
 			{!isLoading && !error &&
 				<>
 					<GraphContainer>
-						<Button onClick={onResetZoomClicked}>Reset Zoom</Button>
 						<LapDataChart dataSets={[...speedData, ...referenceSpeedData]} yAxisLabel='Speed (km/h)' yAxisUnit='km/h' lineNames={standardLineNames} />
 						<LapDataChart dataSets={[...throttleData, ...referenceThrottleData]} yAxisLabel='Throttle %' yAxisUnit='%' lineNames={standardLineNames} />
 						<LapDataChart dataSets={[...brakeData, ...referenceBrakeData]} yAxisLabel='Brake %' yAxisUnit='%' lineNames={standardLineNames} />
@@ -187,6 +186,7 @@ const Lap = () => {
 						<LapDataChart dataSets={[...slipData, ...referenceSlipData]} yAxisLabel='Wheel Slip' lineNames={tyreLineNames} />
 					</GraphContainer>
 					<Sidebar>
+						<Button onClick={onResetZoomClicked}>Reset Zoom</Button>
 						<TrackMap lines={[positionData, referencePositionData]} padding={5} />
 						{lapData &&
 							<ReferenceDataSelector trackId={lapData.lapInfo.trackId} onReferenceDataChange={onReferenceLapChanged}>
