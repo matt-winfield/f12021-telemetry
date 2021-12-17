@@ -66,7 +66,7 @@ const TrackMap = ({ lines, padding }: TrackMapProps) => {
 				{activeCoordinates &&
 					activeCoordinates.map((coordinate, index) =>
 						coordinate
-							? <circle cx={coordinate.x} cy={coordinate.y} stroke={lineColors[index % 7]} r={5}></circle>
+							? <circle key={index} cx={coordinate.x} cy={coordinate.y} stroke={lineColors[index % 7]} r={5}></circle>
 							: null)
 				}
 			</g>

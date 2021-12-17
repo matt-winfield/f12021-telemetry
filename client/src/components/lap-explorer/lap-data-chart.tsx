@@ -2,12 +2,10 @@ import { ActiveElement, CategoryScale, Chart, ChartData, ChartEvent, ChartTypeRe
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { Mode } from 'chartjs-plugin-zoom/types/options';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import { useRecoilState, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { roundToDecimalPlaces } from '../../../../common/helpers/number-helpers';
-import { activeLapDistanceAtom, zoomEndAtom, zoomStartAtom } from '../../slices/chart-slice';
-import { StoreState } from '../../store';
+import { activeLapDistanceAtom, maxLapDistanceAtom, zoomEndAtom, zoomStartAtom } from '../../slices/chart-slice';
 
 const Container = styled.div`
 	width: 100%;
@@ -83,7 +81,7 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 	const [zoomEnd, setZoomEnd] = useRecoilState(zoomEndAtom);
 	const [, updateActiveLapDistance] = useRecoilState(activeLapDistanceAtom);
 	const resetActiveLapDistance = useResetRecoilState(activeLapDistanceAtom);
-	const dataMax = useSelector((state: StoreState) => state.charts.dataMax);
+	const [maxLapDistance] = useRecoilState(maxLapDistanceAtom);
 
 	const onZoomOrPan = useCallback((context: { chart: Chart }) => {
 		const scale = context.chart.scales['x'];
@@ -140,7 +138,7 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 					callback: getXAxisTickLabel
 				},
 				min: 0,
-				max: dataMax
+				max: maxLapDistance
 			},
 			y: {
 				title: {
@@ -185,7 +183,7 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 				}
 			}
 		}
-	}), [dataMax, onZoomOrPan, onHover, getXAxisTickLabel, getTooltipTitle, getTooltipLabel, yAxisLabel]);
+	}), [maxLapDistance, onZoomOrPan, onHover, getXAxisTickLabel, getTooltipTitle, getTooltipLabel, yAxisLabel]);
 
 	useEffect(() => {
 		const data: ChartData = {
@@ -219,9 +217,9 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 		if (chartRef.current && zoomStart !== null && zoomEnd !== null) {
 			chartRef.current.zoomScale('x', { min: zoomStart, max: zoomEnd });
 		} else if (chartRef.current) {
-			chartRef.current.zoomScale('x', { min: 0, max: dataMax })
+			chartRef.current.zoomScale('x', { min: 0, max: maxLapDistance })
 		}
-	}, [zoomStart, zoomEnd, dataMax]);
+	}, [zoomStart, zoomEnd, maxLapDistance]);
 
 	return (
 		<Container>

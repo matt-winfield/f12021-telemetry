@@ -1,15 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
-import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { ScaleLoader } from 'react-spinners';
-import { useResetRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { TyreIds } from '../../../../common/constants/tyre-ids';
 import { LapData, LapInfo } from '../../../../common/model/lap-info';
 import { SavedDataProperties } from '../../../../common/model/saved-data-properties';
 import Api from '../../logic/api';
-import { resetDataMax, updateDataMax, zoomEndAtom, zoomStartAtom } from '../../slices/chart-slice';
+import { maxLapDistanceAtom, zoomEndAtom, zoomStartAtom } from '../../slices/chart-slice';
 import { Button } from '../button/button';
 import ReferenceDataSelector from '../reference-data-selector/reference-data-selector';
 import TrackMap, { Coordinate } from '../track-map/track-map';
@@ -37,12 +36,37 @@ const Sidebar = styled.div`
 	align-items: center;
 `
 
+type LapLinesData = {
+	speedData: ChartDataPoint[][],
+	throttleData: ChartDataPoint[][],
+	brakeData: ChartDataPoint[][],
+	steeringData: ChartDataPoint[][],
+	gearData: ChartDataPoint[][],
+	engineRPMData: ChartDataPoint[][],
+	drsData: ChartDataPoint[][],
+	slipData: ChartDataPoint[][]
+}
+
+const initialData: LapLinesData = {
+	speedData: [],
+	throttleData: [],
+	brakeData: [],
+	steeringData: [],
+	gearData: [],
+	engineRPMData: [],
+	drsData: [],
+	slipData: []
+}
+
 const Lap = () => {
-	const dispatch = useDispatch();
 	const params = useParams();
 	const [referenceLapInfo, setReferenceLapInfo] = useState<LapInfo>()
 	const resetZoomStart = useResetRecoilState(zoomStartAtom);
 	const resetZoomEnd = useResetRecoilState(zoomEndAtom);
+	const [, setMaxLapDistance] = useRecoilState(maxLapDistanceAtom);
+	const resetMaxLapDistance = useResetRecoilState(maxLapDistanceAtom);
+	const [lapLinesData, setLapLinesData] = useState(initialData);
+	const [referenceLapLinesData, setReferenceLapLinesData] = useState(initialData);
 
 	const { isLoading, error, data: lapData } = useQuery(
 		['track', params.sessionUID, params.driverName, params.lapNumber],
@@ -69,8 +93,8 @@ const Lap = () => {
 	}, [resetZoomStart, resetZoomEnd]);
 
 	useEffect(() => {
-		dispatch(resetDataMax());
-	}, [dispatch])
+		resetMaxLapDistance();
+	}, [resetMaxLapDistance])
 
 	const onReferenceLapChanged = useCallback((lapInfo?: LapInfo) => {
 		setReferenceLapInfo(lapInfo);
@@ -81,7 +105,7 @@ const Lap = () => {
 
 		let outputData: ChartDataPoint[][] = [];
 
-		let maxLapDistance = 0;
+		let newMaxLapDistance = 0;
 		for (const selector of selectors) {
 			const values: ChartDataPoint[] = [];
 			// eslint-disable-next-line no-loop-func
@@ -89,7 +113,7 @@ const Lap = () => {
 				const lapDistance = Number(key);
 				const dataPoint = lapData.data[lapDistance];
 				const value = selector(dataPoint);
-				maxLapDistance = Math.max(maxLapDistance, lapDistance);
+				newMaxLapDistance = Math.max(newMaxLapDistance, lapDistance);
 
 				values.push({
 					x: lapDistance,
@@ -98,10 +122,8 @@ const Lap = () => {
 			});
 			outputData.push(values);
 		}
-
-		dispatch(updateDataMax(maxLapDistance));
 		return outputData;
-	}, [dispatch]);
+	}, []);
 
 	const getPositionData = useCallback((lapData?: LapData) => {
 		let outputData: { [lapDistance: number]: Coordinate } = {};
@@ -140,25 +162,21 @@ const Lap = () => {
 		};
 	}, [getData]);
 
-	const {
-		speedData,
-		throttleData,
-		brakeData,
-		steeringData,
-		gearData,
-		engineRPMData,
-		drsData,
-		slipData } = useMemo(() => queryData(lapData), [queryData, lapData]);
+	useEffect(() => {
+		if (lapData) {
+			const lapLinesData = queryData(lapData);
+			setLapLinesData(lapLinesData);
+			setMaxLapDistance(Math.max(...Object.keys(lapData.data).map(Number)));
+		}
+	}, [lapData, queryData, setLapLinesData, setMaxLapDistance])
 
-	const {
-		speedData: referenceSpeedData,
-		throttleData: referenceThrottleData,
-		brakeData: referenceBrakeData,
-		steeringData: referenceSteeringData,
-		gearData: referenceGearData,
-		engineRPMData: referenceEngineRPMData,
-		drsData: referenceDrsData,
-		slipData: referenceSlipData } = useMemo(() => queryData(referenceLapData), [queryData, referenceLapData]);
+	useEffect(() => {
+		if (referenceLapData) {
+			const lapLinesData = queryData(referenceLapData);
+			setLapLinesData(lapLinesData);
+			setMaxLapDistance(Math.max(...Object.keys(referenceLapData.data).map(Number)));
+		}
+	}, [referenceLapData, queryData, setLapLinesData, setMaxLapDistance])
 
 	const positionData = useMemo(() => getPositionData(lapData), [getPositionData, lapData]);
 	const referencePositionData = useMemo(() => getPositionData(referenceLapData), [getPositionData, referenceLapData]);
@@ -176,14 +194,14 @@ const Lap = () => {
 			{!isLoading && !error &&
 				<>
 					<GraphContainer>
-						<LapDataChart dataSets={[...speedData, ...referenceSpeedData]} yAxisLabel='Speed (km/h)' yAxisUnit='km/h' lineNames={standardLineNames} />
-						<LapDataChart dataSets={[...throttleData, ...referenceThrottleData]} yAxisLabel='Throttle %' yAxisUnit='%' lineNames={standardLineNames} />
-						<LapDataChart dataSets={[...brakeData, ...referenceBrakeData]} yAxisLabel='Brake %' yAxisUnit='%' lineNames={standardLineNames} />
-						<LapDataChart dataSets={[...steeringData, ...referenceSteeringData]} yAxisLabel='Steering' lineNames={standardLineNames} />
-						<LapDataChart dataSets={[...gearData, ...referenceGearData]} yAxisLabel='Gear' lineNames={standardLineNames} />
-						<LapDataChart dataSets={[...engineRPMData, ...referenceEngineRPMData]} yAxisLabel='Engine RPM' yAxisUnit='RPM' lineNames={standardLineNames} />
-						<LapDataChart dataSets={[...drsData, ...referenceDrsData]} yAxisLabel='DRS Activation' lineNames={standardLineNames} />
-						<LapDataChart dataSets={[...slipData, ...referenceSlipData]} yAxisLabel='Wheel Slip' lineNames={tyreLineNames} />
+						<LapDataChart dataSets={[...lapLinesData.speedData, ...referenceLapLinesData.speedData]} yAxisLabel='Speed (km/h)' yAxisUnit='km/h' lineNames={standardLineNames} />
+						<LapDataChart dataSets={[...lapLinesData.throttleData, ...referenceLapLinesData.throttleData]} yAxisLabel='Throttle %' yAxisUnit='%' lineNames={standardLineNames} />
+						<LapDataChart dataSets={[...lapLinesData.brakeData, ...referenceLapLinesData.brakeData]} yAxisLabel='Brake %' yAxisUnit='%' lineNames={standardLineNames} />
+						<LapDataChart dataSets={[...lapLinesData.steeringData, ...referenceLapLinesData.steeringData]} yAxisLabel='Steering' lineNames={standardLineNames} />
+						<LapDataChart dataSets={[...lapLinesData.gearData, ...referenceLapLinesData.gearData]} yAxisLabel='Gear' lineNames={standardLineNames} />
+						<LapDataChart dataSets={[...lapLinesData.engineRPMData, ...referenceLapLinesData.engineRPMData]} yAxisLabel='Engine RPM' yAxisUnit='RPM' lineNames={standardLineNames} />
+						<LapDataChart dataSets={[...lapLinesData.drsData, ...referenceLapLinesData.drsData]} yAxisLabel='DRS Activation' lineNames={standardLineNames} />
+						<LapDataChart dataSets={[...lapLinesData.slipData, ...referenceLapLinesData.slipData]} yAxisLabel='Wheel Slip' lineNames={tyreLineNames} />
 					</GraphContainer>
 					<Sidebar>
 						<Button onClick={onResetZoomClicked}>Reset Zoom</Button>
