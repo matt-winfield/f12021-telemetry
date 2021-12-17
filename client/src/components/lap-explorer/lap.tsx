@@ -50,7 +50,7 @@ const Lap = () => {
 			refetchIntervalInBackground: false
 		});
 
-	const { isLoading: isLoadingReference, error: referenceDataError, data: referenceLapData } = useQuery(
+	const { data: referenceLapData } = useQuery(
 		['track', referenceLapInfo?.sessionUID, referenceLapInfo?.driverName, referenceLapInfo?.lapNumber],
 		() => Api.fetchLapData(referenceLapInfo?.sessionUID ?? '', referenceLapInfo?.driverName ?? '', Number(referenceLapInfo?.lapNumber)),
 		{
@@ -99,7 +99,7 @@ const Lap = () => {
 		return outputData;
 	}, [dispatch]);
 
-	const getPositionData = useMemo(() => {
+	const getPositionData = useCallback((lapData?: LapData) => {
 		let outputData: { [lapDistance: number]: Coordinate } = {};
 
 		if (!lapData) return [];
@@ -115,7 +115,7 @@ const Lap = () => {
 		});
 
 		return outputData;
-	}, [lapData])
+	}, [])
 
 	const queryData = useCallback((data?: LapData) => {
 		return {
@@ -137,7 +137,6 @@ const Lap = () => {
 	}, [getData]);
 
 	const {
-		lapTimeData,
 		speedData,
 		throttleData,
 		brakeData,
@@ -148,7 +147,6 @@ const Lap = () => {
 		slipData } = useMemo(() => queryData(lapData), [queryData, lapData]);
 
 	const {
-		lapTimeData: referenceLapTimeData,
 		speedData: referenceSpeedData,
 		throttleData: referenceThrottleData,
 		brakeData: referenceBrakeData,
@@ -157,6 +155,9 @@ const Lap = () => {
 		engineRPMData: referenceEngineRPMData,
 		drsData: referenceDrsData,
 		slipData: referenceSlipData } = useMemo(() => queryData(referenceLapData), [queryData, referenceLapData]);
+
+	const positionData = useMemo(() => getPositionData(lapData), [getPositionData, lapData]);
+	const referencePositionData = useMemo(() => getPositionData(referenceLapData), [getPositionData, referenceLapData]);
 
 	const standardLineNames = useMemo(() => [params.driverName ?? '', referenceLapInfo?.driverName ?? ''], [params.driverName, referenceLapInfo?.driverName])
 	const tyreLineNames = useMemo(
@@ -182,7 +183,7 @@ const Lap = () => {
 						<LapDataChart dataSets={[...slipData, ...referenceSlipData]} yAxisLabel='Wheel Slip' lineNames={tyreLineNames} />
 					</GraphContainer>
 					<Sidebar>
-						<TrackMap data={getPositionData} padding={5} />
+						<TrackMap lines={[positionData, referencePositionData]} padding={5} />
 						{lapData &&
 							<ReferenceDataSelector trackId={lapData.lapInfo.trackId} onReferenceDataChange={onReferenceLapChanged}>
 								Select Reference Data

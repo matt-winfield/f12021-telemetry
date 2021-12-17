@@ -6,16 +6,16 @@ import { lightTheme } from '../../themes';
 import TrackMap, { Coordinate } from './track-map';
 
 test('should render svg with provided points', async () => {
-	const dataPoints: Coordinate[] = [
+	const dataPoints: { [lapDistance: number]: Coordinate }[] = [[
 		{ x: 1, y: 2 },
 		{ x: 3, y: 4 },
 		{ x: 5, y: 6 }
-	]
+	]];
 
 	render(
 		<Provider store={store}>
 			<ThemeProvider theme={lightTheme}>
-				<TrackMap data={dataPoints}></TrackMap>
+				<TrackMap lines={dataPoints}></TrackMap>
 			</ThemeProvider>
 		</Provider>
 	);
@@ -29,16 +29,16 @@ test('should render svg with provided points', async () => {
 });
 
 test('should set correct viewbox x, y, width and height', async () => {
-	const dataPoints: { [lapDistance: number]: Coordinate } = [
+	const dataPoints: { [lapDistance: number]: Coordinate }[] = [[
 		{ x: -10, y: 2 },
 		{ x: 3, y: -3 },
 		{ x: 5, y: 6 }
-	]
+	]]
 
 	render(
 		<Provider store={store}>
 			<ThemeProvider theme={lightTheme}>
-				<TrackMap data={dataPoints}></TrackMap>
+				<TrackMap lines={dataPoints}></TrackMap>
 			</ThemeProvider>
 		</Provider>
 	);
@@ -49,16 +49,16 @@ test('should set correct viewbox x, y, width and height', async () => {
 });
 
 test('should add correct padding to viewBox', async () => {
-	const dataPoints: { [lapDistance: number]: Coordinate } = [
+	const dataPoints: { [lapDistance: number]: Coordinate }[] = [[
 		{ x: -10, y: 2 },
 		{ x: 3, y: -3 },
 		{ x: 5, y: 6 }
-	]
+	]]
 
 	render(
 		<Provider store={store}>
 			<ThemeProvider theme={lightTheme}>
-				<TrackMap data={dataPoints} padding={10}></TrackMap>
+				<TrackMap lines={dataPoints} padding={10}></TrackMap>
 			</ThemeProvider>
 		</Provider>
 	);

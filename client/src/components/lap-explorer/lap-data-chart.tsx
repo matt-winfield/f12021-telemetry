@@ -122,8 +122,9 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 			axis: 'x'
 		},
 		interaction: {
-			mode: 'index' as keyof InteractionModeMap,
-			intersect: false
+			mode: 'nearest' as keyof InteractionModeMap,
+			intersect: false,
+			axis: 'x' as const
 		},
 		onHover: onHover,
 		scales: {

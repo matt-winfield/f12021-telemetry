@@ -9,7 +9,7 @@ export type Coordinate = {
 }
 
 type TrackMapProps = {
-	data: { [lapDistance: number]: Coordinate },
+	lines: { [lapDistance: number]: Coordinate }[],
 	padding?: number
 }
 
@@ -17,49 +17,58 @@ const StyledSvg = styled.svg`
 	max-height: 500px;
 `
 
-const TrackMap = ({ data, padding }: TrackMapProps) => {
+const lineColors = ['#0037ff', '#ff4b4b', '#09ff00', '#6600ff', '#24b6ff', '#ff47a6', '#b0ff4f', '#d400ff']
+
+const TrackMap = ({ lines, padding }: TrackMapProps) => {
 	const zoomStart = useSelector((state: StoreState) => state.charts.zoomStart);
 	const zoomEnd = useSelector((state: StoreState) => state.charts.zoomEnd);
 
-	const [path, viewBox] = useMemo(() => {
-		let output = '';
-
+	const [paths, viewBox] = useMemo(() => {
 		let minX = Infinity;
 		let minY = Infinity;
 		let maxX = -Infinity;
 		let maxY = -Infinity;
 
-		let firstCoordinate = true;
-		Object.keys(data).forEach((key) => {
-			let lapDistance = Number(key);
-			const dataPoint = data[lapDistance];
+		let paths: string[] = []
+		for (let line of lines) {
+			let path = '';
+			let firstCoordinate = true;
+			for (let key of Object.keys(line)) {
+				let lapDistance = Number(key);
+				const dataPoint = line[lapDistance];
 
-			if (dataPoint.x === 0 && dataPoint.y === 0) return;
+				if (dataPoint.x === 0 && dataPoint.y === 0) continue;
 
-			output += `${firstCoordinate ? 'M' : 'L'} ${dataPoint.x} ${dataPoint.y} `;
-			firstCoordinate = false;
+				path += `${firstCoordinate ? 'M' : 'L'} ${dataPoint.x} ${dataPoint.y} `;
+				firstCoordinate = false;
 
-			if ((zoomStart === undefined || zoomEnd === undefined) || (lapDistance >= zoomStart && lapDistance <= zoomEnd)) {
-				minX = Math.min(dataPoint.x, minX);
-				minY = Math.min(dataPoint.y, minY);
-				maxX = Math.max(dataPoint.x, maxX);
-				maxY = Math.max(dataPoint.y, maxY);
-			}
-		});
+				if ((zoomStart === undefined || zoomEnd === undefined) || (lapDistance >= zoomStart && lapDistance <= zoomEnd)) {
+					minX = Math.min(dataPoint.x, minX);
+					minY = Math.min(dataPoint.y, minY);
+					maxX = Math.max(dataPoint.x, maxX);
+					maxY = Math.max(dataPoint.y, maxY);
+				}
+			};
+			path += 'Z';
+			paths.push(path);
+		}
 
-		return [output + 'Z', `${minX - (padding ?? 0)} ${minY - (padding ?? 0)} ${maxX - minX + (padding ?? 0) * 2} ${maxY - minY + (padding ?? 0) * 2}`];
-	}, [data, zoomStart, zoomEnd, padding])
+		return [paths, `${minX - (padding ?? 0)} ${minY - (padding ?? 0)} ${maxX - minX + (padding ?? 0) * 2} ${maxY - minY + (padding ?? 0) * 2}`];
+	}, [lines, zoomStart, zoomEnd, padding])
 
 	const activeLapDistance = useSelector((state: StoreState) => state.charts.activeLapDistance);
-	const activeCoordinate = useMemo(() => activeLapDistance ? data[activeLapDistance] : undefined, [data, activeLapDistance])
+	const activeCoordinates = useMemo(() => activeLapDistance ? lines.map(line => line[activeLapDistance]) : undefined, [lines, activeLapDistance])
 
 	return (
 		<StyledSvg viewBox={viewBox}>
 			<title>Track Map</title>
-			<g stroke='#0037ff' fill='none'>
-				<path d={path}></path>
-				{activeCoordinate &&
-					<circle cx={activeCoordinate.x} cy={activeCoordinate.y} r={5}></circle>
+			<g fill='none'>
+				{paths.map((path, index) => <path key={index} d={path} stroke={lineColors[index % 7]}></path>)}
+				{activeCoordinates &&
+					activeCoordinates.map((coordinate, index) =>
+						coordinate
+							? <circle cx={coordinate.x} cy={coordinate.y} stroke={lineColors[index % 7]} r={5}></circle>
+							: null)
 				}
 			</g>
 		</StyledSvg>
