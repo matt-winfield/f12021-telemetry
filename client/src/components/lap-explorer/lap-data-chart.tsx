@@ -109,10 +109,6 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 		responsive: true,
 		spanGaps: true,
 		maintainAspectRatio: false,
-		animation: {
-			duration: 0
-		},
-		responsiveAnimationDuration: 0,
 		layout: {
 			padding: 20
 		},
@@ -196,6 +192,8 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 	});
 
 	useEffect(() => {
+		if (maxLapDistance <= 0) return;
+
 		options.current.onHover = onHover;
 		options.current.scales.x.ticks.callback = getXAxisTickLabel;
 		options.current.scales.x.max = maxLapDistance;
@@ -204,7 +202,7 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 		options.current.plugins.tooltip.callbacks.label = getTooltipLabel;
 		options.current.plugins.zoom.pan.onPanComplete = onZoomOrPan;
 		options.current.plugins.zoom.zoom.onZoomComplete = onZoomOrPan;
-		chartRef.current?.update();
+		chartRef.current?.update('none');
 	}, [maxLapDistance, onZoomOrPan, onHover, getXAxisTickLabel, getTooltipTitle, getTooltipLabel, yAxisLabel])
 
 	useEffect(() => {
@@ -232,7 +230,7 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 			})
 		})
 
-		chartRef.current?.update();
+		chartRef.current?.update('none');
 	}, [dataSets, lineNames])
 
 	useEffect(() => {
@@ -247,7 +245,7 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 		return () => {
 			chartRef.current?.destroy();
 		}
-	}, [options]);
+	}, []);
 
 	useEffect(() => {
 		if (!chartRef.current) return;
@@ -257,11 +255,11 @@ const LapDataChart = ({ dataSets, lineNames, yAxisLabel, yAxisUnit }: LapDataCha
 		}
 
 		if (zoomStart !== null && zoomEnd !== null) {
-			chartRef.current.zoomScale('x', { min: zoomStart, max: zoomEnd });
+			chartRef.current.zoomScale('x', { min: zoomStart, max: zoomEnd }, 'none');
 			return;
 		}
 
-		chartRef.current.zoomScale('x', { min: 0, max: maxLapDistance })
+		chartRef.current.zoomScale('x', { min: 0, max: maxLapDistance }, 'none')
 	}, [zoomStart, zoomEnd, maxLapDistance]);
 
 	return (
