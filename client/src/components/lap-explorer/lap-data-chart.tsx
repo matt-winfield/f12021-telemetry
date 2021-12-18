@@ -1,4 +1,4 @@
-import { ActiveElement, CategoryScale, Chart, ChartData, ChartEvent, ChartTypeRegistry, InteractionModeMap, Legend, LinearScale, LineElement, PointElement, ScatterController, ScatterDataPoint, Tick, Title, Tooltip, TooltipItem } from 'chart.js';
+import { ActiveElement, CategoryScale, Chart, ChartData, ChartEvent, ChartTypeRegistry, InteractionModeMap, Legend, LinearScale, LineElement, PointElement, ScatterDataPoint, Tick, Title, Tooltip, TooltipItem } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { Mode } from 'chartjs-plugin-zoom/types/options';
 import deepEqual from 'deep-equal';
@@ -7,6 +7,7 @@ import { useRecoilState, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { roundToDecimalPlaces } from '../../../../common/helpers/number-helpers';
 import { activeLapDistanceAtom, maxLapDistanceAtom, zoomEndAtom, zoomStartAtom } from '../../slices/chart-slice';
+import { VerticalCursorScatterChart, verticalCursorScatterChartId } from './vertical-cursor-scatter-chart';
 
 const Container = styled.div`
 	width: 100%;
@@ -27,41 +28,6 @@ type LapDataChartProps = {
 }
 
 const lineColors = ['#0037ff', '#ff4b4b', '#09ff00', '#6600ff', '#24b6ff', '#ff47a6', '#b0ff4f', '#d400ff']
-
-const verticalCursorScatterChartId = 'verticalCursorScatterChart';
-class VerticalCursorScatterChart extends ScatterController {
-	public static id: string = verticalCursorScatterChartId;
-	public static defaults = ScatterController.defaults;
-
-	public draw = (): void => {
-		super.draw();
-
-		const activeElements = this.chart.tooltip?.getActiveElements();
-
-		if (activeElements !== undefined && activeElements.length > 0) {
-			let activePoint = activeElements[0],
-				ctx = this.chart.ctx,
-				x = activePoint.element.tooltipPosition().x,
-				topY = this.chart.scales['y']?.top,
-				bottomY = this.chart.scales['y']?.bottom;
-
-			ctx.save();
-			ctx.beginPath();
-			ctx.moveTo(x, topY);
-			ctx.lineTo(x, bottomY);
-			ctx.lineWidth = 2;
-			ctx.strokeStyle = '#38acff39';
-			ctx.stroke();
-			ctx.restore();
-		}
-	}
-}
-
-declare module 'chart.js' {
-	interface ChartTypeRegistry {
-		[verticalCursorScatterChartId]: ChartTypeRegistry['scatter']
-	}
-}
 
 Chart.register(
 	CategoryScale,
